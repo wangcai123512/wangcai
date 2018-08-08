@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Welcome";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model  Common.Models.RegInfo
+
+<div style="width: 700px;">
+<table style="width: 600px;">
+    <tr style="height: 50px;">
+        <td style="width: 300px;padding-left: 100px"><a class="easyui-linkbutton" onclick="One()">记录收入</a></td>
+        <td style="width: 300px;padding-right: 200px"><a class="easyui-linkbutton" onclick="Two()">记录收款</a></td>
+    </tr>
+    <tr style="height: 50px;">
+        <td style="width: 300px;padding-left: 100px"><a class="easyui-linkbutton" onclick="Three()">记录费用</a></td>
+        <td style="width: 300px;padding-right: 200px"><a class="easyui-linkbutton" onclick="Four()">记录付款</a></td>
+    </tr>
+    <tr style="height: 50px;">
+        <td style="width: 300px;padding-left: 100px"><a class="easyui-linkbutton" onclick="Five()">公司登记</a></td>
+        <td style="width: 300px;padding-right: 200px"><a class="easyui-linkbutton" onclick="Six()">物料资产</a></td>
+    </tr>
+</table>
+<table style="width: 600px;"><tr style="height: 50px;"> <td style="width: 600px; padding-left: 175px"><a class="easyui-linkbutton" onclick="Seven()">报告中心</a></td></tr></table>
+</div>
+<script type="text/javascript">
+    function One() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=1',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/IncomeRecord/Temporary";
+        PageChange(strurl);
+        $("#title").val("记录收入");
+    }
+    function Two() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=2',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/ReceivablesRecord/ReceivablesRecord";
+        PageChange(strurl);
+        $("#title").val("记录收款");
+    }
+    function Three() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=3',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/ExpenseRecord/Temporary";
+        PageChange(strurl);
+        $("#title").val("记录成本与费用");
+    }
+    function Four() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=4',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/PaymentRecord/PaymentRecord";
+        PageChange(strurl);
+        $("#title").val("记录付款");
+    }
+    function Five() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=5',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/BusinessPartnerSetting/Index";
+        PageChange(strurl);
+        $("#title").val("往来公司登记查询");
+    }
+    function Six() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=6',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/DirectMaterialPurchasingRecord/DirectMaterialPurchasingRecord";
+        PageChange(strurl);
+        $("#title").val("直接物料采购");
+    }
+    function Seven() {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=7',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+        var strurl = "/BalanceSheet/Index";
+        PageChange(strurl);
+        $("#title").val("资产负债表");
+    }
+</script>

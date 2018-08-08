@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "UserRole";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<h4>@Common.Resource.RolePermission.UserName : @ViewData["UserName"]</h4>
+<form>
+<input type="hidden" id="UserID" name ="UserID" value='@ViewData["UserGuid"]' />
+</form>
+
+<table id="RoleList"></table>
+
+
+<div class="Submit">
+    <a href="#" onclick ="SubmitForm()" class="easyui-linkbutton" >@General.Resource.Common.Save</a>
+    <a href="#" onclick ="PageChange('/LocalUserManagement/UserIndex')" class="easyui-linkbutton" >@General.Resource.Common.Back</a>
+</div>  
+
+<script>
+    $(function () {
+        $("#RoleList").datagrid({
+            url: '/LocalUserManagement/GetRolesForUser/@ViewData["UserGuid"]',
+            rownumbers: true,
+            columns: [[
+                        { field: 'Stat', checkbox: true },
+                        { field: 'Name', title: '@Common.Resource.RolePermission.RoleName' }
+                     ]],
+            onLoadSuccess: function (data) {
+                if (data) {
+                    $.each(data.rows, function (index, item) {
+                        if (item.Stat) {
+                            $('#RoleList').datagrid('checkRow', index);
+                        }
+                    });
+                }
+            }
+        });
+    });
+    function SubmitForm() {
+        $("form").form('submit', {
+            url: "/LocalUserManagement/UpdUserRole",
+            onSubmit: function (param) {
+                var roles = "";
+                var nodes = $('#RoleList').datagrid("getChecked");
+                $(nodes).each(function (i, n) { roles += n.Guid; roles += ","; });
+                param.Roles = roles;
+                return $("form").form("validate");
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () { PageChange("/LocalUserManagement/UserIndex"); });
+            }
+        });
+    }
+
+</script>
+

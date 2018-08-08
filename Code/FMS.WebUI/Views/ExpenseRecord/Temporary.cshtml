@@ -1,0 +1,440 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "Temporary";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="Choose_dv1">
+    <input type="radio" name="Type" id="radio1" value="营业成本" checked="checked"/>
+    <label id="forradio1" for="radio1">记录营业成本</label><br/>
+    <input type="radio" name="Type" id="radio2" value="销售费用"/>
+    <label id="forradio2" for="radio2">记录销售费用</label> <br/>
+    <input type="radio" name="Type" id="radio3" value="管理费用"/>
+    <label id="forradio3" for="radio3">记录管理费用</label> <br/>
+    <input type="radio" name="Type" id="radio4" value="财务费用"/>
+    <label id="forradio4" for="radio4">记录财务费用</label> <br/>
+    <input type="radio" name="Type" id="radio5" value="工资成本"/>
+    <label id="forradio5" for="radio5">记录工资成本</label> <br/>
+    <input type="radio" name="Type" id="radio6" value="税费计提"/>
+    <label id="forradio6" for="radio6">税费计提</label> <br/>
+    <a class="easyui-linkbutton" onclick="NextE()">下一页</a>
+    <a class="easyui-linkbutton" onclick="">回到上页</a>
+</div>
+<div id="Choose_dv3" style="display:none">
+        <input type="radio" name="Type" id="radio7" value="管理费用"/>
+    <label id="forradio7" for="radio7">记录管理费用</label> <br/>
+    <input type="radio" name="Type" id="radio8" value="财务费用"/>
+    <label id="forradio8" for="radio8">记录财务费用</label> <br/>
+    <a class="easyui-linkbutton" onclick="NextE()">下一页</a>
+    <a class="easyui-linkbutton" onclick="">回到上页</a>
+</div>
+<div id="Choose_dv2" style="display:none">
+<form id="Expense_Form">
+    <input type="hidden" name="IE_GUID" id="IE_GUID" value="@ViewData["IE_GUID"]"/>
+    <input type="hidden" name="State" id="State" value="应付"/>
+    <input type="hidden" name="Profit_GUID" id="Profit_GUID" />
+    <input type="hidden" id="hidRPer"/>
+    <input type="hidden" id="flag"/>
+<input type="hidden" name="InvType" id="InvType"/>
+<span style="font-size:15px;font-weight:900" id="Type"></span>
+    <table>
+        <tr> <a id="aid" style="display:none" class="easyui-linkbutton" onclick="GetDeclareCostSpending()">从预付供应商列表获取</a></tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate:</td>
+            <td><input class="easyui-datebox" id="AffirmDate" name="AffirmDate" data-options='editable:false,required:true'/></td>
+            <td>@FMS.Resource.Finance.Finance.Supplier:</td>
+            <td>
+                <input class="easyui-combobox" id="RPer" name="RPer"
+                       data-options='editable:false,url:"/InternalAPI/GetPayee",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200,required:true,onLoadSuccess:function(data){ $("#RPer").combobox("setValue",$("#hidRPer").val());}'/>
+            </td>
+            <td colspan="2">
+                <a class="easyui-linkbutton" onclick="ShowDetails();">新供应商登记</a>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Group:</td>
+            <td><input class="easyui-combobox" id="IEGroup" name="IEGroup" data-options='editable:false,required:true'/> </td>
+            <td>@FMS.Resource.Finance.Finance.ExpenseDescription:</td>
+            <td><input class="easyui-validatebox" id="IEDescription" name="IEDescription"/> </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.ExpiryDate:
+            </td>
+            <td>
+                <input class="easyui-datebox" id="Date" name="Date"/>
+            </td>
+            <td>发票/合同/单据号:
+            </td>
+            <td>
+                <input class="easyui-validatebox" id="InvNo" name="InvNo"/>
+            </td>
+        </tr>
+        <tr>
+
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="Amount" name="Amount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td id="td1" style="display:none">@FMS.Resource.Finance.Finance.Taxation@FMS.Resource.Finance.Finance.Amount:</td>
+            <td id="td2" style="display:none">
+                <input id="TaxationAmount" name="TaxationAmount" value="0" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td id="td3" style="display:none">@FMS.Resource.Finance.Finance.TaxationType:</td>
+            <td id="td4" style="display:none">
+                <input id="TaxationType" name="TaxationType"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.SumAmount:</td>
+            <td>
+                <input id="SumAmount" name="SumAmount" class="easyui-numberbox" onclick="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+            <td>
+                <input id="Currency" name="Currency"/>
+            </td>
+            <td>@General.Resource.Common.Remark :</td>
+            <td>
+                <input class="easyui-validatebox" id="Remark" name="Remark"/>
+            </td>
+        </tr>
+    </table>
+    	    <table>
+	        <tr>
+	            <td colspan="4">
+	                <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+	                <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <div id="fileQueue" class="fileQueue"></div>
+	                <div id="div_files"></div>
+	            </td>
+	        </tr>
+	    </table>
+</form>
+<a id="IsubmitE" class="easyui-linkbutton" onclick="SubmitForm()">@General.Resource.Common.Save</a>
+<a class="easyui-linkbutton" onclick="Back();">回到上页</a>
+</div>
+  <div id="Partner"></div>
+<script language="javascript" type="text/javascript">
+	$(function () {
+		var StandardCoin;
+		var CommonCurrency;
+		var Tax;
+		var BankAccount;
+		$.ajax({
+			url: "/InternalAPI/GetUserCurrency",
+			async: false,
+			dataType: "json",
+			success: function (d) { CommonCurrency = d; }
+		});
+		$.ajax({
+			url: "/InternalAPI/GetCompanySetting",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				StandardCoin = d.StandardCoin;
+			}
+		});
+		$.ajax({
+			url: "/InternalAPI/GetBankAccounts",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				var obj = new Object();
+				obj.ID = "0";
+				obj.Name = "现金";
+				obj.children = new Array();
+				d.push(obj);
+				BankAccount = d;
+			}
+		});
+		 $.ajax({
+			url: "/InternalAPI/GetTax",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				Tax=d;
+			}
+		});
+
+		$("#Expense_Form #Currency").combobox({
+			editable: false,
+			required: true,
+			data: CommonCurrency,
+			onLoadSuccess: function (data) {
+				$("#Expense_Form #Currency").combobox("setValue", StandardCoin);
+			}
+		});
+		$("#Expense_Form #TaxationType").combobox({
+			valueField:'Rate',
+			textField:'Name',
+			editable: false,
+			required: true,
+			data:Tax
+		});
+		$("#Expense_Form #Bank").combobox({
+		editable: false,
+		required: true,
+		data: BankAccount,
+		textField: "Name",
+		valueField: "ID",
+		onSelect: function (rec) {
+			$("#Expense_Form #BankAccount").combobox("loadData", rec.children);
+		},
+		onChange: function (newV, oldV) {
+			if (newV != oldV) {
+				$("#Expense_Form #BankAccount").combobox("clear");
+			}
+		}
+	});
+		$("#Expense_Form #BankAccount").combobox({
+			editable: false,
+			required: true,
+			textField: "Name",
+			valueField: "ID"
+		});
+		
+		$("#Expense_Form").form({
+			onLoadSuccess:function(data){
+				$("#Expense_Form #Bank").combobox("select",data.B_GUID);
+			}
+		});	   
+		$("#Partner").dialog({
+				collapsible: false,
+				minimizable: false,
+				maximizable: false,
+				closed: true,
+				title: "@FMS.Resource.BusinessPartner.BusinessPartner.Supplier",
+				width: 400,
+				height: 200,
+				buttons: [{
+					text: '@General.Resource.Common.Save',
+					handler: function () { Save(); }
+				}]
+			});
+
+	   //添加界面的附件管理
+		var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName] == null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+		var ASPSESSID = "@Session.SessionID";
+		$('#Expense_Form #file_upload').uploadify({
+			width:120,
+			height: 20,
+			buttonCursor: 'hand',
+			swf : '/Content/uploadify/uploadify.swf',    //FLash文件路径
+			buttonText: '上传发票/合同/单据',               //按钮文本
+			uploader: '/ExpenseRecord/Upload',       //处理文件上传Action
+			queueID: 'fileQueue',                        //队列的ID
+			queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+			auto: false,                                 //选择文件后是否自动上传，默认为true
+			multi: true,                                 //是否为多选，默认为true
+			removeCompleted: true,                       //是否完成后移除序列，默认为true
+			fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+			fileTypeDesc: 'Image Files',                 //文件描述
+			fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+			onQueueComplete: function (event, data) {                 //所有队列完成后事件
+				//ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+				FileFlag = true;
+                 $.messager.alert("提示", "发票附件上传完毕！"); 
+			},
+			onUploadStart: function (file) {
+				$("#Expense_Form #file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#IE_GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+			},
+			onUploadError: function (event, queueId, fileObj, errorObj) {
+				console.log(errorObj);
+				FileFlag = false;
+			}
+		}); 	  
+	});
+	
+	function NextE() {
+		$("#Expense_Form #Type").text($("input[name='Type']:checked").val());
+		$("#Expense_Form #InvType").val($("input[name='Type']:checked").val());
+		if ($("input[name='Type']:checked").val() == "营业成本") {
+		    $('#Profit_GUID').val("51BFDD3E-2253-4FBF-A946-19C18C25C6FC");
+		}
+		if ($("input[name='Type']:checked").val() == "销售费用") {
+		    $('#Profit_GUID').val("51BFDD3E-2253-4FBF-A946-19C18C25C6FC");
+		}
+		if ($("input[name='Type']:checked").val() == "管理费用") {
+		    $('#Profit_GUID').val("51BFDD3E-2253-4FBF-A946-19C18C25C6FC");
+		}
+		if ($("input[name='Type']:checked").val() == "财务费用") {
+		    $('#Profit_GUID').val("51BFDD3E-2253-4FBF-A946-19C18C25C6FC");
+		}
+		var url;
+		if ($("input[name='Type']:checked").val() == "工资成本") {
+		    url = "/WageCostsRecord/WageCostsRecord";
+		    PageChange(url);
+		    $("#title").val("记录工资成本");
+
+		} else if ($("input[name='Type']:checked").val() == "税费计提") {
+		    url = "/TaxProvisionRecord/TaxProvisionRecord";
+		    PageChange(url);
+		    $("#title").val("税费计提");
+		    $("#Expense_Form #Type").text($("input[name='Type']:checked").val());
+		} else {
+		    $("#Choose_dv1").hide();
+		    $("#Choose_dv3").hide();
+		    $("#Choose_dv2").show();
+		}
+	    
+	    var parentaccGuid;
+	    var iegroup;
+	    var invtype = $("input[name='Type']:checked").val();
+        if ( invtype=="营业成本") {
+            parentaccGuid = '51BFDD3E-2253-4FBF-A946-19C18C25C6FC';
+            $("#aid").show();
+            $("#td1").show();
+            $("#td2").show();
+            $("#td3").show();
+            $("#td4").show();
+        }
+	    if ( invtype=="财务费用") {
+            parentaccGuid = 'F85560AA-4951-4214-AF7F-5B890C9524B2';
+            $("#aid").hide();
+            $("#td1").hide();
+            $("#td2").hide();
+            $("#td3").hide();
+            $("#td4").hide();
+        }
+	    if ( invtype=="销售费用") {
+            parentaccGuid = 'DC83D8A5-31F6-4DFE-B093-87F90A234E53';
+            $("#aid").show();
+            $("#td1").show();
+            $("#td2").show();
+            $("#td3").show();
+            $("#td4").show();
+        }
+	    if ( invtype=="管理费用") {
+            parentaccGuid = '547E5A1A-1C20-4249-92C8-67FFFFBD38E7';
+            $("#aid").show();
+            $("#td1").show();
+            $("#td2").show();
+            $("#td3").show();
+            $("#td4").show();
+        }
+	    $.ajax({
+			url: "/InternalAPI/GetDetailsAccountParentAccGuid?pid="+ parentaccGuid,
+			async: false,
+			dataType: "json",
+			success: function (d) { iegroup = d; }
+		});
+	    $("#Expense_Form #IEGroup").combobox({
+			editable: false,
+			required: true,
+			textField: "Name",
+			valueField: "D_GUID",
+			data:iegroup
+		});
+
+	}
+	function Back() {
+		 if ($("#flag").val() == "隐藏") {
+		     $("#Choose_dv2").hide();
+		     $("#Choose_dv1").hide();
+		     $("#Choose_dv3").show();
+		 } else {
+		     $("#Choose_dv2").hide();
+		     $("#Choose_dv1").show();
+		 }
+	   
+	}
+	 function ShowDetails()
+	{
+		$("#Partner").dialog("center");
+		$("#Partner").dialog("open");       
+			$("#Partner").dialog("refresh", "/ExpenseRecord/BusinessPartner");
+	}
+
+   function SubmitForm() {
+    $('#Expense_Form #file_upload').uploadify('upload', '*');
+		$("#Expense_Form").form('submit', {
+			url: "/ExpenseRecord/UpdExpenseRecord",
+			onSubmit: function () {
+                 return $("#Expense_Form").form('validate');
+			},
+			success: function (data) {
+				$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+				if ($.parseJSON(data).Result) {
+               if ($("#flag").val() == "从预付供应商列表获取") {
+                           //更改状态
+                            $.ajax({
+                                url: '/PaymentClassify/UpdState?id=' + $("#IE_GUID").val(),
+                                type: "POST"
+                            });
+                            $.ajax({
+                                url: '/ReceivablesDeclareCustomer/UpdState?id=' + $("#IE_GUID").val() + '&state=' + "关闭",
+                                type: "POST"
+                            });
+                    }
+					$("#Expense_Form").form('clear');
+					 $("#Choose_dv2").hide();
+					  $("#Choose_dv1").show();
+					 
+				}
+			}
+		});
+	}
+
+	 function Save() {
+		$("#BusinessPartner").form('submit', {
+			url: "/ExpenseRecord/UpdPartner",
+			onSubmit: function () { return $("#BusinessPartner").form("validate"); },
+			success: successHandle
+		});
+	}
+	var successHandle = function (data) {
+		$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+		if ($.parseJSON(data).Result) {
+			$("#Partner").dialog("close");
+			$('#Expense_Form #RPer').combobox("reload");
+		}
+	};
+	
+
+    	function checkAmount() {
+	    var amount = document.getElementById('Amount').value == '' ? 0 : document.getElementById('Amount').value;
+	    var taxationamount = document.getElementById('TaxationAmount').value == '' ? 0 : document.getElementById('TaxationAmount').value;
+	    amount = amount.replace(",", "");
+	    taxationamount=taxationamount.replace(",", "");
+	    document.getElementById('SumAmount').value = Money(parseFloat(amount) + parseFloat(taxationamount));
+	}
+	
+	function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+
+    	function GetDeclareCostSpending() {
+            $("#Expense_Form").after("<div id='WinPaymentDeclareCostSpending'></div>");
+            $("#WinPaymentDeclareCostSpending").dialog({
+                title: ' ',
+                width: 800,
+                height: 378,
+                onClose: function () {
+                    $("#WinPaymentDeclareCostSpending").dialog("destroy");
+                },
+                buttons: [{ text: '提交', handler: function () { GetDeclareCostSpendingNextPage(); } }]
+            });
+
+            $('#WinPaymentDeclareCostSpending').dialog("refresh", "/ExpenseRecord/GetPaymentDeclareCostSpending/");
+	}
+
+	function GetDeclareCostSpendingNextPage() {
+	       var items = $('#ChoosePaymentDeclareCostSpending_List').datagrid('getChecked');
+            $.each(items, function (index, item) {
+                $('#RPer').combobox('setValue', item.RPer);
+                $('#Currency').combobox('setValue', item.Currency);
+                 $('#SumAmount').val(item.Amount);
+                $('#IE_GUID').val(item.GUID);
+                $('#flag').val("从预付供应商列表获取");
+            });
+            $("#WinPaymentDeclareCostSpending").dialog("destroy");
+	}
+</script>
+
+

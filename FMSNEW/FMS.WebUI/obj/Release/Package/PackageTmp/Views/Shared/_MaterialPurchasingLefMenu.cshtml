@@ -1,0 +1,24 @@
+﻿<aside id="sidebar_left" style="font-size: 16px;">
+
+    <div class="sidebar-menu" style="margin-top: 10px">
+        <ul class="nav" style="">
+            <li> <a onclick="javascript: window.location = '/DirectMaterialPurchasingRecord/Index'"  href="/DirectMaterialPurchasingRecord/Index"><span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">资材与库存
+                </span></a> </li>         
+            <li>
+                <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">产品与物料类别与名称</span></a>
+                <ul id="sideFour" class="nav sub-nav">
+                    <li><a onclick="javascript: window.location = '/PurchasingTypeRecord/Index'" href="#"><span class="sidebar-title">类别设置</span></a></li>
+                    <li><a onclick="javascript: window.location = '/MaterielManage/Index'" href="#"><span class="sidebar-title">名称设置</span></a></li>
+                </ul>
+            </li>
+            <li> <a onclick="javascript: window.location = '/ProductManage/Index'" href="/ProductManage/Index"><span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">产品制成与核销</span></a> </li>
+            <li > <a onclick="javascript:window.location = '/DirectMaterialPurchasingQuery/Index'" href="javascript:window.location = '/DirectMaterialPurchasingQuery/Index'"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">物料查询与处置</span><span class="sidebar-title-tray"></span></a> </li>
+            <li> <a onclick="javascript:window.location = '/AssetPurchaseQuery/Index'" href="javascript:window.location='/AssetPurchaseQuery/Index'"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">资产查询与处置</span></a> </li>
+            <li> <a onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">寻求会计帮助</span></a></li>
+
+        </ul>
+    </div>
+</aside>
+ 
+<script type="text/javascript" src="@Url.Content("~/js/views/material.js")"></script>
+ 

@@ -1,0 +1,679 @@
+﻿@{
+    ViewBag.Title = "ComTaxReccord";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/taxrate.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/jquery.qrcode.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/webuploader.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/Attachment.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/webuploader.css")" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#quarters').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择',
+            includeSelectAllOption: true
+
+        });
+        $("#payDate").datepicker({
+            language: "zh-CN",
+            autoclose: true, //选中之后自动隐藏日期选择框
+            clearBtn: true, //清除按钮
+            startView: 2,
+            maxViewMode: 1,
+            minViewMode: 1,
+            endDate: new Date(),
+            format: "yyyy/mm"//日期格式
+        });
+        $("#payDate").val(formatDateTime(new Date()));
+        TaxDateInit();
+        $("#btnPreview").hide();
+        $('#dataList').bootstrapTable({
+            url: "/TaxProvisionRecord/GetTaxSettlement?Flag=" + "CT",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+                { field: 'Rep_date', title: '季度', align: 'center', formatter: DHandle },
+                { field: 'Rep_status', align: 'center', title: '结算状态' },
+                { field: 'Amount', title: '结算金额', align: 'center', formatter: DecimalFmter },
+                { field: 'GUID', title: '操作', align: 'center', formatter: LinkHandle1 },
+            ]],
+            pagination: true,
+            rownumbers: true
+
+        });
+
+
+        $('.report-date').change(function () {
+            $.ajax(
+               {
+                   url: "/TaxProvisionRecord/GetTaxSettlement?Flag=" + "CT",
+                   async: false,
+                   type: "post",
+                   dataType: "json",
+                   data: { repDate: $("#quarters").val() },
+                   success: function (d) {
+                       if (d.length > 0) {
+                           $('#btnPreview').hide();
+                           $("#Reports").hide();
+                           $("#SettlementList").show();
+                       } else {
+                           $('#btnPreview').show();
+                           $("#Reports").hide();
+                           $("#SettlementList").hide();
+                           $("#Settlement").show();
+                           $("#Settlement1").show();
+                       }
+                   }
+
+               });
+        })
+    });
+    function TaxDateInit() {
+        var now = new moment();
+        var nowYear = now.year(); //当前年
+        var nowQuarter = now.quarter()
+        var lstQuarter = new Array();
+        var temp = new Object;
+        temp.label = "选择 ";
+        temp.value = "0";
+        lstQuarter.push(temp);
+        for (var i = 1; i <= nowQuarter; i++) {
+            temp = new Object;
+            temp.label = nowYear + "/" + i;
+            temp.value = nowYear + "/" + i;
+            lstQuarter.push(temp);
+        }
+        $("#quarters").multiselect('dataprovider', lstQuarter);
+
+    }
+
+    var formatDateTime = function (date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        return y + '/' + m ;
+    };
+</script>
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li class="active"> <a onclick="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'" href="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px; color: #08C">记录税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+                <li> <a onclick="javascript:window.location = '/ExpenseQuery/TaxQuery'" href="javascript:window.location = '/ExpenseQuery/TaxQuery'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">查询税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+                @*<li> <a onclick="javascript:window.location = '/ExpenseQuery/Index'" href="javascript:window.location = '/ExpenseQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询与编辑成本与费用记录</span></a> </li>*@
+                <li> <a @*onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"*@><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+
+            </ul>
+        </div>
+    </aside>
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content" style="padding-bottom: 150px;">
+                <div id="One" class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 0px; text-align: center"><span style="font-size: 18px; font-weight: 900; color: #074592; text-decoration: underline">计算企业所得税</span></div>
+                    <form id="TaxForm" action="#">
+                        <div id="title" class="col-md-12">
+
+                            <div class="col-md-6" style="margin-left:0px;">
+                                <label style="font-size: 13px;">月份</label>
+                            </div>
+                            <div class="col-md-6" style="margin-left:-338px;">
+                                <label style="font-size: 13px;">企业所得税金额</label>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6" style="width:110px;margin-left:-10px;">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <input type="text" class="form-control mtn" id="payDate" name="payDate" autocomplete="off" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="width:140px;margin-left:15px;">
+
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <input type="text" id="amt" name="amt" class="Amount form-control money" maxlength="10" min="0.1" value="0.00">
+                            </div>
+
+                        </div>
+                        <div id="title" class="col-md-12" >
+                            <div class="col-md-6" style="margin-left:15px;">
+                                <label style="font-size: 13px;"></label>
+                            </div>
+                            <div class="col-md-6" style="margin-left:15px;">
+                                <label style="font-size: 13px;"></label>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin: auto;clear:both">
+                            <div class="col-md-4" style="margin: auto">
+
+                            </div>
+                            <div class="col-md-4" style="margin: auto">
+                                <button type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold"
+                                        class="btn btn-primary pull-right" onclick='TaxSubmitForm()'>
+                                    提交
+                                </button>
+                            </div>
+                            <div class="col-md-4" style="margin: auto">
+                                <button onclick="javascript: window.location = '/TaxProvisionRecord/TaxProvisionRecord'" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!--<div class="col-md-12" style="margin: auto" id="quart">
+                     <div class="col-md-4">
+                     <div class="form-group">
+                         <div class="input-group input-group-sm" style="margin: 0">
+                             <span class="input-group-addon" style="color: #000000;">季度</span>
+                             <select id="quarters" name="quarters" class="report-date"></select>
+                         </div>
+                     </div>
+                     <div class="col-md-4"></div>
+                     <div class="col-md-4"></div>
+                    </div>
+                    </div>
+                    <div class="col-md-12" style="margin: auto">
+                     <div class="col-md-3">
+                         <button type="button" class="btn btn-primary pull-left button-radius" id="btnPreview" onclick="Preview()">
+                             预览企业所得税
+                         </button>
+                     </div>
+                    </div>
+                    <div id="Reports" style="display:none">
+
+                           <input type="hidden" value="" id="TaxGUID">
+                           <input type="hidden" value="" id="Date">
+                         <div class="col-lg-12"> <table id="Reports1" style="text-align:center"></table></div>
+                          <div class="col-lg-12" id="card1">
+
+                               <div class="col-lg-3" style="text-align:right;margin-left:-35px">
+                               所得税计算利润
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:-18px">
+                               <span id ="TotalAmount"></span>
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:20px">
+                               <span>@Session["Currency"]</span>
+                               </div>
+                                <div class="col-lg-3" style="float:right">
+
+                               </div>
+                          </div>
+                          <div class="col-lg-12" id="card2">
+
+                               <div class="col-lg-3" style="text-align:right;margin-left:-35px">
+                               往季企业所得税抵扣金额
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:-18px">
+                               <span id ="TotalAmount1"></span>
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:20px">
+                               <span>@Session["Currency"]</span>
+                               </div>
+                                <div class="col-lg-3" style="float:right">
+
+                               </div>
+                          </div>
+                           <div class="col-lg-12" id="card3">
+
+                               <div class="col-lg-3" style="text-align:right;margin-left:-35px">
+                               调整后当季应缴企业所得税
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:-18px">
+                               <span id ="TotalAmount2"></span>
+                               </div>
+                               <div class="col-lg-3" style="text-align:right;margin-left:20px">
+                               <span>@Session["Currency"]</span>
+                               </div>
+                                <div class="col-lg-3" style="float:right">
+                                 <button type="button" class="btn btn-primary pull-right button-radius" id="Settlement" onclick="Check()">
+                                         确认金额
+                                 </button>
+                               </div>
+                          </div>
+                           <div class="col-md-12"></div>
+                         <div class="col-md-12">
+                         <div class="col-md-8" style="text-align:right;margin-top: 10px">
+
+                         </div>
+                         <div class="col-md-4" style="float:right">
+                         <button onclick="Back()" class="btn btn-primary pull-right button-radius">
+                                     返回
+                                 </button>
+                                  <button type="button" class="btn btn-primary pull-right button-radius" id="Settlement1" onclick="Create()">
+                                         结算
+                                     </button>
+                         </div>
+                         </div>
+                     </div>
+
+                    <div class="col-md-12" id="SettlementList">
+                         <table id="dataList" style="font-size: 12px"></table>
+                         <div class="col-md-12" style="margin: auto; text-align: center">
+                         <button onclick="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'" href="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'" type="button" style="float:right" class="btn btn-primary pull-right button-radius">返回上页</button>
+                         </div>
+                     </div>-->
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+<script language="javascript" type="text/javascript">
+    var amount = 0;
+    var TotalAmount2 = 0;
+    var TotalAmount3 = 0;
+    var year;
+    var quarter;
+    var QuarterDate
+    var str
+    var amt = 0
+    var SumAmount = 0
+    function Preview() {
+        document.getElementById('Settlement').value = '1';
+        QuarterDate = $("#quarters").val();
+        var strs = new Array(); //定义一数组
+        strs = QuarterDate.split("/");
+        year = strs[0];
+        quarter = strs[1];
+        str = "";
+        amt = 0;
+        SumAmount = 0;
+        if (!DateCheck()) {
+            return false;
+        }
+        $("#Reports").show();
+        $("#SettlementList").hide();
+        $("#Settlement1").hide();
+        document.getElementById("TotalAmount").innerHTML = "";
+        document.getElementById("TotalAmount1").innerHTML = "";
+        document.getElementById("TotalAmount2").innerHTML = "";
+        document.getElementById("card1").style.display = "block";
+        document.getElementById("card2").style.display = "block";
+        $('#Reports1').bootstrapTable('destroy');
+        $('#Reports1').bootstrapTable({
+            url: "/TaxProvisionRecord/GetComIETaxList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+                { field: 'IEGroup', align: 'center', title: '名称' },
+                { field: 'Amount', align: 'center', title: '金额(本币)', formatter: DecimalFmter },
+                { field: 'SumAmount', align: 'center', title: '可抵扣金额(本币)', editable: { type: 'text', title: '可抵扣金额' }, formatter: DecimalFmter },
+                { field: 'Currency', align: 'center', title: '货币', formatter: Handle }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { Year: year, Quarter: quarter }
+        });
+
+
+
+    }
+    var Handle = function (s) {
+        if (s == null || s == "undefined" || s == '0') {
+            return "";
+        }
+        else {
+            return s
+        }
+    }
+    var DecimalFmter = function (s, row, index) {
+        if (s == null || s == "undefined" || s == '0') {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+    var DHandle = function (value, row, index) {
+        var link = "<a class='linkbtn' onclick='GetTaxSettlement(\"" + row.Rep_date + "\")'><font>\ " + row.Rep_date + "\</font></a>";
+        return link;
+    }
+    var LinkHandle1 = function (value, row) {
+        if (row.Rep_status == '已结算') {
+            var link1 = "<a class='linkbtn' onclick='ResetStatus(\"" + value + "\",\"" + row.Rep_date + "\")'>反结算</a>";
+        } else {
+            var link1 = "<a class='linkbtn' onclick='ReSet(\"" + value + "\",\"" + row.Rep_date + "\")'>结算</a>";
+        }
+        return link1;
+    }
+    function DateCheck() {
+        if ($("#quarters").val() == "0") {
+            alert("请选择季度");
+            return false;
+        }
+        return true;
+    }
+    function Back() {
+        $("#Reports").hide();
+        $("#quart").show();
+        $("#SettlementList").show();
+    }
+    function Check() {
+        var str = document.getElementById("Settlement").value
+        TotalAmount2 = 0;
+        var ComTax;
+        $.ajax({
+            url: "/TaxProvisionRecord/GetTaxSettlement?Flag=" + "CT",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+
+                ComTax = d;
+            }
+        });
+        if (quarter == 1) {
+            $("#Settlement1").show();
+            var allTableData = $("#Reports1").bootstrapTable('getData');
+            amount = allTableData[0].SumAmount;
+            for (var i = 1; i < allTableData.length; i++) {
+                amount -= allTableData[i].SumAmount;
+            }
+            var num = new Number(amount);
+            amt = num * 0.25;
+            str = num.toFixed(2) + "*25%=" + amt.toFixed(2);
+            document.getElementById("TotalAmount").innerHTML = str;
+
+
+            document.getElementById("TotalAmount1").innerHTML = TotalAmount2;
+            var num1 = new Number(amt + TotalAmount2);
+            document.getElementById("TotalAmount2").innerHTML = num1.toFixed(2);
+            SumAmount = num1.toFixed(2);
+        }
+        if (str == '1') {
+            if (quarter > 1) {
+                if (ComTax.length == quarter - 1) {
+                    $("#Settlement1").show();
+                    if (ComTax[quarter - 2].Amount < 0) {
+                        TotalAmount2 = ComTax[quarter - 2].Amount;
+                    }
+                    var allTableData = $("#Reports1").bootstrapTable('getData');
+                    amount = allTableData[0].SumAmount;
+                    for (var i = 1; i < allTableData.length; i++) {
+                        amount -= allTableData[i].SumAmount;
+                    }
+                    var num = new Number(amount);
+                    amt = num * 0.25;
+                    str = num.toFixed(2) + "*25%=" + amt.toFixed(2);
+                    document.getElementById("TotalAmount").innerHTML = str;
+
+
+                    document.getElementById("TotalAmount1").innerHTML = TotalAmount2;
+                    var num1 = new Number(amt + TotalAmount2);
+                    document.getElementById("TotalAmount2").innerHTML = num1.toFixed(2);
+                    SumAmount = num1.toFixed(2);
+                } else {
+                    alert("请先结算上一季");
+                }
+            }
+        }
+        else if (str == '2') {
+            if (quarter > 1) {
+                $("#Settlement1").show();
+                if (ComTax[quarter - 2].Amount < 0) {
+                    TotalAmount2 = ComTax[quarter - 2].Amount;
+                }
+                var allTableData = $("#Reports1").bootstrapTable('getData');
+                amount = allTableData[0].SumAmount;
+                for (var i = 1; i < allTableData.length; i++) {
+                    amount -= allTableData[i].SumAmount;
+                }
+                var num = new Number(amount);
+                amt = num * 0.25;
+                str = num.toFixed(2) + "*25%=" + amt.toFixed(2);
+                document.getElementById("TotalAmount").innerHTML = str;
+
+
+                document.getElementById("TotalAmount1").innerHTML = TotalAmount2;
+                var num1 = new Number(amt + TotalAmount2);
+                document.getElementById("TotalAmount2").innerHTML = num1.toFixed(2);
+                SumAmount = num1.toFixed(2);
+            }
+        }
+    }
+
+    function ResetStatus(id, Rep_date) {
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "/TaxProvisionRecord/CheckTaxSettlement",
+            data: { Rep_date: Rep_date },
+            success: function (data) {
+                if ($.parseJSON(data).success) {
+                    if (confirm('确认修改?')) {
+                        $.ajax({
+                            cache: false,
+                            type: "POST",
+                            url: "/TaxProvisionRecord/UpdTaxSet",
+                            data: { GUID: id, Rep_status: "未结算" },
+                            success: function (data) {
+
+                                if ($.parseJSON(data).Result) {
+                                    alert("提交成功");
+                                    $("#dataList").bootstrapTable("refresh");
+                                } else {
+                                    alert("提交失败");
+                                }
+                            }
+
+                        });
+                    }
+                } else {
+                    alert("请先反结算大于本季的季度")
+                }
+            }
+        });
+
+    }
+
+    function Create() {
+        var GUID = $("#TaxGUID").val();
+        var mon = $("#Date").val();
+        if (QuarterDate == undefined) {
+            QuarterDate = mon;
+        }
+
+        $.ajax(
+                {
+                    url: "/TaxProvisionRecord/CreateTaxSettlement",
+                    type: "post",
+                    async: false,
+                    dataType: "json",
+                    data: { repDate: QuarterDate, Amount: SumAmount, Rep_status: "已结算", GUID: GUID, Flag: "CT", State: "未付" },
+                    success: function (d) {
+                        if (d.success == true) {
+                            alert("提交成功");
+                            $("#Reports").hide();
+                            $("#btnPreview").hide();
+                            $("#dataList").bootstrapTable("refresh");
+                            $("#SettlementList").show();
+                        } else {
+                            alert("提交失败");
+                        }
+                    }
+
+                })
+    }
+    function ReSet(id, Rep_date) {
+
+        $("#Settlement1").hide();
+        QuarterDate = Rep_date;
+        var strs = new Array(); //定义一数组
+        strs = QuarterDate.split("/");
+        year = strs[0];
+        quarter = strs[1];
+        $("#TaxGUID").val(id);
+        $("#Date").val(Rep_date);
+        $("#SettlementList").hide();
+        $("#Reports").show();
+        $("#Settlement").show();
+        $("#Settlement1").show();
+        document.getElementById('Settlement').value = '2'
+        document.getElementById("card1").style.display = "block";
+        document.getElementById("card2").style.display = "block";
+        document.getElementById("TotalAmount").innerHTML = "";
+        document.getElementById("TotalAmount1").innerHTML = "";
+        document.getElementById("TotalAmount2").innerHTML = "";
+        $('#Reports1').bootstrapTable('destroy');
+        $('#Reports1').bootstrapTable({
+            url: "/TaxProvisionRecord/GetComIETaxList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+        { field: 'IEGroup', align: 'center', title: '名称' },
+        { field: 'Amount', align: 'center', title: '金额(本币)', formatter: DecimalFmter },
+        { field: 'SumAmount', align: 'center', title: '可抵扣金额(本币)', editable: { type: 'text', title: '可抵扣金额' }, formatter: DecimalFmter },
+        { field: 'Currency', align: 'center', title: '货币', formatter: Handle }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { Year: year, Quarter: quarter }
+        });
+    }
+
+    function GetTaxSettlement(Rep_date) {
+        var year
+        var quarter
+        var QuarterDate = Rep_date;
+        var strs = new Array(); //定义一数组
+        strs = QuarterDate.split("/");
+        year = strs[0];
+        quarter = strs[1];
+        $("#Reports").show();
+        $("#SettlementList").hide();
+        $("#btnPreview").hide();
+        $('#Reports1').bootstrapTable('destroy');
+        $('#Reports1').bootstrapTable({
+            url: "/TaxProvisionRecord/GetComIETaxList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+        { field: 'IEGroup', align: 'center', title: '名称' },
+        { field: 'Amount', align: 'center', title: '金额(本币)', formatter: DecimalFmter },
+        { field: 'SumAmount', align: 'center', title: '可抵扣金额(本币)', editable: { type: 'text', title: '可抵扣金额' }, formatter: DecimalFmter },
+        { field: 'Currency', align: 'center', title: '货币', formatter: Handle }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { Year: year, Quarter: quarter }
+        });
+        $("#quart").hide();
+        $("#Settlement").hide();
+        $("#Settlement1").hide();
+        document.getElementById("card1").style.display = "none";
+        document.getElementById("card2").style.display = "none";
+        var ComTax;
+        $.ajax({
+            url: "/TaxProvisionRecord/GetTaxSettlement?repDate=" + Rep_date + "&Flag=" + "CT",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+
+                ComTax = d;
+            }
+        });
+        document.getElementById("TotalAmount2").innerHTML = ComTax[0].Amount;
+    }
+
+    //20180314修改记录企业所得税
+    function TaxSubmitForm() {
+        var Amount = document.getElementById('amt').value;
+        var date = $("#payDate").val();
+        //alert(Amount);
+        //alert(taxname);
+        //exit;
+        $.ajax({
+            url: "/TaxProvisionRecord/AddCTProvisionRecord",
+            type: "post",
+            async: false,
+            dataType: "json",
+            data: { Amount: Amount, Name: '应交税费', Date: date },
+            success: function (d) {
+                //alert(d.success); exit;
+                if (d.success == true) {
+                    alert("提交成功");
+                    //location.reload(true);
+                    location.href = "/TaxProvisionRecord/TaxProvisionRecord";
+                } else {
+                    alert("提交失败");
+                }
+            }
+        });
+
+    }
+</script>

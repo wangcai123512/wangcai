@@ -1,0 +1,1827 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+@{
+    List<FMS.Model.T_BankAccount> BankList2 = ViewBag.BankList2;
+    List<FMS.Model.T_BeginningBalance> balanceList = ViewBag.balanceList;
+}
+@*<div id="topbar">
+    <div class="topbar-left">
+        <ol class="breadcrumb">
+            <li class="crumb-icon"><span class="glyphicons glyphicons-calculator text-purple2"
+                style="font-size: 20px"></span></li>
+            <li class="crumb-active">
+                <h style="font-size: 15px">余额初始化设置</h>
+            </li>
+            <li class="crumb-link">
+                <h>Initial Balance Setting</h>   
+            </li>
+        </ol>
+    </div>
+</div>*@
+
+ <style type="text/css">
+        .multiselect-selected-text {
+            max-width: 4em;        
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .input-group-addon:first-child
+        {
+             width: 30%;
+            }
+
+    </style>
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                    <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                     <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                    <li><a class="accordion-toggle menu-open" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                        <ul id="sideFour" class="nav sub-nav">
+                            <li class="active"><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px;color: #08C">科目余额初始化</span></a><span id="cir" class="circle" style="float:right;margin-right:20px;margin-top:-25px;font-size:x-small;color:#ffffff;text-align:center" >不平</span> </li>
+                            <li ><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                            <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                            @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                             <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                        </ul>
+                    </li>
+                    <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                    <li>
+                        <a class="accordion-toggle" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                        <ul id="sidecompany" class="nav sub-nav">
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'">@*<span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>*@<span class="sidebar-title" style="font-size: 14px">往来公司登记</span></a></li>
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                        <ul id="sideVoucher" class="nav sub-nav">
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                            @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                        <ul id="sideTwo" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                            <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                        </ul>
+                    </li>
+                    @*<li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>*@
+                    <li> <a onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+                </ul>
+            </div>
+  </aside>
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF;" >
+    <div id="content">
+    <div class="row">
+        <div class="col-md-12">
+            @*<div class="panel panel-visible">*@
+               @* <div class="panel-heading">
+                    <span class="panel-title"><span class="glyphicon glyphicon-pencil"></span>科目余额初始化</span>
+                </div>*@
+                <div class="panel-body pbn">
+                    <form id="altForm">
+                    <div class="form-group" style="margin: 0 auto;margin-left:20px">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon" style="font-size: 10px">初始日期</span>
+                            <input type="text" class="Date form-control datepicker mtn " style="width: 120px"
+                                id="Date" name="Date" value="" require="true">
+                        </div>
+                    </div>
+
+                   
+                  
+                     @*<div class="input-group" style="margin: 0 auto;margin-bottom: 20px;">
+                                <ol class="breadcrumb" style="margin-bottom: 20px;">
+                                    <li>
+                                        <p style="font-weight:bold;font-size: 20px; margin-left: 50%">
+                                            资产类</p>
+                                    </li>
+                                </ol>
+                            </div>*@
+                           @* <div class="input-group" style="margin: 0 auto;margin-bottom: 20px;">
+                                <ol class="breadcrumb" style="margin-bottom: 20px;">
+                                    <li class="crumb-active ">
+                                        <p style="font-weight:bold;font-size: 20px; margin-left: 50%">
+                                            负债类</p>
+                                    </li>
+                                </ol>
+                   
+                            </div>*@
+                  
+                  <div>
+                  
+                    <div class="col-md-12" style="float:left;width:50%">
+                        <p style="font-weight:bold;font-size: 16px;margin-left: 2%"> 资产类</p>
+                           
+                            <div class="col-md-8">
+                          @*      @foreach (var item in BankList2)
+                                {
+                                    var num = item.BA_GUID + "*";
+                                <div class="form-group" style="height: 30px">
+                                    <div class="input-group " style="margin: 0;width:400px">
+                                        <span class="input-group-addon AddOn">@item.AccountAbbreviation 余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" class="form-control money" maxlength="20" autocomplete="off"
+                                        placeholder="" id="@num" name="@item.BA_GUID"  value="@item.Amount"/>
+                                    </div>
+                                </div>
+                                }*@
+
+                                
+                                @foreach (var item1 in balanceList)
+                                {
+                                    if (item1.AccGroup == "1")
+                                    {
+                                        if (item1.Acc_Name == "银行存款")
+                                        {
+                                    <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                 <span style="font-weight:lighter;font-size:12px;margin-left:-5px" id="bankSum">货币资金</span>
+                                 <span id="sum"  style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px;"></span>
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form>
+                                    <div class="input-group " style="margin: auto">
+                                         @foreach (var item in BankList2)
+                                         {
+                                             var num = item.BA_GUID + "*";
+                                             var InitialAmount = string.Format("{0:N2}", Decimal.Parse(item.InitialAmount == "" ? "0" : item.InitialAmount));
+                                            <div class="form-group"  style="height: 30px">
+                                                <div class="input-group " id="BankAccount" style="margin: 0;width:300px">
+                                                    <span class="input-group-addon" style="font-size: 12px">@item.AccountAbbreviation 余额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    <input type="text"  class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="@num" name="@item.BA_GUID" onblur="GetSumBankAmount(this)"  value="@InitialAmount" />
+                                                </div>
+                                            </div>
+                                         }
+                                         <div class="input-group" id="cash" style="margin: 0;width:400px">
+                                    <span class="input-group-addon" name="myspan1" style="font-size: 10px">库存现金&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                             <input type="text" id="a1" name="record1" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"
+                                                    maxlength="20" autocomplete="off" placeholder="" value="" onblur="GetSumBankAmount(this)" style="width:163px">
+                                </div>
+                                         </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                        }
+
+                                        if (item1.Acc_Name == "应收账款")
+                                        {
+                                    <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px;">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" style="height:10px">
+                                 <span style="font-weight:400;font-size:12px;margin-left:-5px" name="myspan1">@item1.Acc_Name</span>
+                                 <input type="text" id="sumIRecord" name="record1" class="form-control money"
+                                        maxlength="20" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" onblur="FAmount(this)" autocomplete="off" placeholder="" style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px">
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form class="cmxform" id="Expense_Form1" method="post">
+                                    <div class="input-group " style="margin: auto">
+                                         <div id="Ex" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                                              <input type="hidden" name="IE_GUID" id="IE_GUID" value=""/>
+                                              <input type="hidden" name="IE_Flag" id="IE_Flag" value="I"/>
+                                              <input type="hidden" name="State" id="State" value="应收"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="初始账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                     
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="SumAmount" name="SumAmount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(2)"  class="add" href="#" style="font-size: 5px;">新增</a>
+                                                         <a class="delete" style="font-size: 12px;">删除</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                            
+                                             <div id="Ex_1" class="col-md-12" style="margin-bottom: 0px">
+                                             <input type="hidden" name="IE_GUID" id="IE_GUID" />
+                                             <input type="hidden" name="IE_Flag" id="IE_Flag" value="I"/>
+                                             <input type="hidden" name="State" id="State" value="应收"/>
+                                             <input type="hidden" name="InvType" id="InvType" value="初始账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="SumAmount" class="SumAmount" name="SumAmount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"  value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(2)" class="add" href="#" style="font-size: 5px;">新增</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                                 <div id="AddLayout2" style=""></div>
+                                                  <div class="form-group" style="margin: auto; text-align: center">
+                                                    <button onclick="AddIRecord()" type="button" style="margin-top: 20px; height: 20px; width: 20%;
+                                                    border-radius: 20px; font-size: 5px; border: 0px solid #c0c0c0; font-weight: bold;float:right;"
+                                                            class="btn btn-primary btn-xs">
+                                                        提交
+                                                    </button>
+                                                  </div>
+                                       
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                        }
+
+                                        if (item1.Acc_Name == "预付账款")
+                                        { 
+                                        <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px;">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" style="height:10px">
+                                 <span style="font-weight:lighter;font-size:12px;margin-left:-5px" name="myspan1">@item1.Acc_Name</span>
+                                 <input type="text" id="sumDeclareCost" name="record1" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"
+                                        maxlength="20" autocomplete="off" placeholder="" onblur="FAmount(this)" style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px">
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapseSix" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form class="cmxform" id="Expense_Form1" method="post">
+                                    <div class="input-group " style="margin: auto">
+                                         <div id="Examp" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                                              <input type="hidden" name="GUID" id="GUID" value=""/>
+                                              <input type="hidden" name="Record" id="Record" value="未记录"/>
+                                              <input type="hidden" name="Remark" id="Remark" value="初始预付账款"/>
+                                              <input type="hidden" name="State" id="State" value="未付"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="预付供应商"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                     
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="Amount" name="Amount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(5)"  class="add" href="#" style="font-size: 5px;">新增</a>
+                                                         <a class="delete" style="font-size: 12px;">删除</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                            
+                                             <div id="Examp_1" class="col-md-12" style="margin-bottom: 0px">
+                                             <input type="hidden" name="GUID" id="GUID" value=""/>
+                                              <input type="hidden" name="Record" id="Record" value="未记录"/>
+                                              <input type="hidden" name="Remark" id="Remark" value="初始预付账款"/>
+                                              <input type="hidden" name="State" id="State" value="未付"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="预付供应商"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="Amount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" class="Amount" name="Amount"  value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(5)" class="add" href="#" style="font-size: 5px;">新增</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                                 <div id="AddLayout5" style=""></div>
+                                                  <div class="form-group" style="margin: auto; text-align: center">
+                                                    <button onclick="AddDeclareCost()" type="button" style="margin-top: 20px; height: 20px; width: 20%;
+                                                    border-radius: 20px; font-size: 5px; border: 0px solid #c0c0c0; font-weight: bold;float:right;"
+                                                            class="btn btn-primary btn-xs">
+                                                        提交
+                                                    </button>
+                                                  </div>
+                                       
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                        }
+                                    }
+                                }
+                                 @foreach (var item2 in balanceList)
+                                 {
+                                     if (item2.AccGroup == "1")
+                                     {
+                                         if (item2.Acc_Name != "银行存款" && item2.Acc_Name != "应收账款" && item2.Acc_Name != "预付账款" && item2.Acc_Name != "库存现金")
+                                         { 
+                                        <div class="form-group" style="height: 30px">
+                                <div class="input-group" style="margin: 0;width:400px">
+                                    <span class="aa input-group-addon" name="myspan1" style="font-size: 12px">@item2.Acc_Name</span>
+                                    <input type="text" id="a13" name="record1" onblur="FAmount(this)" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" maxlength="20"
+                                        autocomplete="off" placeholder="">
+                                </div>
+                            </div>
+                                         }
+                                     }
+                                 }
+                            <div class="form-group" style="height: 30px">
+                                <div class="input-group" style="margin: 0;width:400px">
+                                    <span class="input-group-addon" style="font-weight:bold;font-size: 16px;">资产合计&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</span>
+                                    <input type="text" id="sum1" 
+                                        class="form-control money" maxlength="20" autocomplete="off" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" placeholder="">
+                                </div>
+                            </div>
+                            </div>
+                            
+                            
+                     </div>   
+                     
+                     <div class="col-md-12" style="float:right;width:50%">
+                     <p style="font-weight:bold;font-size: 16px;margin-left: 2%">负债类</p>
+                         <div class="col-md-8">
+
+
+                         @foreach (var item4 in balanceList)
+                         {
+                             if(item4.AccGroup=="2"){
+                                 if (item4.Acc_Name == "应付账款")
+                                 {
+                                     <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px;">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapsefour" style="height:10px">
+                                 <span style="font-weight:lighter;font-size:12px;margin-left:-5px" name="myspan2" >@item4.Acc_Name</span>
+                                 <input type="text" id="sumERecord" name="record2" class="form-control money"
+                                        maxlength="20" autocomplete="off" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" placeholder="" style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px">
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapsefour" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form class="cmxform" id="Expense_Form1" method="post">
+                                    <div class="input-group " style="margin: auto">
+                                         <div id="Exa" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                                              <input type="hidden" name="IE_GUID" id="IE_GUID" value=""/>
+                                              <input type="hidden" name="State" id="State" value="应付"/>
+                                              <input type="hidden" name="IE_Flag" id="IE_Flag" value="E"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="初始账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                     
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="SumAmount" name="SumAmount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"  value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(3)"  class="add" href="#" style="font-size: 5px;">新增</a>
+                                                         <a class="delete" style="font-size: 12px;">删除</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                            
+                                             <div id="Exa_1" class="col-md-12" style="margin-bottom: 0px">
+                                             <input type="hidden" name="IE_GUID" id="IE_GUID" />
+                                             <input type="hidden" name="State" id="State" value="应付"/>
+                                             <input type="hidden" name="IE_Flag" id="IE_Flag" value="E"/>
+                                             <input type="hidden" name="InvType" id="InvType" value="初始账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="SumAmount" class="SumAmount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(3)" class="add" href="#" style="font-size: 5px;">新增</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                                 <div id="AddLayout3" style=""></div>
+                                                  <div class="form-group" style="margin: auto; text-align: center">
+                                                    <button onclick="AddERecord()" type="button" style="margin-top: 20px; height: 20px; width: 20%;
+                                                    border-radius: 20px; font-size: 5px; border: 0px solid #c0c0c0; font-weight: bold;float:right;"
+                                                            class="btn btn-primary btn-xs">
+                                                        提交
+                                                    </button>
+                                                  </div>
+                                       
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                 }
+                                 if (item4.Acc_Name == "预收账款")
+                                 {
+                                     <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px;">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapsefive" style="height:10px">
+                                 <span style="font-weight:lighter;font-size:12px;margin-left:-5px" name="myspan2">@item4.Acc_Name</span>
+                                 <input type="text" id="sumDCustomer" name="record2" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"
+                                        maxlength="20" onblur="FAmount(this)" autocomplete="off" placeholder="" style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px">
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapsefive" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form class="cmxform" id="Expense_Form1" method="post">
+                                    <div class="input-group " style="margin: auto">
+                                         <div id="Exam" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                                              <input type="hidden" name="GUID" id="GUID" value=""/>
+                                              <input type="hidden" name="State" id="State" value="未收"/>
+                                              <input type="hidden" name="Record" id="Record" value="未记录"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="预收客户款"/>
+                                              <input type="hidden" name="Remark" id="Remark" value="初始预收账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                     
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="Amount" name="Amount" onblur="FAmount(this)" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(4)"  class="add" href="#" style="font-size: 5px;">新增</a>
+                                                         <a class="delete" style="font-size: 12px;">删除</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                            
+                                             <div id="Exam_1" class="col-md-12" style="margin-bottom: 0px">
+                                             <input type="hidden" name="GUID" id="GUID" value=""/>
+                                              <input type="hidden" name="State" id="State" value="未收"/>
+                                              <input type="hidden" name="Record" id="Record" value="未记录"/>
+                                               <input type="hidden" name="InvType" id="InvType" value="预收客户款"/>
+                                              <input type="hidden" name="Remark" id="Remark" value="初始预收账款"/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="RPer" name="RPer">
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="Amount" class="Amount" onblur="FAmount(this)" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(4)" class="add" href="#" style="font-size: 5px;">新增</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                                 <div id="AddLayout4" style=""></div>
+                                                  <div class="form-group" style="margin: auto; text-align: center">
+                                                    <button onclick="AddDeclareCustomer()" type="button" style="margin-top: 20px; height: 20px; width: 20%;
+                                                    border-radius: 20px; font-size: 5px; border: 0px solid #c0c0c0; font-weight: bold;float:right;"
+                                                            class="btn btn-primary btn-xs">
+                                                        提交
+                                                    </button>
+                                                  </div>
+                                       
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                 }
+                                 if (item4.Acc_Name == "应交税费")
+                                 {
+                                     <div class="panel-group" id="accordion" style="margin-right:30px;margin-bottom:10px;width:400px;">
+                            <div class="panel panel-default">
+
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" style="height:10px">
+                                 <span style="font-weight:lighter;font-size:12px;margin-left:-5px" name="myspan2">@item4.Acc_Name</span>
+                                 <input type="text" id="sumId" name="record2" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"
+                                        maxlength="20" onblur="FAmount(this)" autocomplete="off" placeholder="" style="font-weight:lighter;font-size:15px;display:inline-block;width:auto;border:none;BACKGROUND-color:transparent;height:20px">
+                                </a>
+                                </h4>
+                            </div>
+   
+                            <div id="collapseTwo" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                <form class="cmxform" id="Expense_Form" method="post">
+                                    <div class="input-group " style="margin: auto">
+                                         <div id="Example" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                                              <input type="hidden" name="IE_GUID" id="IE_GUID" value=""/>
+                                               <input type="hidden" name="GUID" id="GUID" value=""/>
+                                              <input type="hidden" name="State" id="State" value="未付"/>
+                                              <input type="hidden" name="InvType" id="InvType" value="税费"/>
+                                              <input type="hidden" name="Remark" id="Remark" value="初始应交税金"/>
+                                              <input type="hidden" name="SumAmount" id="SumAmount" value=""/>
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                    <select id="IEGroup" name="IEGroup">
+                                                     <option value="增值税">增值税</option>
+                                                     <option value="营业税金及附加">营业税金及附加</option>
+                                                     <option value="所得税费用">所得税费用</option>
+                                                     <option value="个人所得税">个人所得税</option>
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="TaxAmount" name="" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"  value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(1)"  class="add" href="#" style="font-size: 5px;">新增</a>
+                                                         <a class="delete" style="font-size: 12px;">删除</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                            
+                                             <div id="Example_1" class="col-md-12" style="margin-bottom: 0px">
+                                             <input type="hidden" name="IE_GUID" id="IE_GUID" />
+                                             <input type="hidden" name="GUID" id="GUID" value=""/>
+                                             <input type="hidden" name="State" id="State" value="未付"/>
+                                             <input type="hidden" name="InvType" id="InvType" value="税费"/>
+                                             <input type="hidden" name="Remark" id="Remark" value="初始应交税金"/>
+                                             <input type="hidden" name="SumAmount" id="SumAmount" />
+                                                   <div class="col-md-4" style="margin-bottom: 0px;margin-left:-30px">
+                                                   <div class="form-group">
+                                                   <div class="input-group" style="margin: 0;width:120px;">
+                                                  <select id="IEGroup" name="IEGroup">
+                                                     <option value="增值税">增值税</option>
+                                                     <option value="营业税金及附加">营业税金及附加</option>
+                                                     <option value="所得税费用">所得税费用</option>
+                                                     <option value="个人所得税">个人所得税</option>
+                                                    </select>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-6" style="margin-bottom: 0px;margin-left:10px">
+                                                    <div class="form-group">
+                                                    <div class="input-group" style="margin: 0">
+                                                    <input  style="height:30px" type="text"  class="form-control money" maxlength="20" autocomplete="off"
+                                                    placeholder="" id="TaxAmount" class="TaxAmount" onblur="FAmount(this)" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')" value=""/>
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-2"  style="margin-left:20px">
+                                                     <div class="form-group">
+                                                     <div class="input-group" style="margin: 0">
+                                                       <a onclick="add(1)" class="add" href="#" style="font-size: 5px;">新增</a>
+                                                        </div>
+                                                     </div>
+                                                    </div>
+                                                </div>
+                                                 <div id="AddLayout" style=""></div>
+                                                  <div class="form-group" style="margin: auto; text-align: center">
+                                                    <button onclick="AddTax()" type="button" style="margin-top: 20px; height: 20px; width: 20%;
+                                                    border-radius: 20px; font-size: 5px; border: 0px solid #c0c0c0; font-weight: bold;float:right;"
+                                                            class="btn btn-primary btn-xs">
+                                                        提交
+                                                    </button>
+                                                  </div>
+                                       
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+  
+                            </div>
+                           </div>
+                                 }
+                             }
+                         }
+                          @foreach (var item4 in balanceList)
+                          {
+                              if (item4.AccGroup == "2")
+                              {
+                                  if (item4.Acc_Name != "应付账款" && item4.Acc_Name != "预收账款"  && item4.Acc_Name != "应交税费")
+                                  {
+                                   <div class="form-group" style="height: 30px">
+                                <div class="input-group" style="margin: 0;width:400px">
+                                    <span class="input-group-addon" name="myspan2" style="font-size: 12px">@item4.Acc_Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="a19" name="record2" onblur="FAmount(this)" class="form-control money" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')"
+                                        maxlength="20" autocomplete="off" placeholder="">
+                                </div>
+                            </div>
+                             
+                                  }
+                              }
+                          }
+                          
+                             <p style="font-weight:bold;font-size: 16px;margin-left: 2%">所有者权益</p>
+                             @foreach (var item5 in balanceList)
+                             {
+                                 if (item5.AccGroup == "4")
+                                 {
+                                     <div class="form-group" style="height: 30px">
+                                <div class="input-group" style="margin: 0;width:400px">
+                                    <span class="input-group-addon" name="myspan2" style="font-size: 12px">@item5.Acc_Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</span>
+                                    <input type="text" id="a29" name="record2" onblur="FAmount(this)"
+                                        class="form-control money" maxlength="20" autocomplete="off" placeholder="" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')">
+                                </div>
+                            </div>
+                                 }
+                             }
+                             <div class="form-group" style="height: 30px">
+                                <div class="input-group" style="margin: 0;width:400px">
+                                    <span class="input-group-addon" style="font-weight:bold;font-size: 16px;" >负债+权益 合计</span>
+                                    <input type="text" id="sum2" 
+                                        class="form-control money" maxlength="20" autocomplete="off" placeholder="" onkeyup="value=this.value=this.value.replace(/[^\0-9\.]/g,'')">
+                                </div>
+                            </div>
+                            </div>
+                            
+                    </div>
+              
+                       </div>
+                     
+                    <div class="form-group" style="margin: auto; text-align: center">
+                        <button onclick="Submit()" type="button" style="margin-top: 20px; height: 40px; width: 20%;
+                            border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0; font-weight: bold"
+                            class="btn btn-primary">
+                            提交</button>
+                        <button onclick="window.history.go(-1)" type="button" style="margin-top: 20px;
+                            height: 40px; width: 20%; border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0;
+                            font-weight: bold" class="btn btn-primary">
+                            返回上页</button>
+                    </div>
+                    </form>
+                
+            
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script type="text/javascript">
+    var IRecordSum=0
+    var DCustomerSum=0
+    var DeclareCostSum=0
+    var ERecordSum=0
+    var IdSum=0
+    jQuery(document).ready(function () {
+    
+    InitalDateInput();
+     $("#Example_1 #IEGroup").multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#Example_1 #IEGroup").val("").multiselect("refresh");
+         var allList;
+        $.ajax({
+            url: "/InternalAPI/GetPartnersAll",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+               
+                allList = d;
+            }
+        });
+
+        $("#Ex_1 #RPer").multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#Ex_1 #RPer").multiselect('dataprovider', allList);
+        $("#Ex_1 #RPer").val("").multiselect("refresh");
+        $("#Exa_1 #RPer").multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#Exa_1 #RPer").multiselect('dataprovider', allList);
+        $("#Exa_1 #RPer").val("").multiselect("refresh");
+        $("#Exam_1 #RPer").multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#Exam_1 #RPer").multiselect('dataprovider', allList);
+        $("#Exam_1 #RPer").val("").multiselect("refresh");
+        $("#Examp_1 #RPer").multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#Examp_1 #RPer").multiselect('dataprovider', allList);
+        $("#Examp_1 #RPer").val("").multiselect("refresh");
+        var id = NewGUID();
+        $("#Example_1 #IE_GUID").val(id);
+        $("#Ex_1 #IE_GUID").val(NewGUID());
+        $("#Exa_1 #IE_GUID").val(NewGUID());
+        $("#Exam_1 #GUID").val(NewGUID());
+        $("#Examp_1 #GUID").val(NewGUID());
+        
+//        $.ajax({
+//                url: "/InitialBalanceManagement/GetInitialBalanceRecord?Acc_Name=" + "现金余额",
+//                async: false,
+//                dataType: "json",
+//                success: function (d) {
+//                    recordList = d;
+//                }
+//            });
+//             if (recordList.length == 0) {
+//                cash = ls2[j].value = 0.00;
+//            }else{
+//                cash = recordList[0].Money.toFixed(2);
+//            }
+       
+        var taxList
+        var recordList
+        var DeclareCustomerList
+        
+        $.ajax({
+             url : '/ExpenseQuery/GetExpenseList_Bootstraptable?incomeGrp='+"税费"+ "&taxName=" + escape('期初')+ "&State=" + escape('未付'),
+             async: false,
+             dataType: "json",
+             success: function (d) {
+                taxList = d;
+              }
+        });
+        $.ajax({
+             url : "/PaymentRecord/GetChoosePayablesList?invtype="+ escape('初始账款'),
+             async: false,
+             dataType: "json",
+             success: function (d) {
+                recordList = d;
+              }
+        });
+        $.ajax({
+             url : "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList?state=" + escape('未收') + "&invtype=" + escape('预收客户款')+"&remark=" + escape('初始预收账款'),
+             async: false,
+             dataType: "json",
+             success: function (d) {
+                DeclareCustomerList = d;
+              }
+        });
+        $.ajax({
+             url : "/PaymentDeclareCostSpending/GetPaymentDeclareCostSpendingList?state=" + escape('未付') + "&invtype=" + escape('预付供应商')+"&remark=" + escape('初始预付账款'),
+             async: false,
+             dataType: "json",
+             success: function (d) {
+                DeclareCostList = d;
+              }
+        });
+        var b = 2
+         for(var i =0;i<recordList.length;i++){
+          if(recordList[i].State == '应收'){
+             if ($('#Ex_' + (b - 1) + ' #SumAmount').val() != "") {
+                 
+                  add(2);
+                  $('#Ex_' + (b - 1) + ' .add').hide();
+                  $('#Ex_' + (b - 1) + ' .delete').hide();
+                  $('#Ex_' + (b) + ' .delete').hide();
+                  b++;
+                 }
+                var newRow = $("[id^=Ex_]").last();
+                newRow.find('#IE_GUID').val(recordList[i].IE_GUID);
+                newRow.find('#RPer').val(recordList[i].RPer);
+                newRow.find('#RPer').multiselect('refresh');
+                newRow.find('#SumAmount').val(DecimalFmter(recordList[i].Amount.toFixed(2)));
+               IRecordSum+=parseFloat(recordList[i].Amount);
+                
+          }
+          
+        }
+        var c=2
+         for(var i =0;i<recordList.length;i++){
+          if(recordList[i].State == '应付'){
+             if ($('#Exa_' + (c - 1) + ' #SumAmount').val() != "") {
+                 
+                  add(3);
+                  $('#Exa_' + (c - 1) + ' .add').hide();
+                  $('#Exa_' + (c - 1) + ' .delete').hide();
+                  $('#Exa_' + (c) + ' .delete').hide();
+                  c++;
+                 }
+                var newRow = $("[id^=Exa_]").last();
+                newRow.find('#IE_GUID').val(recordList[i].IE_GUID);
+                newRow.find('#RPer').val(recordList[i].RPer);
+                newRow.find('#RPer').multiselect('refresh');
+                newRow.find('#SumAmount').val(DecimalFmter(recordList[i].Amount.toFixed(2)));
+               ERecordSum+=parseFloat(recordList[i].Amount);
+                
+          }
+          
+        }
+         var d=2
+         for(var i =0;i<DeclareCustomerList.length;i++){
+          
+             if ($('#Exam_' + (d - 1) + ' #Amount').val() != "") {
+                  add(4);
+                  $('#Exam_' + (d - 1) + ' .add').hide();
+                  $('#Exam_' + (d - 1) + ' .delete').hide();
+                  $('#Exam_' + (d) + ' .delete').hide();
+                  d++;
+                 }
+                var newRow = $("[id^=Exam_]").last();
+                newRow.find('#GUID').val(DeclareCustomerList[i].GUID);
+                newRow.find('#RPer').val(DeclareCustomerList[i].RPer);
+                newRow.find('#RPer').multiselect('refresh');
+                newRow.find('#Amount').val(DecimalFmter(DeclareCustomerList[i].Amount.toFixed(2)));
+               
+                DCustomerSum += parseFloat(DeclareCustomerList[i].Amount);
+          
+          
+        }
+        var aa=2
+         for(var i =0;i<DeclareCostList.length;i++){
+          
+             if ($('#Examp_' + (aa - 1) + ' #Amount').val() != "") {
+                  add(5);
+                  $('#Examp_' + (aa - 1) + ' .add').hide();
+                  $('#Examp_' + (aa - 1) + ' .delete').hide();
+                  $('#Examp_' + (aa) + ' .delete').hide();
+                  aa++;
+                 }
+                var newRow = $("[id^=Examp_]").last();
+                newRow.find('#GUID').val(DeclareCostList[i].GUID);
+                newRow.find('#RPer').val(DeclareCostList[i].RPer);
+                newRow.find('#RPer').multiselect('refresh');
+                newRow.find('#Amount').val(DecimalFmter(DeclareCostList[i].Amount.toFixed(2)));
+               DeclareCostSum+=parseFloat(DeclareCostList[i].Amount);
+                
+          
+          
+        }
+        var a = 2
+        var sumTaxAmount
+        for(var i =0;i<taxList.length;i++){
+          
+             if ($('#Example_' + (a - 1) + ' #TaxAmount').val() != "") {
+                 
+                  add(1);
+                  $('#Example_' + (a - 1) + ' .add').hide();
+                  $('#Example_' + (a - 1) + ' .delete').hide();
+                  $('#Example_' + (a) + ' .delete').hide();
+                  a++;
+                 }
+                var newRow = $("[id^=Example_]").last();
+                newRow.find('#GUID').val(taxList[i].IE_GUID);
+                newRow.find('#IEGroup').val(taxList[i].IEGroup);
+                newRow.find('#IEGroup').multiselect('refresh');
+                newRow.find('#TaxAmount').val(DecimalFmter(taxList[i].Amount.toFixed(2)));
+               
+                IdSum+=parseFloat(taxList[i].Amount);
+          
+          
+        }
+        var balance
+        var ls = $("span[name='myspan1']");
+        var ls4 = $("span[name='myspan2']");
+        var ls2 = $("input[name='record1']");
+        var ls3 = $("input[name='record2']");
+        var cash = 0;
+        for (var j = 0; j < ls.length; j++) {
+            var a = ls[j].innerText.trim();
+            $.ajax({
+                url: "/InitialBalanceManagement/GetInitialBalanceRecord?Acc_Name=" + ls[j].innerText.trim().replace('余额',''),
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    balance = d;
+                }
+            });
+            if (balance.length == 0) {
+                ls2[j].value = 0.00;
+                
+            } else {
+                ls2[j].value = DecimalFmter(balance[0].Money);
+                
+            }
+        };
+
+       
+        for (var k = 0; k < ls4.length; k++) {
+            var a = ls4[k].innerText.trim();
+            $.ajax({
+                url: "/InitialBalanceManagement/GetInitialBalanceRecord?Acc_Name=" + ls4[k].innerText.trim().replace('余额',''),
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    balance = d;
+                }
+            });
+            if (balance.length == 0) {
+                ls3[k].value = 0.00;
+            } else {
+                ls3[k].value = DecimalFmter(balance[0].Money);
+            }        
+                
+        };
+        if (balance.length != 0){
+        $("#Date").val(balance[0].InitialDate); 
+        $("#Date").datepicker('update'); 
+        }
+        //         var sumBankAmount=0;
+        //            var lst = $("input[id$='*']");
+        ////            var lst2 = $("select[id$='d']");
+        //            var bankObj = new Array()
+        //            for (var i = 0; i < lst.length; i++) {
+        //                sumBankAmount =parseFloat(sumBankAmount) + parseFloat(lst[i].value)
+        //            }
+        var sumBankAmount = 0;
+        var BankAmount = 0;
+       
+        var recordSum1 = 0;
+        var recordSum2 = 0;
+        var list = new Array();
+        var ls = $("span[name='myspan1']");
+        var ls4 = $("span[name='myspan2']");
+        var ls2 = $("input[name='record1']");   
+        var ls3 = $("input[name='record2']");
+        var depreciation = 0;
+        for (var j = 0; j < ls.length; j++) {
+            if(ls[j].innerText.trim()=='累计折旧'){
+                depreciation = parseFloat(ls2[j].value.replace(",", ""));
+            }if(ls[j].innerText.trim()=='库存现金'){
+                 cash = parseFloat(ls2[j].value.replace(",", ""));
+                } else if(ls[j].innerText.trim()!='累计折旧'){
+                 recordSum1 = parseFloat(recordSum1) + parseFloat(ls2[j].value.replace(",", ""));
+             }
+           
+        };
+         GetSum(cash);
+          BankAmount = document.getElementById("sum").innerText;
+        sumBankAmount = parseFloat(BankAmount.replace(",", ""));
+         recordSum1 = parseFloat(recordSum1) - parseFloat(depreciation);
+        for (var k = 0; k < ls4.length; k++) {
+            recordSum2 = parseFloat(recordSum2) + parseFloat(ls3[k].value.replace(",", ""))
+        };
+        $("#sum1").val(DecimalFmter(sumBankAmount + recordSum1));
+        $("#sum2").val(DecimalFmter(recordSum2));
+        if ( $("#sum1").val() ==  $("#sum2").val()) {
+            var d = document.getElementById("cir");
+            d.style.backgroundColor = "green";
+            d.innerText = "平";
+        } else {
+            var d = document.getElementById("cir");
+            d.style.backgroundColor = "red";
+            d.innerText = "不平";
+        }
+        //        var ConfigSetting = {
+        //            buttonWidth: '100%',
+        //            maxHeight: 150,
+        //            enableFiltering: true,
+        //            includeFilterNewBtn: false
+        //        }
+        //        var list = $("select");
+        //        var id = "";
+        //        list.each(function () {
+        //            id = $(this).attr("id")
+        //            //            var currency;
+        //            $.ajax({
+        //                url: "/InternalAPI/GetCommonCurrency",
+        //                async: false,
+        //                dataType: "json",
+        //                success: function (d) {
+        //                    currency = d;
+        //                }
+        //            });
+        //            $('#' + id).multiselect('dataprovider', currency);
+        //            $('#' + id).multiselect('select', standardCoin);
+        //            $('#' + id).multiselect(ConfigSetting);
+
+        //        });
+
+    });
+    var a =2;
+    var b =2;
+    var c =2;
+    var d =2;
+    var aa =2;
+    function add(id){
+     var allList;
+        $.ajax({
+            url: "/InternalAPI/GetPartnersAll",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+               
+                allList = d;
+            }
+        });
+    if(id==1){
+        var o = document.getElementById("Example");
+        var div = document.createElement("div");
+        div.id = "Example_" + a;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, a);
+        document.getElementById("AddLayout").appendChild(div);
+         $("#" + div.id + ' #GUID').val(NewGUID());
+         $("#" + div.id + " .delete").bind("click", function () {
+            de(div.id,1);
+        });
+        $("#" + div.id +' #IEGroup').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#" + div.id +' #IEGroup').val("").multiselect("refresh")
+        a++;
+        }
+        else if(id == 2){
+        var o = document.getElementById("Ex");
+        var div = document.createElement("div");
+        div.id = "Ex_" + b;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, b);
+        document.getElementById("AddLayout2").appendChild(div);
+         $("#" + div.id + ' #IE_GUID').val(NewGUID());
+         $("#" + div.id + " .delete").bind("click", function () {
+            de(div.id,2);
+        });
+        $("#" + div.id +' #RPer').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+         $("#" + div.id +' #RPer').multiselect('dataprovider', allList);
+         $("#" + div.id +' #RPer').val("").multiselect("refresh");
+         b++;
+        }
+        else if(id == 3){
+        var o = document.getElementById("Exa");
+        var div = document.createElement("div");
+        div.id = "Exa_" + c;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, c);
+        document.getElementById("AddLayout3").appendChild(div);
+         $("#" + div.id + ' #IE_GUID').val(NewGUID());
+         $("#" + div.id + " .delete").bind("click", function () {
+            de(div.id,3);
+        });
+        $("#" + div.id +' #RPer').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+         $("#" + div.id +' #RPer').multiselect('dataprovider', allList);
+         $("#" + div.id +' #RPer').val("").multiselect("refresh");
+         c++;
+        }
+        else if(id == 4){
+        var o = document.getElementById("Exam");
+        var div = document.createElement("div");
+        div.id = "Exam_" + d;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, d);
+        document.getElementById("AddLayout4").appendChild(div);
+         $("#" + div.id + ' #GUID').val(NewGUID());
+         $("#" + div.id + " .delete").bind("click", function () {
+            de(div.id,4);
+        });
+        $("#" + div.id +' #RPer').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+         $("#" + div.id +' #RPer').multiselect('dataprovider', allList);
+         $("#" + div.id +' #RPer').val("").multiselect("refresh");
+         d++;
+        }
+        else if(id == 5){
+        var o = document.getElementById("Examp");
+        var div = document.createElement("div");
+        div.id = "Examp_" + aa;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, aa);
+        document.getElementById("AddLayout5").appendChild(div);
+         $("#" + div.id + ' #GUID').val(NewGUID());
+         $("#" + div.id + " .delete").bind("click", function () {
+             de(div.id, 5);
+        });
+        $("#" + div.id +' #RPer').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+         $("#" + div.id +' #RPer').multiselect('dataprovider', allList);
+         $("#" + div.id +' #RPer').val("").multiselect("refresh");
+         aa++;
+        }
+
+    }
+
+    function de(e, obj) {
+        $('#' + e).remove();
+        if (obj==1) {
+            a = a - 1;
+        } else if (obj == 2) {
+            b = b - 1;
+        } else if (obj == 3) {
+            c = c - 1;
+        } else if (obj == 4) {
+            d = d - 1;
+        } else if (obj == 5) {
+            aa = aa - 1;
+        }
+        
+    }
+    function AddIRecord(){
+      var list = new Array();
+      var param = new Array();
+      var IAmount = 0;
+      var SAmount = 0;
+      for(var i=1;i<b;i++){
+         var IRecord = new Object;
+         var div = document.createElement("div");
+           div.id = "Ex_" + i;
+           IAmount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+           IAmount = parseFloat(IAmount);
+           SAmount+=IAmount;
+            IRecord.IE_GUID = $("#" + div.id +' #IE_GUID').val();
+             IRecord.RPer = $("#" + div.id +' #RPer').val();
+             IRecord.State = $("#" + div.id +' #State').val();
+             IRecord.InvType = $("#" + div.id +' #InvType').val();
+             IRecord.SumAmount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+             IRecord.Amount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+             IRecord.IE_Flag = $("#" + div.id +' #IE_Flag').val();
+             IRecord.AffirmDate =  $("#Date").val();
+             list.push(IRecord);     
+      }
+      var HisAmount =0
+      HisAmount = $("#sumIRecord").val().replace(",", "");
+       $("#sumIRecord").val(DecimalFmter(parseFloat(HisAmount)+parseFloat(SAmount)-IRecordSum));
+         
+       param = { TaxList: list }
+       
+        $.ajax({
+                cache: true,
+                type: "POST",
+                url: '/ExpenseRecord/CreateTaxRecord',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                data: JSON.stringify(param),
+                success: function (data) {
+                 var res = JSON.parse(data)
+                    if(res.Result==true){
+                        IRecordSum = parseFloat(SAmount);
+                        alert('提交成功');
+                    }else{
+                        alert('提交失败');
+                        }
+                }
+                 });
+
+    }
+    function AddDeclareCost(){
+        var list = new Array();
+      var param = new Array();
+      var IAmount = 0;
+      var SAmount = 0;
+      for(var i=1;i<aa;i++){
+         var IRecord = new Object;
+         var div = document.createElement("div");
+           div.id = "Examp_" + i;
+           IAmount = $("#" + div.id +' #Amount').val().replace(",", "");
+           IAmount = parseFloat(IAmount);
+           SAmount+=IAmount;
+            IRecord.GUID = $("#" + div.id +' #GUID').val();
+             IRecord.RPer = $("#" + div.id +' #RPer').val();
+             IRecord.State = $("#" + div.id +' #State').val();
+             IRecord.InvType = $("#" + div.id +' #InvType').val();
+             IRecord.Amount = $("#" + div.id +' #Amount').val().replace(",", "");
+             IRecord.Record = $("#" + div.id +' #Record').val();
+             IRecord.Remark = $("#" + div.id +' #Remark').val();
+             IRecord.Date =  $("#Date").val();
+             list.push(IRecord);
+      }
+      var HisAmount =0
+      HisAmount = $("#sumDeclareCost").val().replace(",", "");
+      $("#sumDeclareCost").val(DecimalFmter(parseFloat(HisAmount)+parseFloat(SAmount)-DeclareCostSum));
+       
+       
+        param = { DeclareCostList: list}
+        $.ajax({
+                cache: true,
+                type: "POST",
+                url: '/PaymentDeclareCostSpending/CreateIntRecord',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                data: JSON.stringify(param),
+                success: function (data) {
+                 var res = JSON.parse(data)
+                    if(res.Result==true){
+                        DeclareCostSum=parseFloat(SAmount);
+                        alert('提交成功');
+                    }else{
+                        alert('提交失败');
+                        }
+                }
+                 });
+    }
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined") {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        s= s.replace(",", "");
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+    function FAmount(a){
+        if(a !=null && a  != "undefined"){
+        var name = a.name;
+        $(a).val(DecimalFmter(a.value));
+        }
+    }
+    function GetSumBankAmount(a)
+    {
+        var sum = 0;
+        sum = parseFloat($("#a1").val().replace(",", ""));
+        var lst = $("input[id$='*']");
+        for (var i = 0; i < lst.length; i++) {
+            sum += parseFloat(lst[i].value.replace(",", ""));
+        }
+        if(a !=null && a  != "undefined"){
+        var name = a.name;
+        $(a).val(DecimalFmter(a.value));
+        }
+        $("#sum").text(DecimalFmter(sum));
+    }
+        function Money(price) {
+        if (price > 0) {
+            var priceString = price.toString();
+            var priceInt = parseInt(price);
+            var len = priceInt.toString().length;
+            var num = len / 3;
+            var remainder = len % 3;
+            var priceStr = '';
+            for (var i = 1; i <= len; i++) {
+                priceStr += priceString.charAt(i - 1);
+                if (i == (remainder) && len > remainder) priceStr += ',';
+                if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ',';
+            }
+            if (priceString.indexOf('.') < 0) {
+                priceStr = priceStr + '.00';
+            } else {
+                priceStr += priceString.substr(priceString.indexOf('.'));
+                if (priceString.length - priceString.indexOf('.') - 1 < 2) {
+                    priceStr = priceStr + '0';
+                }
+            }
+            return priceStr;
+        } else {
+            return price;
+        }
+    }
+    function AddDeclareCustomer(){
+      var list = new Array();
+      var param = new Array();
+      var IAmount = 0;
+      var SAmount = 0;
+      for(var i=1;i<d;i++){
+         var IRecord = new Object;
+         var div = document.createElement("div");
+           div.id = "Exam_" + i;
+           IAmount = $("#" + div.id +' #Amount').val().replace(",", "");
+           IAmount = parseFloat(IAmount);
+           SAmount+=IAmount;
+            IRecord.GUID = $("#" + div.id +' #GUID').val();
+             IRecord.RPer = $("#" + div.id +' #RPer').val();
+             IRecord.State = $("#" + div.id +' #State').val();
+             IRecord.InvType = $("#" + div.id +' #InvType').val();
+             IRecord.Amount = $("#" + div.id +' #Amount').val().replace(",", "");
+             IRecord.Record = $("#" + div.id +' #Record').val();
+             IRecord.Remark = $("#" + div.id +' #Remark').val();
+             IRecord.Date =  $("#Date").val();
+             list.push(IRecord);
+      }
+      var HisAmount =0
+      HisAmount = $("#sumDCustomer").val().replace(",", "");
+       $("#sumDCustomer").val(DecimalFmter(parseFloat(HisAmount)+parseFloat(SAmount)-DCustomerSum));
+      
+        param = { DCustomerList: list}
+        $.ajax({
+                cache: true,
+                type: "POST",
+                url: '/ReceivablesDeclareCustomer/CreateIntRecord',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                data: JSON.stringify(param),
+                success: function (data) {
+                 var res = JSON.parse(data)
+                    if(res.Result==true){
+                    DCustomerSum = parseFloat(SAmount);
+                        alert('提交成功');
+                    }else{
+                        alert('提交失败');
+                        }
+                }
+                 });
+    }
+    
+    function AddERecord(){
+      var list = new Array();
+      var param = new Array();
+      var IAmount = 0;
+      var SAmount = 0;
+      for(var i=1;i<c;i++){
+         var IRecord = new Object;
+         var div = document.createElement("div");
+           div.id = "Exa_" + i;
+           IAmount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+           IAmount = parseFloat(IAmount);
+           SAmount+=IAmount;
+            IRecord.IE_GUID = $("#" + div.id +' #IE_GUID').val();
+             IRecord.RPer = $("#" + div.id +' #RPer').val();
+             IRecord.State = $("#" + div.id +' #State').val();
+             IRecord.InvType = $("#" + div.id +' #InvType').val();
+             IRecord.SumAmount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+             IRecord.Amount = $("#" + div.id +' #SumAmount').val().replace(",", "");
+             IRecord.IE_Flag = $("#" + div.id +' #IE_Flag').val();
+             IRecord.AffirmDate =  $("#Date").val();
+             list.push(IRecord);
+      }
+      var HisAmount =0
+      HisAmount = $("#sumERecord").val().replace(",", "");
+      $("#sumERecord").val(DecimalFmter(parseFloat(HisAmount)+parseFloat(SAmount)-ERecordSum));
+       param = { TaxList: list}
+        $.ajax({
+                cache: true,
+                type: "POST",
+                url: '/ExpenseRecord/CreateTaxRecord',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                data: JSON.stringify(param),
+                success: function (data) {
+                 var res = JSON.parse(data)
+                    if(res.Result==true){
+                    ERecordSum = parseFloat(SAmount);
+                        alert('提交成功');
+                    }else{
+                        alert('提交失败');
+                        }
+                }
+                 });
+
+    }
+    function AddTax(){
+    var sumTax = 0
+    var Tax =0
+    var list = new Array();
+    var param = new Array();
+        for (var i=1;i<a;i++){
+        var TaxRecord = new Object;
+           var div = document.createElement("div");
+           div.id = "Example_" + i;
+           Tax = $("#" + div.id +' #TaxAmount').val().replace(",", "");
+           Tax = parseFloat(Tax);
+         
+           if(Tax>0){
+            sumTax+=Tax;
+            };
+             TaxRecord.GUID =$("#" + div.id +' #GUID').val();
+             TaxRecord.State = $("#" + div.id +' #State').val();
+             
+             TaxRecord.Amount = $("#" + div.id +' #TaxAmount').val().replace(",", "");
+             TaxRecord.Flag = $("#" + div.id +' #IEGroup').val();
+            list.push(TaxRecord);
+        }
+         var HisAmount =0
+         HisAmount = $("#sumId").val().replace(",", "");
+        $("#sumId").val(DecimalFmter(parseFloat(HisAmount)+parseFloat(sumTax)-IdSum));
+        param = { TaxList: list}
+     
+        $.ajax({
+                cache: true,
+                type: "POST",
+                url: '/TaxProvisionRecord/CreatTaxSettlement',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                data: JSON.stringify(param),
+                success: function (data) {
+                 var res = JSON.parse(data)
+                    if(res.success==true){
+                    IdSum = parseFloat(sumTax);
+                        alert('提交成功');
+                    }else{
+                        alert('提交失败');
+                        }
+                }
+                 });
+    }
+    function GetSum(cash){
+         var sum = 0;
+             $.ajax({
+                url: "/InitialBalanceManagement/GetBankInformation",
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    bankList = d;
+                     for (var j = 0; j < bankList.length; j++) {
+                     sum =sum + parseFloat(bankList[j].InitialAmount);
+                     }
+                     sum = sum + parseFloat(cash);
+                }
+            });
+            if(sum == 0){
+            document.getElementById("sum").innerText = sum;
+            }else{
+        document.getElementById("sum").innerText =DecimalFmter(sum);
+        }
+    }
+    function Submit() {
+        if (!CheckDate()) {
+            alert('请输入日期!');
+        } else {
+
+            //        var arr = new Array();
+            //            var list = $('input');
+            //            var id = "";
+            //            list.each(function () {
+            //                id = $(this).attr("id")
+            //                //var arr = $("input[id$='e']").Text()
+
+            //                if ((id != undefined) && (id.lastIndexOf("*") == id.length-1)) {
+
+            //                    arr.push(this.value);
+            //                }
+
+            //                //= decodeURIComponent($("input[id$='e']").attributes['Text'].value);
+            //            });
+//            var sumBankAmount=0;
+//            var lst = $("input[id$='*']");
+////            var lst2 = $("select[id$='d']");
+//            var bankObj = new Array()
+//            for (var i = 0; i < lst.length; i++) {
+//                var bank = {
+//                    BA_GUID: lst[i].name,
+//                    Amount: lst[i].value,
+////                    AccountCurrency: lst2[i].value
+//                };
+//                bankObj.push(bank);
+//                sumBankAmount =parseFloat(sumBankAmount) + parseFloat(lst[i].value)
+//               
+            //            }
+            GetSumBankAmount();
+            var lst = $("input[id$='*']");
+            var bankObj = new Array();
+            for (var i = 0; i < lst.length; i++){
+                var bank = {
+                    BA_GUID: lst[i].name,
+                    InitialAmount: lst[i].value,
+                };
+                bankObj.push(bank);
+                }
+
+          
+           
+            var recordSum1=0;
+            var recordSum2=0; 
+            var cash = 0;
+            var list = new Array();
+            var ls =  $("span[name='myspan1']");
+            var ls4 =  $("span[name='myspan2']");
+            var ls2 = $("input[name='record1']");
+            var ls3 = $("input[name='record2']");
+            var record1 = {
+                Acc_Name: "银行存款",
+                Money: String(parseFloat($("#sum").text().replace(",", "")) - parseFloat($("#a1").val().replace(",", ""))),
+                InitialDate: $("#Date").val()
+            }
+            list.push(record1);
+            var depreciation = 0;
+              for (var j = 0; j < ls.length; j++) {
+                
+                if(ls[j].innerText.trim()=='累计折旧'){
+                    depreciation = parseFloat(ls2[j].value.replace(",", ""));
+                }if(ls[j].innerText.trim()=='库存现金'){
+                 cash = parseFloat(ls2[j].value.replace(",", ""));
+                }
+                 else if(ls[j].innerText.trim()!='累计折旧'){
+                 recordSum1 = parseFloat(recordSum1) + parseFloat(ls2[j].value.replace(",", ""));
+                    }
+                 var record1 ={
+                  Acc_Name: ls[j].innerText.trim(),
+                  Money:ls2[j].value.replace(",", ""),
+                  InitialDate: $("#Date").val()
+                  }
+                 list.push(record1);
+                
+              };
+               recordSum1 = parseFloat(recordSum1) - parseFloat(depreciation);
+              for (var k = 0; k < ls4.length; k++) {
+                 var record2 ={
+                  Acc_Name: ls4[k].innerText.trim(),
+                  Money:ls3[k].value.replace(",", ""),
+                  InitialDate: $("#Date").val()
+                  }
+                 list.push(record2);
+                  recordSum2 = parseFloat(recordSum2) + parseFloat(ls3[k].value.replace(",", ""))
+              };
+              
+//              if(sum !== recordSum2){
+//                alert('资产与负债不平');
+//              }else{
+            var param = new Array()
+            //            var inf = conveterParamsToJson(decodeURIComponent($('#altForm').serialize()));
+            param = { list: list,bankItems: bankObj };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "UpdInitialBalanceRecord",
+                data: JSON.stringify(param),
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                success: function (data) {
+                    alert(data);
+                    GetSum(cash);
+                      var sumBankAmount = 0;
+                      var BankAmount = 0;
+                      BankAmount = document.getElementById("sum").innerText;
+                      sumBankAmount = parseFloat(BankAmount.replace(",", ""));
+                      var sum = sumBankAmount+recordSum1;
+                      $("#sum1").val(DecimalFmter(sum));
+                      $("#sum2").val(DecimalFmter(recordSum2));
+                  
+                    if ($("#sum1").val() == $("#sum2").val()) {
+                        var d = document.getElementById("cir");
+                        d.style.backgroundColor = "green";
+                        d.innerText = "平";
+                    } else {
+                        var d = document.getElementById("cir");
+                        d.style.backgroundColor = "red";
+                        d.innerText = "不平";
+                    }
+                    var balance
+                    var ls = $("span[name='myspan1']");
+                    var ls4 = $("span[name='myspan2']");
+                    var ls2 = $("input[name='record1']");
+                    var ls3 = $("input[name='record2']");
+                    for (var j = 0; j < ls.length; j++) {
+                        var a = ls[j].innerText.trim();
+                        $.ajax({
+                            url: "/InitialBalanceManagement/GetInitialBalanceRecord?Acc_Name=" + ls[j].innerText.trim().replace('余额',''),
+                            async: false,
+                            dataType: "json",
+                            success: function (d) {
+                                balance = d;
+                            }
+                        });
+                        ls2[j].value = DecimalFmter(balance[0].Money);
+
+                    };
+
+                    for (var k = 0; k < ls4.length; k++) {
+                        var a = ls4[k].innerText.trim();
+                        $.ajax({
+                            url: "/InitialBalanceManagement/GetInitialBalanceRecord?Acc_Name=" + ls4[k].innerText.trim().replace('余额',''),
+                            async: false,
+                            dataType: "json",
+                            success: function (d) {
+                                balance = d;
+                            }
+                        });
+                        ls3[k].value = DecimalFmter(balance[0].Money);
+
+                    };
+                }
+            });
+            }
+//        }
+
+
+
+    }
+    function Money(price) {
+        if (price > 0) {
+            var priceString = price.toString();
+            var priceInt = parseInt(price);
+            var len = priceInt.toString().length;
+            var num = len / 3;
+            var remainder = len % 3;
+            var priceStr = '';
+            for (var i = 1; i <= len; i++) {
+                priceStr += priceString.charAt(i - 1);
+                if (i == (remainder) && len > remainder) priceStr += ',';
+                if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ',';
+            }
+            if (priceString.indexOf('.') < 0) {
+                priceStr = priceStr + '.00';
+            } else {
+                priceStr += priceString.substr(priceString.indexOf('.'));
+                if (priceString.length - priceString.indexOf('.') - 1 < 2) {
+                    priceStr = priceStr + '0';
+                }
+            }
+            return priceStr;
+        } else {
+            return price;
+        }
+    }
+    function CheckDate(input) {
+        if ($('#Date').val() == '') {
+            return false;
+        }
+        return true;
+    }
+</script>
+ <style type="text/css">
+ .circle {
+        border-radius: 50%;
+        width: 30px; 
+        height: 13px;
+        background: red; 
+        /* 宽度和高度需要相等 */
+        }
+#BankAccount .input-group-addon {
+        width:137px;
+        max-width: 9em;        
+        overflow: hidden;
+        @*text-overflow: ellipsis;*@
+        }
+#cash .input-group-addon {
+        width:137px;
+        max-width: 9em;        
+        overflow: hidden;
+        @*text-overflow: ellipsis;*@
+        }
+
+ </style>

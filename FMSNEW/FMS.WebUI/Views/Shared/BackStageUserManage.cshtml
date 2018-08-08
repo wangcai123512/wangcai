@@ -1,0 +1,232 @@
+﻿@{
+    ViewBag.Title = "BackStageUserManage";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<script language="javascript" type="text/javascript">
+  $(document).ready(function () {
+
+      $("#dateBegin").datepicker({
+          language: "zh-CN",
+          autoclose: true, //选中之后自动隐藏日期选择框
+          clearBtn: true, //清除按钮
+          todayBtn: "linked", //今日按钮
+          format: "yyyy/mm/dd"//日期格式
+      });
+     $("#dateEnd").datepicker({
+         language: "zh-CN",
+         autoclose: true, //选中之后自动隐藏日期选择框
+         clearBtn: true, //清除按钮
+         todayBtn: "linked", //今日按钮
+         format: "yyyy/mm/dd"//日期格式
+     });
+
+     $('#GroupCode').multiselect({
+         buttonWidth: '100%',
+         maxHeight: 200,
+         enableFiltering: false,
+         includeFilterNewBtn: false,
+         nonSelectedText: ''
+     });
+     $("#GroupCode").val("").multiselect("refresh");
+    });
+</script>
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+    <!-- Start: Sidebar -->
+    <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li><a class="accordion-toggle" href="#sideOne"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司查询与统计</span></a>
+                        <ul id="sideOne" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/Common/BackStageManage'" href="#"><span class="sidebar-title" style="font-size: 14px">公司登记查询与统计</span></a></li>
+                            <li><a @*onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'"*@ href="#"><span class="sidebar-title" style="font-size: 14px">公司财务查询与统计</span></a></li>
+                        </ul>
+                    </li>
+                        <li class="active"> <a onclick="javascript:window.location = '/Common/BackStageUserManage'" href="#"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C">用户查询与统计</span></a>
+                        </li>
+                     <li> <a><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">使用查询与统计</span></a>
+                    </li>
+                   @* <li> <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户查询与统计</span></a>
+                        <ul id="sideTwo" class="nav sub-nav">
+                        </ul>
+                    </li>
+                     <li> <a class="accordion-toggle" href="#sideThree"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">使用查询与统计</span></a>
+                        <ul id="sideThree" class="nav sub-nav">
+                        </ul>
+                    </li>*@
+                </ul>
+            </div>
+  </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF;" >
+        <div id="content">
+           <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">用户查询与统计</span></div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-12" style="margin: auto">
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div id="toolbar" >
+                                            <form style="text-align:center; " >
+                                            <input type="hidden" name="ExpenseFlag" id="ExpenseFlag"/>
+                                            <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    从
+                                             </div>
+                                             <div class="col-md-3" style="margin-bottom: 0px">       
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                           <span class="input-group-addon" >日期</span> 
+                                                            <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required=""/> 
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                 <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    至
+                                                 </div>
+                                                <div class="col-md-3" id="card2" style="margin-bottom: 0px">       
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                             <span class="input-group-addon">日期</span> 
+                                                          <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/> 
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    注册的
+                                                 </div>
+                                                 <div class="col-md-2" style="margin-bottom: 0px">       
+                                                    <div class="form-group" id="card" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <select id="GroupCode" name="GroupCode"   class="form-control" required="true"> 
+                                                            <option value="">全部</option>
+                                                             <option value="GP001">管理员</option>
+                                                             <option value="GP010">用户</option>
+                                                            </select>  
+                                                                                                                                                             
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                             <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    <button onclick="query()" type="button" style="width: 100%; border-radius: 25px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:-5px"  class="btn btn-primary">
+                                                      查询
+                                                     </button>
+                                             </div>
+                                          </form>
+                                           
+
+                                        </div>
+                                        <table id="UserAllTable" class="table-condensed" style="font-size: 12px">
+                                        <table id="UserTable" class="table-condensed" style="font-size: 12px">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>   
+    </div>
+        <br />
+    </section>
+</div>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $('#UserAllTable').bootstrapTable('destroy');
+        $('#UserAllTable').bootstrapTable({
+            url: '/Company/GetUserAllList',
+            method: 'get', //请求方式（*）
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            showFooter: false,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: false, //是否显示分页（*）
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            showExport: false,
+            uniqueId: "U_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                { field: 'U_GUID', width: '8%', align: 'center', title: '序号', formatter: LinkHandle },
+                { field: 'TelName', width: '12%', align: 'center', title: '手机', formatter: LinkHandle1 },
+                { field: 'LoginName', width: '18%', align: 'center', title: 'Email', formatter: LinkHandle1 },
+                { field: 'NickName', width: '12%', align: 'center', title: '昵称', formatter: LinkHandle1 },
+                { field: 'CreateDate', width: '11%', align: 'center', title: '注册日期', formatter: LinkHandle1 },
+                { field: 'MCount', width: '16%', align: 'center', title: '担任管理者的公司的数量', formatter: LinkHandle1 },
+                { field: 'UCount', width: '16%', align: 'center', title: '担任非管理者的公司的数量', formatter: LinkHandle1 },
+                { field: 'Count', width: '12%', align: 'center', title: '数量' }
+            ]
+
+        });
+        $('#UserTable').bootstrapTable('destroy');
+        $('#UserTable').bootstrapTable({
+            url: '/Company/GetUsersList',
+            method: 'get', //请求方式（*）
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1, //初始化加载第一页，默认第一页
+            showFooter: false,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: false, //是否显示分页（*）
+            sortName: '', // 设置默认排序为 Date
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            showExport: false,
+            uniqueId: "U_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                { field: 'id', width: '8%', align: 'center' },
+                { field: 'TelName', width: '12%', align: 'center' },
+                { field: 'LoginName', width: '18%', align: 'center' },
+                { field: 'NickName', width: '12%', align: 'center' },
+                { field: 'CreateDate', width: '11%', align: 'center' },
+                { field: 'MCount', width: '16%', align: 'center' },
+                { field: 'UCount', width: '16%', align: 'center' },
+                { field: 'Count', width: '12%', align: 'center', formatter: LinkHandle1 }
+            ],
+            queryParams: queryParams
+        });
+
+        $("#UserTable").css("margin-top", "-30px");
+
+    });
+    function queryParams(params) {
+        var temp = {
+            pageSize: params.limit,
+            pageIndex: params.pageNumber,
+            dateBegin: $('#dateBegin').val(),
+            dateEnd: $('#dateEnd').val(),
+            GroupCode: $('#GroupCode').val()
+        };
+        return temp;
+    }
+    var LinkHandle = function (value, row, index) {
+        var link1 = " <p class=''>全部</p> ";
+        return link1;
+    };
+    var LinkHandle1 = function (value, row, index) {
+        var link1 = "";
+        return link1;
+    };
+    function query() {
+        $('#UserTable').bootstrapTable('refresh');
+    }
+</script>
+

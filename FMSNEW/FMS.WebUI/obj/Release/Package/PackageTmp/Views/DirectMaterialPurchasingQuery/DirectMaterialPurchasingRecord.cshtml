@@ -1,0 +1,202 @@
+﻿@{
+    ViewBag.Title = "DirectMaterialPurchasingRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@using System
+@using System.Web.Security
+@model FMS.Model.T_AIDRecord
+<form id="IMP_Form">
+    <input type="hidden" name="GUID" id="GUID" value="@Model.GUID"/>
+    <input type="hidden" name="State" id="State" value="@Model.State" />
+    <span style="font-size:15px;font-weight:900" id="Type"></span>
+    <table>
+        <tr>
+            <td>购入日期：</td>
+            <td><input class="easyui-datebox" id="Date" name="Date" value="@(Model.Date.Equals(DateTime.MinValue) ? string.Empty : Model.Date.ToShortDateString())"/> </td>
+            <td>供应商：</td>
+            <td>
+                <input class="easyui-combobox" id="RPer" name="RPer" value="@Model.RPer"
+                       data-options='editable:false,url:"/InternalAPI/GetPayee",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200'/>
+            </td>
+        </tr>
+        <tr>
+            <td>金额：</td>
+            <td>
+                <input id="Amount" name="Amount" class="easyui-numberbox" value="@Model.Amount" data-options="required:true, precision:2,groupSeparator:','" />
+            </td>
+            
+            <td>货币：</td>
+            <td>
+                <input id="Currency" name="Currency" value="@Model.Currency"/>
+            </td>
+        </tr>
+        <tr>
+            <td>物料类别：</td>
+            <td>
+                <input id="InvType" name="InvType" value="@Model.InvType"/>
+            </td>
+            <td>物料描述：</td>
+            <td>
+                <input class="easyui-validatebox" id="Description" name="Description" value="@Model.Description" />
+            </td>
+        </tr>
+        <tr>
+            <td>备注：</td>
+            <td>
+                <input class="easyui-validatebox" id="Remark" name="Remark" value="@Model.Remark" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div>
+                    <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID" />
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple" />
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <div id="div_files"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+<div id="imageview"></div>
+<div id="Attachmentshow"></div>
+<script language="javascript" type="text/javascript">
+    
+    $(function () {
+        var StandardCoin;
+        var CommonCurrency;
+
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#Currency").combobox("setValue", StandardCoin);
+            }
+        });
+
+        //添加附件管理
+        var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+        var ASPSESSID = "@Session.SessionID";
+        $('#file_upload').uploadify({
+            width:120,
+            height: 20,
+            swf : '/Content/uploadify/uploadify.swf',    //FLash文件路径
+            buttonText: '上传发票附件',               //按钮文本
+            uploader: '/DirectMaterialPurchasingQuery/Upload',       //处理文件上传Action
+            queueID: 'fileQueue',                        //队列的ID
+            queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+            auto: false,                                 //选择文件后是否自动上传，默认为true
+            multi: true,                                 //是否为多选，默认为true
+            removeCompleted: true,                       //是否完成后移除序列，默认为true
+            fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+            fileTypeDesc: 'Image Files',                 //文件描述
+            fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+            onQueueComplete: function (event, data) {                 //所有队列完成后事件
+                //ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+                FileFlag = true;
+            },
+            onUploadStart: function (file) {
+                $("#file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+            },
+            onUploadError: function (event, queueId, fileObj, errorObj) {
+                console.log(errorObj);
+                FileFlag = false;
+            }
+        }); 	  
+    });
+
+    var SaveAttachmentsuccessHandle= function (data) {
+        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+        if ($.parseJSON(data).Result) {
+            $("#Attachmentshow").dialog("close");
+            $('#imageview').datagrid("reload");
+            $('#imageview').datagrid("refresh");
+        }
+    };
+	
+    var LinkHandle = function (value) {
+        var link1 = " <a class='linkbtn' href='/DirectMaterialPurchasingQuery/DownLoadFile?id=" + value + "'>浏览</a> ";
+        var link2 = " <a class='linkbtn' onclick='DelClick(\"" + value + "\")'>删除</a> ";
+        var link3 = " <a class='linkbtn' onclick='UpdClick(\"" + value + "\")'>修改</a> ";
+        return link1 + link2 + link3;
+    };
+	
+
+    $(function() {
+        var id =document.getElementById("GUID").value ;
+        $("#imageview").datagrid({
+            url: '/DirectMaterialPurchasingQuery/GetAttachment?id=' + id,
+            columns: [[
+                { field: 'FileName', title: '文件名' },
+                { field: 'FileRemark', title: '备注' },
+                { field: 'A_GUID', title: '操作', formatter: LinkHandle }
+            ]],
+            rownumbers: true,
+            singleSelect: true
+        });
+    });
+	
+    function UpdClick(id) {
+        $("#Attachmentshow").dialog({
+            title: '附件 ',
+            collapsible: false,
+            minimizable: false,
+            width: 300,
+            height:150,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () { SaveAttachment(); }
+            }]
+        });
+        $("#Attachmentshow").dialog("refresh", "/DirectMaterialPurchasingQuery/Attachment/" + id);
+    }
+   
+    function SaveAttachment() {
+        $("#Attachenmtform").form('submit', {
+            url: "/DirectMaterialPurchasingQuery/UpdAttachment/",
+            onSubmit: function () { return $("#Attachenmtform").form("validate"); },
+            success: SaveAttachmentsuccessHandle
+        });
+    }
+	
+    function DelClick(id) {
+        $.messager.confirm('确认', '确认删除?', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/DirectMaterialPurchasingQuery/DelEveryAttachment/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#imageview').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+
+

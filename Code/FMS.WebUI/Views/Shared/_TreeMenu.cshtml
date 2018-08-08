@@ -1,0 +1,31 @@
+﻿<style type="text/css">
+.tree-icon 
+.tree-folder 
+.tree-file
+{
+    width:0;
+    }
+</style>
+
+<ul id="tree" style="float: left; height: auto; clear:left; "></ul>
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#tree').tree({
+            url: '/Common/GenerateNavigatorTreeJson?block=0',
+            onLoadSuccess: function (node, data) { $('#tree').tree('collapseAll'); },
+            onClick: function (node) {
+                var url = node.attributes.url;
+                if (url != null && url != '' && url != undefined) {
+                    PageChange(url);
+                    $("#title").val(node.text);
+                }
+                else {
+                    $('#tree').tree("toggle", node.target);
+                }
+            },
+            onBeforeLoad: function () {
+            }
+        });
+    });
+</script>

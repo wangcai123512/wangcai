@@ -1,0 +1,715 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+    List<FMS.Model.R_UserCompany> modelList = ViewBag.GroupCode;
+    List<FMS.Model.T_QuickAttention> AttentionList = ViewBag.AttentionList;
+    List<FMS.Model.T_QuickAttention> AllAttentionList = ViewBag.AllAttentionList;
+    List<FMS.Model.R_UserCompany> GCompanycode = ViewBag.GCompanycode;
+}
+<style type="text/css">
+    #menu {
+        font: 12px verdana, arial, sans-serif;
+    }
+
+        #menu, #menu li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            #menu li {
+                float: right;
+            }
+
+                #menu li a {
+                    display: block; /* 如果是中英文混排的文字，建议用固定宽度
+    width:150px;
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    */
+                    padding: 1px 5px;
+                    text-decoration: none;
+                    border-left: 1px solid #000;
+                }
+
+                    #menu li a.last {
+                        border-right: 0; /* 去掉左侧边框 */
+                    }
+
+    #example {
+        white-space: normal;
+        word-break: break-all;
+        word-wrap: break-word;
+    }
+</style>
+
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+   
+    <!-- Start: Sidebar -->
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+                
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+               <li>
+                     <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                         <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                        @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                    </ul>
+                </li>
+                <li>
+                    <a class="accordion-toggle" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                    <ul id="sidecompany" class="nav sub-nav">
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'"><span class="sidebar-title" style="font-size: 14px">往来公司登记</span></a></li>
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                    </ul>
+                </li>
+                 
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+                
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF;">
+            <div id="content">
+                <div id="s_main" class="row" style="margin-top: 30px;">
+                    <div class="col-sm-12 col-xs-12" id="s_uploader" style="display:none">
+                        <br />
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                上传发票/合同/凭证等文件
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                        <br />
+                    </div>
+                    <div class="col-sm-12 col-xs-12" style="margin-top:1px">
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;">
+                            <div class="col-sm-12 col-xs-12" style="padding: 0; border: 4px solid #c0c0c0; background-color: #95B3D7">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 7rem; text-align: center; line-height: 7rem; font-weight: bold;">
+                                    <i class="fa fa-id-card-o" aria-hidden="true" style="color:white"></i>&nbsp;&nbsp;<span style="color:white;">会计凭证</span>
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0;">
+                                    <div class="btn-group-vertical" style="float:right">
+                                        <button style="font-family: 'Open Sans',Helvetica, Arial, sans-serif; border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; background-color: #95B3D7;padding:12px 12px; " onclick="javascript: window.location = '/VoucherQuery/VoucherRecord'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true" style="color:white"></i>&nbsp;&nbsp;<span style ="color:white;">新增</span>
+                                        </button>
+
+                                        <button style="border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; background-color: #95B3D7; padding: 12px 12px; " onclick="javascript: window.location = '/VoucherQuery/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true" style="color:white"></i>&nbsp;&nbsp;<span style="color:white;">查询</span>
+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold "> 
+                                    <i class="fa fa-dollar" aria-hidden="true"></i>&nbsp;&nbsp;收入
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0">
+                                    <div class="btn-group-vertical" style="float: right; margin-right: -1px; ">
+                                        <button style="font-family: 'Open Sans',Helvetica, Arial, sans-serif; border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; " onclick="javascript:window.location = '/IncomeRecord/Temporary'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增
+                                        </button>
+
+                                        <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript:window.location = '/IncomeQuery/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold "> 
+                                    &nbsp;<i class="fa fa-balance-scale" aria-hidden="true"></i>&nbsp;&nbsp;成本与费用
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0">
+                                    <div class="btn-group-vertical" style="float:right">
+                                        <button style="border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; " onclick="javascript: window.location = '/ExpenseRecord/Temporary'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增
+                                        </button>
+                                        <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript: window.location = '/ExpenseQuery/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold ">
+                                 
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;&nbsp;资材与库存
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0px">
+                                    <div class="btn-group-vertical" style="float: right; margin-right: -1px">
+                                       
+                                        <button style="border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; " onclick="javascript: window.location = '/DirectMaterialPurchasingRecord/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增
+                                        </button>
+                                        <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript: window.location = '/DirectMaterialPurchasingQuery/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="clear:both;"></div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;">
+                            <div class="col-sm-12 col-xs-12" style="padding: 0; border: 4px solid #c0c0c0; background-color: #DDD9C3; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; cursor:pointer;padding: 0; height: 4.4rem; text-align: center; line-height: 4.4rem;font-weight:bold;width:100%;" onclick="javascript:window.location = '/ReportManagement/Index'">
+
+                                    <i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp;&nbsp;报告中心
+                                </div>
+                               
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;;margin-top:-12px;">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold ">
+                                   
+                                    <i class="fa fa-money" aria-hidden="true"></i>&nbsp;&nbsp;收款
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0">
+                                    <div class="btn-group-vertical" style="float: right;">
+                                        <button style="border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; " onclick="javascript: window.location = '/ReceivablesRecord/ReceivablesRecord'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增
+                                        </button>
+                                        <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript: window.location = '/ReceivablesClassify/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询
+                                        </button>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;;margin-top:-12px">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold ">
+                                  
+                                    <i class="fa fa-credit-card" aria-hidden="true"></i>&nbsp;&nbsp;付款
+                                </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0">
+                                    <div class="btn-group-vertical" style="float:right">
+                                       
+                                        <button style="border-top: none; border-top-right-radius: 0; border-top-left-radius: 0;" onclick="javascript: window.location = '/PaymentRecord/PaymentRecord'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增
+                                        </button>
+                                        <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript: window.location = '/PaymentClassify/Index'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xs-4" style="margin-bottom: 2.5rem;;margin-top:-12px;margin-left:-1px;">
+                            <div class="col-sm-12 col-xs-12" style="padding:0;border: 4px solid #c0c0c0; ">
+                                <div class="col-sm-8 col-xs-8" style="font-size: 1.5rem; padding: 0; height: 5rem; text-align: center; line-height: 5rem;font-weight:bold ">
+                                    &nbsp;<i class="fa fa-gg-circle" aria-hidden="true"></i>&nbsp;&nbsp;税费
+                                    </div>
+                                <div class="col-sm-4 col-xs-4" style="padding:0;margin:0">
+                                    <div class="btn-group-vertical" style="float:right">
+                                        <button style="border-top: none; border-top-right-radius: 0; border-top-left-radius: 0; " onclick="javascript: window.location = '/TaxProvisionRecord/TaxProvisionRecord'" type="button" class="btn btn-default">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;新增</button>
+                                            <button style=" border-bottom: none; border-bottom-right-radius: 0; border-bottom-left-radius: 0; " onclick="javascript: window.location = '/ExpenseQuery/TaxQuery'" type="button" class="btn btn-default">
+                                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;&nbsp;查询</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xs-12 " style="margin-left: 11px;width:98%;margin-top:1px">
+                        <div class="col-sm-12 col-xs-12" style="padding:0;border: 3px solid #c0c0c0;text-align:center">
+                            <div class="col-sm-4 col-xs-4" style="text-align: center; font-size: 1.5rem; height: 3rem; line-height: 3rem;font-weight:bold">
+                                待办事项
+                            </div>
+                            <div class="col-sm-8 col-xs-8" style="border-left: 3px solid #c0c0c0; height: 3rem">
+                                <div class="col-sm-8 col-xl-8" style="text-align: center; height: 3rem; font-size: 1.5rem;line-height: 3rem;font-weight:bold">
+                                快速关注   
+                                </div>                            
+                                 <div class="col-sm-4 col-xl-4" style="">
+                                    <button type="button" onclick="focusClick()" style="margin-top: 8px; height: 25px; width: 40%;border: 0px solid #c0c0c0;border-radius:100px;float:right;margin-right:5px; font-size: 1px;">
+                                        设置
+                                    </button>                                
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12" style="padding: 0; border: 3px solid #c0c0c0; border-top: 0px;">
+                            <div class="col-sm-4 col-xs-4">
+                                <!--待办事项内容-->
+                                 <ul class="circle">
+                                     <li style="margin-top:20px;font-weight:normal;cursor: pointer;">
+                                        <a onclick="Undone()">逾期应收账款(0)</a>
+                                     </li>
+                                
+                                 
+                                     <li style="font-weight:normal;cursor: pointer;">
+                                        <a onclick="Undone()">待销账收款(0)</a>
+                                     </li>
+                                    
+                                 
+                                     <li style="font-weight:normal;cursor: pointer;">
+                                        <a onclick="Undone()">逾期应付账款(0)</a>
+                                     </li>
+                                        
+                                
+                                     <li style="font-weight:normal;cursor: pointer;">
+                                        <a onclick="Undone()">待销账付款(0)</a>
+                                     </li>
+
+                                     <li style="font-weight:normal;cursor: pointer;">
+                                         <a onclick="Undone()">收入外收款(0)</a>
+                                     </li>
+
+                                     <li style="font-weight:normal;cursor: pointer;">
+                                        <a onclick="Undone()">成本外支出(0)</a>
+                                     </li>
+                                 </ul>
+                            </div>
+                            <div class="col-sm-8 col-xs-8" style="border-left: 3px solid #c0c0c0;height:190px;font-weight:normal">
+                                <!--修改统计功能查询功能货币使用统计货币-->
+                                <div class="col-sm-12 col-xs-12" style="margin-top:20px" ;id="formAct"; >
+                                    <ul class="circle">
+                                        @if (AttentionList != null)
+                                            {
+                                            foreach (var AttentionLists in AttentionList)
+                                            {
+                                            <li style="margin-top:-15px">
+                                                <label class="label-title" style="width:25%;font-size:14px;font-weight:normal">
+                                                    @AttentionLists.attention_type:
+                                                </label>
+                                                <label class="label-money" style="margin-right: 20px; width: 25%;text-align:center;font-size: 8px;font-weight:normal">@AttentionLists.attention_type_amount</label>
+                                                <label style="margin-right:20px;font-size: 8px;font-weight:normal">@Session["Currency"]</label>
+                                                <label style="width: 23%;font-size: 8px;font-weight:normal">@AttentionLists.statistical_time</label>
+                                                <a onclick="Statistical(this.value)" id="StatisticalType" value="@AttentionLists.attention_type"
+                                                        style="margin-top: 10px;cursor: pointer;height: 20px; width: 12%; border-radius: 40px; font-size: 8px;font-weight:normal;color:#023A85">
+                                                    统计
+                                                </a>
+                                                <input type="hidden" id="push_account"  value="@AttentionLists.push_account">
+                                                <input type="hidden" id="push_frequency"  value="@AttentionLists.push_frequency">
+                                               
+                                            </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <label class="label-title">
+                                                    无
+                                                </label>
+                                            </li>
+                                        }
+
+
+                                    </ul>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </section>
+</div>
+<!--编辑快速关注 model--->
+<div class="modal fade" id="QuickAttentionModal" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 700px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    编辑快速关注
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="quickatten" id="quickattentionform" method="post">
+                        <input type="hidden" id="cguid" name="cguid" value="@ViewData["CurrentCompanyGuid"]">
+                        <div class="col-sm-12 col-xs-12" style="margin-top:10px">
+                            <ul style="list-style-type: none">
+                                <li>
+                                    <label class="label-title" style="width:60%">
+                                        类别
+                                    </label>
+                                    <label style="margin-right: 10px; width: 10%;font-size:15px">
+                                        快速关注
+                                    </label>
+                                </li>
+                            </ul>
+                            <ul class="circle">
+                                @if (AllAttentionList != null)
+                                {
+                                    foreach (var AllAttentionLists in AllAttentionList)
+                                    {
+
+                                    <li style="border-bottom: 3px solid #c0c0c0;margin-bottom:5px ">
+                                        <label class="label-title" style="width:60%">
+                                            @AllAttentionLists.attention_type:
+                                        </label>
+                                            @if (GCompanycode != null)
+                                            {
+                                                foreach (var GCompanycodes in GCompanycode)
+                                                {
+                                                    if (@AllAttentionLists.attention_state == @GCompanycodes.State)
+                                                    {
+                                                        <label class="label-title" style="width:20%">
+                                                            <input style='cursor: pointer;' name='attention_state' type='checkbox' checked id="statecheck" value="@AllAttentionLists.attention_type">
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="label-title" style="width:20%">
+                                                            <input name='attention_state' style='cursor: pointer;' type='checkbox' id="statecheck" value="@AllAttentionLists.attention_type">
+                                                        </label>
+                                                    }      
+                                                }
+                                            }
+                                                                                
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>
+                                        <label class="label-title">
+                                            无
+                                        </label>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-sm-12 col-xs-12" id="APushform">
+                            <div class="col-sm-6 col-xs-6">
+                                <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                    <div class="col-sm-4 col-xs-4">
+                                        <b>推送选择:</b>
+                                    </div>
+                                    <div class="col-sm-8 col-xs-8">
+                                        <input name='attention_state' id="WeChat" type='checkbox' style='cursor: pointer;'onchange="updchecktype(this.id)">
+                                        <b style="width:10%">微信</b>
+                                        <input type="text" id="WeChatText" name="push_account" style="width:70%;">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                    <div class="col-sm-3 col-xs-3">
+                                    </div>
+                                    <div class="col-sm-9 col-xs-9" style="margin-left:97px">
+                                        <input name='push_account' type='checkbox' id="Email" style='cursor: pointer;' onchange="updchecktype(this.id)">
+                                        <b>Email</b>
+                                        <input type="text" id="EmailText" name="push_account" style="width:70%">
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="col-sm-3 col-xs-3">
+                                    </div>
+                                    <div class="col-sm-9 col-xs-9" style="margin-left:97px">
+                                        <input name='push_account' type='checkbox' id="Sms" style='cursor: pointer;' onchange="updchecktype(this.id)">
+                                        <b>短信</b>
+                                        <input type="text" id="SmsText" name="push_account" style="width:70%">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-5 col-xs-5" id="APushFform">
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="col-sm-5 col-xs-5">
+                                        <b>推送频率:</b>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6" >
+                                        <input name='push_frequency' id="day" type='checkbox' style='cursor: pointer;' onchange="updcheckfrequency(this.id)">
+                                        <b>每日</b>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="col-sm-5 col-xs-5">
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6" >
+                                        <input name='push_frequency' id="week" type='checkbox' style='cursor: pointer;' onchange="updcheckfrequency(this.id)">
+                                        <b>每周</b>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="col-sm-5 col-xs-5">
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6" >
+                                        <input name='push_frequency' id="month" type='checkbox'  onchange="updcheckfrequency(this.id)">
+                                        <b>每月</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="EditQAttention()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<div id="s_footer" class="row" style="max-width: 1150px; width: 100%; position: fixed; bottom: 0px; left: 0px; z-index: 10000000000; margin:0;display:none">
+    <div class="btn-group dropup" style="width: 100%;">
+        <button type="button" class="btn btn-default" style="width: 33%;">用户管理</button>
+        <button type="button" class="btn btn-default" style="width: 34%;">财务数据设置</button>
+        <div class="btn-group" style="width: 33%;">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="width: 100%;">
+                寻求会计帮助
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="#">下拉链接 1</a></li>
+                <li><a href="#">下拉链接 2</a></li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <hr style="width: 100%; background-color: #074592; height: 5px; margin-top: 0px; margin-bottom: 0px;border-width: 0px" align="center">
+
+    </div>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        if ("@Session["GroupCode"]" == "GP010") {
+            $(UserManage).css("display", "none");
+        };
+        ScreenWidth();
+
+    }
+    function ScreenWidth() {
+        if (screen.width <= 768) {
+            $('#s_uploader').css("display", "block");
+            $('#s_footer').css("display", "block");
+            $("body").find(".s_btn1").css({ "width": "6rem", "font-size": "1.4rem" });
+            $("body").find(".s_btn2").css("width", "6rem");
+            $("body").find(".s_btn4").css("height", "5.6rem");
+            $("body").find(".s_btn1 span").css({ "width": "100%", "white-space": "normal", "word-wrap": "break-all" });
+            $("#s_main").css("margin-top", "0");
+        } else if (screen.width == 800) {
+            alert(screen.width);
+        } else if (screen.width >= 1152) {
+            $("body").find(".s_btn3").css("height", "5.6rem");
+        } else {
+            alert(screen.width);
+        }
+    }
+  
+    //点击快速关注编辑按钮
+    function focusClick() {      
+        //给账号和频率赋值
+        var push_account = $("#formAct #push_account").val();
+        var push_frequency = $("#formAct #push_frequency").val();
+        var Em = /^\w+([-+.]\w+)*@@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        var Ph= /^1[\d]{10}$/;
+        if (Em.test(push_account)) {
+            $("#EmailText").val(push_account);
+            $("#Email").attr("checked", "checked");
+        } else if (Ph.test(push_account)) {
+            $("#SmsText").val(push_account);
+            $("#Sms").attr("checked", "checked");
+        }
+        if (push_frequency == 'day') {
+            $("#day").attr("checked", "checked");
+        } else if (push_frequency == 'week') {
+            $("#week").attr("checked", "checked");
+        } else if (push_frequency == 'month') {
+            $("#month").attr("checked", "checked");
+        }
+        $('#QuickAttentionModal').modal({ show: true, backdrop: 'static' });
+        document.getElementById("body").style.paddingRight = "0px";
+    }
+
+   
+    //编辑快速关注model框提交
+    function EditQAttention() {
+        var counttype = "";
+        var count = 0;
+        $("input[name='attention_state']:checkbox:checked").each(function () {
+            counttype = $(this).val()
+            count++;
+        })
+        if (count == 0) {
+            alert("请选择快速关注类别");
+            error = true;
+            return false;
+        }
+        /**if ($("#APushform #WeChat").is(':checked')&& $("#APushform #Email").is(':checked') && $("#APushform #Sms").is(':checked')) {         
+                alert("请选择推送选择");
+                error = true;
+                return false;
+        }
+        if ($("#WeChatText").val()=="" && $("#EmailText").val()=="" && $("#SmsText").val()=="") {
+            alert("请选择推送选择");
+            error = true;
+            return false;
+        }
+        if ($("#day").is(':checked') && $("#week").is(':checked') && $("#month").is(':checked')) {
+            alert("请选择推送频率");
+            error = true;
+            return false;
+        }**/
+        var list = new Array();
+        var param = new Array();
+        var attention_type = "";
+        var push_account = "";
+        var cguid = $("#quickattentionform #cguid").val();
+        if ($("#APushform #WeChat").is(':checked')) {
+            push_account = $("#APushform #WeChatText").val();
+           
+        }
+        if ($("#APushform #Email").is(':checked')) {
+            push_account = $("#APushform #EmailText").val();
+            var Em = /^\w+([-+.]\w+)*@@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+            if (!Em.test(push_account)) {
+                alert("请输入正确的邮箱格式");
+                error = true;
+                return false;
+            }
+        }
+        if ($("#APushform #Sms").is(':checked')) {
+            push_account = $(" #APushform #SmsText").val();
+            var Ph = /^1[\d]{10}$/;
+            if (!Ph.test(push_account)) {
+                alert("请输入正确的手机号");
+                error = true;
+                return false;
+            }
+        }
+        if ($("#APushFform #day").is(':checked')) {
+            push_frequency = 'day';
+        }
+        if ($("#APushFform #week").is(':checked')) {
+            push_frequency = 'week';
+        }
+        if ($("#APushFform #month").is(':checked')) {
+            push_frequency = 'month';
+        }
+        $("input[name='attention_state']:checkbox:checked").each(function () {
+            pay = new Object;
+            pay.attention_type = $(this).val()
+            pay.c_guid=cguid
+            pay.push_account = push_account;
+            pay.push_frequency = push_frequency;
+            list.push(pay);
+        })
+        param = { recordList: list };
+        $.ajax({
+            url: "/Common/UpdateQuickAList",
+            type: "POST",
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            data: JSON.stringify(param),
+            success: function (data) {
+                //提交成功
+                $('#QuickAttentionModal').modal('hide');
+                alert("编辑成功！");
+                
+            },
+            error: function () {
+                alert('@General.Resource.Common.NoResponse');
+            }
+        });
+        location.reload(true);
+    }
+    //首页统计功能
+    function Statistical(attention_type) {
+        var attention_type = attention_type;
+        $.ajax({
+            url: "/Common/UpdAType",
+            type: "POST",
+            async: false,
+            dataType: "JSON",
+            data: { attention_type: attention_type},
+            ContentType: "application/json",
+            success: function (data) {
+                //提交成功
+                alert("统计成功！");
+            },
+            error: function () {
+                alert('@General.Resource.Common.NoResponse');
+            }
+        });
+        location.reload(true);
+    }
+</script>
+<script type="text/javascript">
+    //不可多选三选一（推送选择）
+    function updchecktype(type) {
+        if ($("#APushform #WeChat").is(':checked') && type == 'WeChat') {
+            $("#APushform #Email").attr("checked", false);
+            $("#APushform #Sms").attr("checked", false);
+        }
+        if ($("#APushform #Email").is(':checked') && type == 'Email') {
+            $("#APushform #WeChat").attr("checked", false);
+            $("#APushform #Sms").attr("checked", false);
+        }
+        if ($("#APushform #Sms").is(':checked') && type == 'Sms') {
+            $("#APushform #Email").attr("checked", false);
+            $("#APushform #WeChat").attr("checked", false);
+        }
+    }
+    //不可多选三选一（推送频率）
+    function updcheckfrequency(type) {
+        if ($("#APushFform #day").is(':checked') && type == 'day') {
+            $("#APushFform #week").attr("checked", false);
+            $("#APushFform #month").attr("checked", false);
+        }
+        if ($("#APushFform #week").is(':checked') && type == 'week') {
+            $("#APushFform #day").attr("checked", false);
+            $("#APushFform #month").attr("checked", false);
+        }
+        if ($("#APushFform #month").is(':checked') && type == 'month') {
+            $("#APushFform #day").attr("checked", false);
+            $("#APushFform #week").attr("checked", false);
+        }
+    }
+</script>

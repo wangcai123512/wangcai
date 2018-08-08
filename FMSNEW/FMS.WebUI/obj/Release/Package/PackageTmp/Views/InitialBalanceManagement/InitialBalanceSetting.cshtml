@@ -1,0 +1,331 @@
+﻿@{
+    ViewBag.Title = "InitialBalanceSetting";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+   
+    <!-- Start: Sidebar -->
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+                <li class="active"> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C"">设置会计科目</span></a></li>
+                 <li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>
+                
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF;">
+            <div id="content">
+            <div class="col-md-12" style="margin: auto">
+                 <div class="col-md-2" style="margin: auto"></div>
+                        <div class="col-md-8" style="margin: auto">
+                     <div class="panel-group" id="accordion" style="margin:0" >
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#Assets1">
+                                    资产类
+                                </a>
+                                </h4>
+                            </div>
+                            <div id="Assets1" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                <form>
+                                    <div class="input-group " style="margin: auto">
+                                        <table id="Assets" style="font-size: 14px;margin: auto;width:330px" class="table-condensed">
+                                       </table>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                     <div class="panel-group" id="accordion" style="margin:0">
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#Liabilities1">
+                                    负债类
+                                </a>
+                                </h4>
+                            </div>
+                            <div id="Liabilities1" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                <form>
+                                    <div class="input-group " style="margin: auto">
+                                        <table id="Liabilities" style="font-size: 14px;margin: auto;width:330px" class="table-condensed">
+                                       </table>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                     <div class="panel-group" id="accordion" style="margin:0">
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#OwnerEquity1">
+                                    所有者权益类
+                                </a>
+                                </h4>
+                            </div>
+                            <div id="OwnerEquity1" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                <form>
+                                    <div class="input-group " style="margin: auto">
+                                        <table id="OwnerEquity" style="font-size: 14px;margin: auto;width:330px" class="table-condensed">
+                                       </table>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                     
+                             <div class="input-group " style="margin: auto">
+                                    <input type="button"onclick="Select()" value="全选" style=" border-radius: 100px;"/>
+                                    <input type="button"onclick="Deselect()" value="清空" style=" border-radius: 100px;"/>
+                                </div>
+                            <div class="form-group" style="margin: auto; text-align: center">
+                                <button onclick="Submit()" type="button" style="margin-top: 20px; height: 40px; width: 20%; border-radius: 100px; font-size: 16px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">提交</button>
+                                <button onclick="Back()" type="button" style="margin-top: 20px; height: 40px; width: 20%; border-radius: 100px; font-size: 16px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">返回上页</button>
+                            </div>
+                       </div>
+             <div class="col-md-2" style="margin: auto">
+             </div>
+            </div>
+        </div>
+       </div>
+        <br />
+    </section>
+</div>
+
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+
+        var list = $('.table-condensed');
+        var id = "";
+        list.each(function () {
+            id = $(this).attr("id")
+
+            $('#' + id).bootstrapTable({
+                url: "/GeneralLedgerAccount/GetLAccount?Name=" + id,
+                method: 'get',
+                pageSize: 20,
+                pageNumber: 1,
+                singleSelect: false,
+                detailView: true,
+                clickToSelect: true,
+                checkOnSelect: true,
+                selectOnCheck: true,
+                checkboxHeader: false,
+                columns: [[
+                { field: 'State', checkbox: true, title: '', width: '10%', formatter: stateFormatter },
+                { field: 'Name', title: '', align: 'left', width: '48%' }
+             ]]
+            });
+
+        });
+
+
+
+    });
+
+    
+
+    
+
+    function Submit() {
+        //var arr = $("#dataList").bootstrapTable('getData');
+        //取到所有勾选的行
+        var list = $('.table-condensed');
+        var list2 = $('.Table2');
+        var list3 = $('.Table3');
+        var id = "";
+
+        //所有的guid
+        var str = '';
+
+
+        //定义分隔符
+        var separatorStr = ',';
+        list.each(function () {
+            id = $(this).attr("id")
+
+            //            var arr = $("#" + id).bootstrapTable('getAllSelections');
+            var arr = $("#" + id).bootstrapTable('getData');
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+
+                    if (arr[i].State == true) {
+                        arr[i].State = '1';
+                    } else {
+                        arr[i].State = '0';
+                    }
+                }
+                var jsonData = JSON.stringify(arr);
+                $.ajax({
+                    type: 'Post',
+                    url: '/GeneralLedgerAccount/UpdateUsingLA/',
+                    data: { jsonData1: jsonData },
+                    async: false,
+                    success: function (data) {
+                        if (JSON.parse(data).Result) {
+                            //                        alert("提交成功");
+                            $("#" + id).bootstrapTable("refresh");
+                        }
+                        else {
+                            alert("提交失败");
+                        }
+                    }
+                });
+            }
+
+
+
+        });
+
+        list2.each(function () {
+            id = $(this).attr("id")
+
+            //            var arr = $("#" + id).bootstrapTable('getAllSelections');
+            var arr = $("#" + id).bootstrapTable('getData');
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+
+                    if (arr[i].State == true) {
+                        arr[i].State = '1';
+                    } else {
+                        arr[i].State = '0';
+                    }
+                }
+                var jsonData = JSON.stringify(arr);
+                $.ajax({
+                    type: 'Post',
+                    url: '/GeneralLedgerAccount/UpdateUsingDLA/',
+                    data: { jsonData2: jsonData },
+                    async: false,
+                    success: function (data) {
+                        if (JSON.parse(data).Result) {
+                            //                        alert("提交成功");
+                            $("#" + id).bootstrapTable("refresh");
+                        }
+                        else {
+                            alert("提交失败");
+                        }
+                    }
+                });
+            }
+
+
+
+        });
+        list3.each(function () {
+            id = $(this).attr("id")
+
+            //            var arr = $("#" + id).bootstrapTable('getAllSelections');
+            var arr = $("#" + id).bootstrapTable('getData');
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+
+                    if (arr[i].State == true) {
+                        arr[i].State = '1';
+                    } else {
+                        arr[i].State = '0';
+                    }
+                }
+                var jsonData = JSON.stringify(arr);
+                $.ajax({
+                    type: 'Post',
+                    url: '/GeneralLedgerAccount/UpdateUsingThLA/',
+                    data: { jsonData3: jsonData },
+                    async: false,
+                    success: function (data) {
+                        if (JSON.parse(data).Result) {
+                            //                        alert("提交成功");
+                            $("#" + id).bootstrapTable("refresh");
+                        }
+                        else {
+                            alert("提交失败");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function Back() {
+        window.history.go(-1);
+    }
+    
+   
+
+    function stateFormatter(value, row, index) {
+        if (value === "1") {
+            return {
+                checked: true
+            };
+        } else {
+            return {
+                checked: false
+            };
+        }
+        return value;
+    }
+
+    function Select() {
+        var list = $('.table');
+        var id = "";
+        list.each(function () {
+            id = $(this).attr("id")
+            $("#" + id).bootstrapTable('checkAll');
+        });
+
+    }
+
+    function Deselect() {
+        var list = $('.table');
+        var id = "";
+        list.each(function () {
+            id = $(this).attr("id")
+            $("#" + id).bootstrapTable('uncheckAll');
+        });
+
+    }
+
+</script>

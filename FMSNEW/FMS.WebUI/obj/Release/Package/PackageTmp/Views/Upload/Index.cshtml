@@ -1,0 +1,176 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+    List<FMS.Model.R_UserCompany> modelList = ViewBag.GroupCode;
+}
+<style type="text/css">
+       .btn-default {
+           background-color: #CCCC;
+       }
+
+       #menu {
+           font: 12px verdana, arial, sans-serif;
+       }
+
+           #menu, #menu li {
+               list-style: none;
+               padding: 0;
+               margin: 0;
+           }
+
+               #menu li {
+                   float: right;
+               }
+
+                   #menu li a {
+                       display: block; /* 如果是中英文混排的文字，建议用固定宽度
+    width:150px;
+    height:30px;
+    line-height:30px;
+    text-align:center;
+    */
+                       padding: 1px 5px;
+                       text-decoration: none;
+                       border-left: 1px solid #000;
+                   }
+
+                       #menu li a.last {
+                           border-right: 0; /* 去掉左侧边框 */
+                       }
+
+       #example {
+           white-space: normal;
+           word-break: break-all;
+           word-wrap: break-word;
+       }
+</style>
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+    <!-- Start: Sidebar -->
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+                <li> <a onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF;">
+            <div id="content">
+                <div id="s_main" class="row" style="">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6">
+                            <h2>上传到:</h2>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                收入类文件池
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <br />
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                费用类文件池
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <br />
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                资产类文件池
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <br />
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                公司信息类文件池
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <br />
+                        <div class="col-sm-3">
+                        </div>
+                        <div class="col-sm-6" onclick="javascript: window.location = '/Upload/Index'">
+
+                            <button type="button" style="height: 60px;width: 100%;text-align:center;  font-size: 16px;
+                    border: 4px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                其他文件池
+                            </button>
+                        </div>
+                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </section>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        if ("@Session["GroupCode"]" == "GP010") {
+            $(UserManage).css("display", "none");
+        };
+        ScreenWidth();
+
+    }
+</script>

@@ -1,0 +1,276 @@
+﻿@{
+	ViewBag.Title = "ReceivablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Receivables
+<form id="ReceivablesRecord">
+<input type="hidden" name="R_GUID" value="@Model.R_GUID" />
+<input type="hidden" name="Money" value="@Model.Money" />
+<table id="RR_List">
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Payer:
+		</td>
+		<td>
+			<input class="easyui-combobox" id="Payer" name="Payer" value="@Model.Payer" 
+				data-options="readonly:true,editable:false,required:true,url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID',panelHeight:'auto',panelMaxHeight:200" />
+		</td>
+		<td>@FMS.Resource.Finance.Finance.Date:
+		</td>
+		<td>
+			<input class="easyui-datebox" id="Date" name="Date" 
+				value="@System.DateTime.Now.Date.ToShortDateString()" />
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.InvType:
+		</td>
+		<td>
+			<input class="easyui-combobox" id="InvType" name="InvType" value="@Model.InvType" 
+				data-options="readonly:true,editable:false,url:'/InternalAPI/GetInvType',textField:'Name',valueField:'Key',panelHeight:'auto',panelMaxHeight:200" />
+		</td>
+		<td>@FMS.Resource.Finance.Finance.InvNo:
+		</td>
+		<td>
+        @Model.InvNo
+			@*<input type="text" value="@Model.InvNo" style="width:148px" disabled="true"/>*@
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.DebitLedgerAccount:
+		</td>
+		<td>
+			<input id="DebitLedgerAccount" name="DebitLedgerAccount"/>
+		</td>
+		<td>@FMS.Resource.Finance.Finance.CreditLedgerAccount:
+		</td>
+		<td>
+			<input id="CreditLedgerAccount" name="CreditLedgerAccount" value="@Model.LA_GUID"  />
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.DebitDetailsAccount :
+		</td>
+		<td>
+			<input id="DebitDetailsAccount" name="DebitDetailsAccount"/>
+		</td>
+		<td>@FMS.Resource.Finance.Finance.CreditDetailsAccount :
+		</td>
+		<td>
+			<input id="CreditDetailsAccount" name="CreditDetailsAccount" value="@Model.DA_GUID"  />
+		</td>
+	</tr>
+	<tr>
+        	<td>@FMS.Resource.Finance.Finance.Currency:
+		</td>
+        <td>
+        <input id="Currency" name="Currency" value="@Model.Currency"  />
+        </td>
+		<td>@FMS.Resource.Finance.Finance.Amount:
+		</td>
+		<td>
+        @string.Format("{0:N}", @Model.Money)
+			@*<input id="Money" name="Money" class="easyui-numberbox" value="@Model.Money" data-options="readonly:true,required:true, precision:2,groupSeparator:','" />*@
+		</td>
+	</tr>
+    <tr>
+    <td>@General.Resource.Common.Remark :
+		</td>
+		<td>
+			<input class="easyui-validatebox" id="Remark" name="Remark"/>
+		</td>
+    </tr>
+</table>
+</form>
+<script>
+    var LedgerAccount;
+    var DetailsAccount;
+    var DebitLedgerAccount = new Array();
+    var DebitCode = ['1231'];
+    var DebitVal;
+    var Currency;
+
+    $(function () {
+//        $("#Payer").combobox("disable");
+        $.ajax({
+            url: "/InternalAPI/GetUserLedgerAccount",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                var DebitFlag = false;
+                $(d).each(function (i, n) {
+                    $(DebitCode).each(function (j, m) {
+                        if (n.Code == m) {
+                            DebitLedgerAccount.push(n);
+                        }
+                    });
+                });
+                var more = new Object();
+                more.text = '更多';
+                more.value = "-1";
+                DebitLedgerAccount.push(more);
+                LedgerAccount = d;
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetDetailsAccount",
+            async: false,
+            dataType: "json",
+            success: function (d) { DetailsAccount = d; }
+        });
+          $.ajax({
+            url: "/InternalAPI/GetCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { Currency = d; }
+        });
+
+        try {
+            $("#DebitDetailsAccount").combotree("destroy");
+        } catch (e) {
+
+        }
+        $("#DebitDetailsAccount").combotree({
+            required: true,
+            valueField: 'id',
+            panelHeight: "auto",
+            panelMaxHeight: 200,
+        });
+
+        $("#DebitDetailsAccount").combotree("tree").tree("options").onBeforeSelect = LeafSelect;
+
+        try {
+            $("#CreditDetailsAccount").combotree("destroy");
+        } catch (e) {
+
+        }
+        $("#CreditDetailsAccount").combotree({
+            required: true,
+            valueField: 'id',
+            panelHeight: "auto",
+            panelMaxHeight: 200,
+            readonly:true
+        });
+
+        $("#CreditDetailsAccount").combotree("tree").tree("options").onBeforeSelect = LeafSelect;
+
+        try {
+            $("#DebitLedgerAccount").combobox("destroy");
+        } catch (e) {
+
+        }
+        $("#DebitLedgerAccount").combobox({
+            editable: false,
+            required: true,
+            data: DebitLedgerAccount,
+            onSelect: function (rec) {
+
+                if (rec.value != "-1") {
+                    UpdDebitDetailsAccount(rec.value);
+                    DebitVal = rec.value;
+                    $("#DebitDetailsAccount").combobox("clear");
+                }
+                else {
+                    $("#DebitLedgerAccount").combobox("setValue", DebitVal);
+                    window.setTimeout(function () {
+                        $('#DebitLedgerAccount').combobox('loadData', LedgerAccount);
+                    }, 5);
+                }
+            },
+            onLoadSuccess: function (data) {
+
+                var flag = true;
+                $(data).each(function (i, n) {
+                    if (n.value == "-1") {
+                        flag = flag & false;
+                    }
+                    else {
+                        flag = flag & true;
+                    }
+                });
+                if (flag) {
+                    $("#DebitLedgerAccount").combobox("showPanel");
+                }
+                else {
+                    var dlaValue = $("#DebitLedgerAccount").combobox("getValue");
+                    if (dlaValue != null && dlaValue.length != 0 && dlaValue != -1) {
+                        UpdDebitDetailsAccount(dlaValue);
+                    }
+                }
+            }
+        });
+
+        try {
+            $("#CreditLedgerAccount").combobox("destroy");
+        } catch (e) {
+        }
+        $("#CreditLedgerAccount").combobox({
+            readonly: true,
+            editable: false,
+            required: true,
+            data: LedgerAccount,
+            panelMaxHeight: '200'
+        ,
+            onSelect: function (rec) {
+                UpdCreditDetailsAccount(rec.value);
+            },
+            onLoadSuccess: function (data) {
+                var claValue = $("#CreditLedgerAccount").combobox("getValue");
+                if (claValue != null && claValue.length != 0) {
+                    UpdCreditDetailsAccount(claValue);
+                }
+
+            }
+        });
+         $("#Currency").combobox({
+            readonly: true,
+            editable: false,
+            required: true,
+            data: Currency,
+            panelMaxHeight: '200'
+        });
+    });
+
+
+            function UpdDebitDetailsAccount(newV) {
+                if (GetDetailsAccount(newV).length == 0) {
+                    $("#DebitDetailsAccount").combotree("disableValidation");
+                    $("#DebitDetailsAccount").combotree("loadData", []);
+                    $("#DebitDetailsAccount").combotree("clear");
+                }
+                else {
+                    $("#DebitDetailsAccount").combotree("enableValidation");
+                    $("#DebitDetailsAccount").combotree("loadData", GetDetailsAccount(newV));
+
+                }
+
+            }
+
+            function UpdCreditDetailsAccount(newV) {
+                if (GetDetailsAccount(newV).length == 0) {
+                    $("#CreditDetailsAccount").combotree("disableValidation");
+                    $("#CreditDetailsAccount").combotree("loadData", []);
+                    $("#CreditDetailsAccount").combotree("clear");
+                }
+                else {
+                    $("#CreditDetailsAccount").combotree("enableValidation");
+                    $("#CreditDetailsAccount").combotree("loadData", GetDetailsAccount(newV));
+
+                }
+            }
+
+            function GetDetailsAccount(la) {
+                var result;
+                $(DetailsAccount).each(function (i, n) {
+                    if (n.id == la) {
+                        result = n.children;
+                    }
+                });
+                return result;
+            }
+
+            function LeafSelect(node) {
+                if (!$(this).tree("isLeaf", node.target)) {
+                    return false;
+                }
+            }
+</script>

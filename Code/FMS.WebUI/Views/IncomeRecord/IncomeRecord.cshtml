@@ -1,0 +1,487 @@
+﻿@{
+	ViewBag.Title = "IncomeRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_IERecord
+<form id="IncomeRecord">
+<input type="hidden" name="IE_GUID" id="IE_GUID" value="@Model.IE_GUID" />
+<input type="hidden" name="Creator" id="Creator" value="@Model.Creator" />
+<input type="hidden" name="CreateDate" value="@(Model.CreateDate.Equals(System.DateTime.MinValue) ? System.DateTime.Now : Model.CreateDate)" />
+<table>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Payer:
+		</td>
+		<td>
+			<input class="easyui-combobox" id="RPer" name="RPer" value="@Model.RPer"
+				data-options='editable:false,url:"/InternalAPI/GetPayer",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200'/>
+		</td>
+		<td>@FMS.Resource.Finance.Finance.Date:
+		</td>
+		<td>
+			<input class="easyui-datebox" id="Date" name="Date" 
+				value="@(Model.Date.Equals(System.DateTime.MinValue) ? System.DateTime.Now.Date.ToShortDateString() : Model.Date.Date.ToShortDateString())" required="true"/>
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.InvType:
+		</td>
+		<td>
+			<input class="easyui-combobox" id="InvType" name="InvType" value="@Model.InvType" 
+				data-options="editable:false,url:'/InternalAPI/GetInvType',textField:'Name',valueField:'Key',panelHeight:'auto',panelMaxHeight:200" />
+		</td>
+		<td>@FMS.Resource.Finance.Finance.InvNo:
+		</td>
+		<td>
+			<input class="easyui-validatebox" id="InvNo" name="InvNo" value="@Model.InvNo" 
+				data-options="" />
+		</td>
+	</tr>
+</table>
+</form>
+<table id="IncomeDetailsList">
+</table>
+<script language="javascript" type="text/javascript">
+	var LedgerAccount;
+	var DetailsAccount;
+	var DebitAccount;
+	var CreditAccount;
+	var CommonDebitAccount;
+	var CommonCreditAccount;
+	var CommonDebitCode=['1122','1221'];
+	var CommonCreditCode=['6001','6051','6301'];
+    var DebitVal;
+    var CreditVal;
+    var CommonCurrency;
+    var StandardCoin;
+
+	$.ajax({
+		url: "/InternalAPI/GetUserLedgerAccount",
+		async: false,
+		dataType:"json",
+		success: function (d) 
+		{
+			LedgerAccount = FilterLedgerAccount(d);
+			CommonDebitAccount=FilterCommonAccount(LedgerAccount,CommonDebitCode);
+			CommonCreditAccount=FilterCommonAccount(LedgerAccount,CommonCreditCode);
+			DebitAccount = FilterAccount(LedgerAccount,1);
+			CreditAccount = FilterAccount(LedgerAccount,6);
+		}
+	});
+	$.ajax({
+		url: "/InternalAPI/GetDetailsAccount",
+		async: false,
+		dataType:"json",
+		success: function (d) { DetailsAccount = d; }
+	});
+    $.ajax({
+        url:"/InternalAPI/GetUserCurrency",
+        async:false,
+        dataType:"json",
+		success: function (d) { CommonCurrency = d; }
+    });
+     $.ajax({
+        url:"/InternalAPI/GetCompanySetting",
+        async:false,
+        dataType:"json",
+		success: function (d) { 
+        StandardCoin=d.StandardCoin;
+         }
+    });
+//     $.ajax({
+//        url:"/InternalAPI/GetCurrency",
+//        async:false,
+//        dataType:"json",
+//		success: function (d) { Currency = d; }
+//    });
+
+	$(function () {
+		$("#IncomeDetailsList").datagrid({
+			url: "@(string.IsNullOrEmpty(Model.IE_GUID) ? "" : "/IncomeRecord/GetIncomeDetails/" + Model.IE_GUID)",
+			columns: [[
+				{ field: 'DebitLedgerAccount', title: '@FMS.Resource.Finance.Finance.DebitLedgerAccount',width:120, formatter:function(val,row){return row.DebitLedgerAccountName}, editor: { type: 'combobox', options: { editable:false,required: true, data: CommonDebitAccount,onSelect:DebitOnSelect, onLoadSuccess:DebitLoadSuccess, textField: 'text', valueField: 'value',panelHeight:'auto',panelMaxHeight:200}} },
+				{ field: 'DebitDetailsAccount', title: '@FMS.Resource.Finance.Finance.DebitDetailsAccount',width:250,formatter:function(val,row){return row.DebitDetailsAccountName}, editor: { type: 'combotree', options: { required: true ,panelHeight:'auto',panelMaxHeight:200}} },
+				{ field: 'CreditLedgerAccount', title: '@FMS.Resource.Finance.Finance.CreditLedgerAccount',width:120,formatter:function(val,row){return row.CreditLedgerAccountName}, editor: { type: 'combobox', options: { editable:false,required: true, data: CommonCreditAccount,onSelect:CreditOnSelect, onLoadSuccess:CreditLoadSuccess, textField: 'text', valueField: 'value',panelHeight:'auto',panelMaxHeight:200}} },
+				{ field: 'CreditDetailsAccount', title: '@FMS.Resource.Finance.Finance.CreditDetailsAccount',width:250, formatter:function(val,row){return row.CreditDetailsAccountName}, editor: { type: 'combotree', options: { required: true,panelHeight:'auto',panelMaxHeight:200}} },
+                { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency',width:120, editor: { type: 'combobox', options: { editable:false,required: true, data: CommonCurrency, textField: 'text', valueField: 'value',panelHeight:'auto',panelMaxHeight:200}} },
+				{ field: 'Money', title: '@FMS.Resource.Finance.Finance.Money',width:100 ,align:'right',formatter:DecimalFmter, editor: { type: 'numberbox', options: { required: true, precision: 2,groupSeparator:','}} },
+                { field: 'Remark', title: '@General.Resource.Common.Remark',width:100, editor: { type: 'validatebox'} }
+			]],
+			rownumbers: true,
+			singleSelect: true,
+			onClickRow: onClickRow,
+			toolbar: [
+			{
+				iconCls: 'icon-add',
+				text: '@General.Resource.Common.Add',
+				handler: function () { append(); }
+			},
+			{
+				iconCls: 'icon-remove',
+				text: '@General.Resource.Common.Delete',
+				handler: function () { removeit(); }
+			},
+			{
+				iconCls: 'icon-save',
+				text: '@General.Resource.Common.Save',
+				handler: function () { accept(); }
+			},
+			{
+				iconCls: 'icon-undo',
+				text: '@General.Resource.Common.Undo',
+				handler: function () { reject(); }
+			}
+			]
+
+		});
+
+	});
+
+	function onClickRow(index) {
+		if (editIndex != index) {
+			if (endEditing()) {
+				editIndex = index;
+				$('#IncomeDetailsList').datagrid('selectRow', index).datagrid('beginEdit', index);
+                  var Debited = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex ,field:'DebitLedgerAccount'});
+                var DebitValue=$('#IncomeDetailsList').datagrid('getRows')[editIndex].DebitLedgerAccount;
+                var DebitText=$('#IncomeDetailsList').datagrid('getRows')[editIndex].DebitLedgerAccountName;
+                var DebitArray=InsertAccount(CommonDebitAccount,DebitValue,DebitText);
+                $(Debited.target).combobox('loadData', DebitArray);
+                 DebitVal=$('#IncomeDetailsList').datagrid('getRows')[editIndex].DebitLedgerAccount;
+
+               
+                var Credited = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex ,field:'CreditLedgerAccount'});
+                var CreditValue=$('#IncomeDetailsList').datagrid('getRows')[editIndex].CreditLedgerAccount;
+                var CreditText=$('#IncomeDetailsList').datagrid('getRows')[editIndex].CreditLedgerAccountName;
+                var CreditArray=InsertAccount(CommonCreditAccount,CreditValue,CreditText);
+                $(Credited.target).combobox('loadData', CreditArray);
+                 CreditVal=$('#IncomeDetailsList').datagrid('getRows')[editIndex].CreditLedgerAccount;
+
+                  var Currency=$('#IncomeDetailsList').datagrid('getEditor', { index: editIndex ,field:'Currency'});
+                var CurrencyVal=$('#IncomeDetailsList').datagrid('getRows')[editIndex].Currency;
+                if(CurrencyVal=="" || CurrencyVal==null)
+                {
+                    $(Currency.target).combobox('setValue', StandardCoin);
+                }
+			} else {
+				$('#IncomeDetailsList').datagrid('selectRow', editIndex);
+			}
+		}
+	}
+
+	function append() {
+		if (endEditing()) {		
+			$('#IncomeDetailsList').datagrid('appendRow', {});
+			editIndex = $('#IncomeDetailsList').datagrid('getRows').length - 1;
+			$('#IncomeDetailsList').datagrid('selectRow', editIndex);
+			$('#IncomeDetailsList').datagrid('beginEdit', editIndex);
+              var Currency=$('#IncomeDetailsList').datagrid('getEditor', { index: editIndex ,field:'Currency'});
+             $(Currency.target).combobox('setValue', StandardCoin);
+		}
+	}
+	function removeit() {
+		if (editIndex == undefined) { return }
+		$('#IncomeDetailsList').datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
+		editIndex = undefined;
+	}
+	function accept() {
+		if (endEditing()) {
+			$('#IncomeDetailsList').datagrid('acceptChanges');
+		}
+	}
+	function reject() {
+		$('#IncomeDetailsList').datagrid('rejectChanges');
+		editIndex = undefined;
+	}
+	
+	var editIndex = undefined;
+	function endEditing() {
+		if (editIndex == undefined) { return true }
+		if ($('#IncomeDetailsList').datagrid('validateRow', editIndex)) {
+
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'DebitLedgerAccount' });
+			var accName = $(ed.target).combobox('getText');
+			$('#IncomeDetailsList').datagrid('getRows')[editIndex]['DebitLedgerAccountName'] = accName;
+
+			ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'DebitDetailsAccount' });
+			accName = $(ed.target).combotree('getText');
+			$('#IncomeDetailsList').datagrid('getRows')[editIndex]['DebitDetailsAccountName'] = accName;
+
+			ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'CreditLedgerAccount' });
+			accName = $(ed.target).combobox('getText');
+			$('#IncomeDetailsList').datagrid('getRows')[editIndex]['CreditLedgerAccountName'] = accName;
+
+			ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'CreditDetailsAccount' });
+			accName = $(ed.target).combotree('getText');
+			$('#IncomeDetailsList').datagrid('getRows')[editIndex]['CreditDetailsAccountName'] = accName;
+
+			$('#IncomeDetailsList').datagrid('endEdit', editIndex);
+			editIndex = undefined;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function UpdDebitDetailsAccount(newV)
+	{
+		if (newV != null) {
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'DebitDetailsAccount' });
+			if(GetDetailsAccount(newV).length==0)
+			{
+			 $(ed.target).combotree("disableValidation");
+			 $(ed.target).combotree("loadData",[]);
+			  $(ed.target).combotree("clear");
+			}
+			else
+			{
+			$(ed.target).combotree("enableValidation");
+			$(ed.target).combotree("loadData",GetDetailsAccount(newV));
+			}
+			
+			$(ed.target).combotree("tree").tree("options").onBeforeSelect = LeafSelect;
+
+		}
+	}
+
+	function UpdCreditDetailsAccount(newV)
+	{
+		if (newV != null) {
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'CreditDetailsAccount' });
+			if(GetDetailsAccount(newV).length==0)
+			{
+			 $(ed.target).combotree("disableValidation");
+			 $(ed.target).combotree("loadData",[]);
+			  $(ed.target).combotree("clear");
+			}
+			else
+			{
+			$(ed.target).combotree("enableValidation");
+			$(ed.target).combotree("loadData",GetDetailsAccount(newV));
+			}
+			$(ed.target).combotree("tree").tree("options").onBeforeSelect = LeafSelect;
+
+		}
+	}
+
+	function GetDetailsAccount(la)
+	{
+		var result;
+		$(DetailsAccount).each(function(i,n){
+			if (n.id == la) {
+				result = n.children;
+			}
+		});
+		return result;
+	}
+
+	function LeafSelect(node) {
+		if (!$(this).tree("isLeaf", node.target)) {
+			return false;
+		}
+	}
+
+	function FilterAccount(accs,grp)
+	{
+		var newAcc = new Array();
+		$(accs).each(function(i,n){
+			if (n.Group == grp) {
+				newAcc.push(n);
+			}
+		});
+		return newAcc;
+	}
+
+	function FilterCommonAccount(accs,code)
+	{
+		var newAcc=new Array();
+		 $(accs).each(function (i, n) {
+					$(code).each(function (j, m) {
+						if (n.Code == m) {
+							newAcc.push(n);
+						}
+					});
+					});
+		 var more=new Object();
+		 more.text="更多";
+		 more.value="-1";
+		 newAcc.push(more);
+		 return newAcc;
+					}
+	
+    function FilterLedgerAccount(accs)
+    {
+       var newAcc=new Array();
+		 $(accs).each(function (i, n) {
+						if (n.Code != '1001'&&n.Code != '1002') {
+                            
+							newAcc.push(n);
+                            
+						}
+					});
+             return newAcc;
+    }
+
+
+	function DebitOnSelect(rec)
+	{
+    
+		if(rec.value!='-1')
+		{
+			UpdDebitDetailsAccount(rec.value);
+            DebitVal=rec.value;
+             var Detailsed=$('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'DebitDetailsAccount' });
+            $(Detailsed.target).combotree("clear");
+		}
+		else
+		{
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'DebitLedgerAccount' });
+			$(ed.target).combobox("clear");
+            $(ed.target).combobox("setValue",DebitVal);
+			window.setTimeout(function () {
+						 $(ed.target).combobox('loadData', DebitAccount);
+					}, 5);
+		}
+	}
+
+	function CreditOnSelect(rec)
+	{
+      
+		if(rec.value!='-1')
+		{
+			UpdCreditDetailsAccount(rec.value);
+            CreditVal=rec.value;
+            var Detailsed=$('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'CreditDetailsAccount' });
+            $(Detailsed.target).combotree("clear");
+		}
+		else
+		{
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'CreditLedgerAccount' });
+			 $(ed.target).combobox("clear");
+             $(ed.target).combobox("setValue",CreditVal);
+			 window.setTimeout(function () {
+						$(ed.target).combobox('loadData', CreditAccount);
+					}, 5);
+		}
+	}
+
+//    function CurrencyOnSelect(rec)
+//	{
+//    
+//		if(rec.value!='-1')
+//		{
+//            CurrencyVal=rec.value;
+//		}
+//		else
+//		{
+//			var ed = $('#IncomeDetailsList').datagrid('getEditor', { index: editIndex, field: 'Currency' });
+//			$(ed.target).combobox("clear");
+//            $(ed.target).combobox("setValue",CurrencyVal);
+//			window.setTimeout(function () {
+//						 $(ed.target).combobox('loadData', Currency);
+//					}, 5);
+//		}
+//	}
+
+//    function CurrencyLoadSuccess(data)
+//	{
+//		if ($('#IncomeDetailsList').datagrid('getEditors',  editIndex ).length > 5) {
+//			var ed = $('#IncomeDetailsList').datagrid('getEditor', {index: editIndex,field:'Currency'} );
+//			var flag = true;
+//			$(data).each(function (i, n) {
+//				if (n.value == "-1") {
+//                    alert("-1");
+//					flag = flag & false;
+//				}
+//				else {
+//					flag = flag & true;
+//				}
+//			});
+//			if (flag) {
+//					$(ed.target).combobox("showPanel");
+//			}
+//		}
+//	}
+
+	function DebitLoadSuccess(data)
+	{
+		if ($('#IncomeDetailsList').datagrid('getEditors',  editIndex ).length > 1) {
+			var ed = $('#IncomeDetailsList').datagrid('getEditor', {index: editIndex,field:'DebitLedgerAccount'} );
+			var flag = true;
+			$(data).each(function (i, n) {
+				if (n.value == "-1") {
+					flag = flag & false;
+				}
+				else {
+					flag = flag & true;
+				}
+			});
+			if (flag) {
+					$(ed.target).combobox("showPanel");
+			}
+			else {
+				var claValue = $(ed.target).combobox("getValue");
+				if (claValue != null && claValue.length != 0 && claValue != -1) {
+					UpdDebitDetailsAccount(claValue);
+				}
+			}
+		}
+	}
+
+        function InsertAccount(accs,value,text)
+    {   
+        var flag=false; 
+        var newAcc=new Array();
+         $(accs).each(function(i,n){
+            if(n.value==value)
+            {
+            flag=true;
+            return false;
+            }
+        });
+        if(flag)
+        {
+          $(accs).each(function(i,n){
+            newAcc.push(n);
+        });
+        }
+        else
+        {
+        var object=new Object();
+        object.text=text;
+        object.value=value;
+        newAcc.push(object);
+        $(accs).each(function(i,n){
+            newAcc.push(n);
+        });
+        }
+        return newAcc;
+    }
+
+	function CreditLoadSuccess(data)
+	{
+        if ($('#IncomeDetailsList').datagrid('getEditors',  editIndex ).length > 3) {
+        var ed = $('#IncomeDetailsList').datagrid('getEditor', {index: editIndex,field:'CreditLedgerAccount'} );
+			var flag = true;
+			$(data).each(function (i, n) {
+				if (n.value == "-1") {
+					flag = flag & false;
+				}
+				else {
+					flag = flag & true;
+				}
+			});
+			if (flag) {
+					$(ed.target).combobox("showPanel");
+			}
+			else {
+				var claValue = $(ed.target).combobox("getValue");
+				if (claValue != null && claValue.length != 0 && claValue != -1) {
+					UpdCreditDetailsAccount(claValue);
+				}
+			}
+
+        }
+	}
+
+</script>

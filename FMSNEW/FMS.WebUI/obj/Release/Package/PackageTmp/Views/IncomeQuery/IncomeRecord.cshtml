@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "IncomeRecord";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_IERecord
+<div id="MAIN" style="background-color: #FFF">
+    <div id="content">
+        <div id="Two" class="row" style="">
+            <div class="col-md-12" style="margin: auto">
+                <div class="col-md-1" style="margin: auto">
+                </div>
+                <div class="col-md-10" style="margin: auto">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <form class="cmxform" id="Income_Form" method="post">
+                        <input type="hidden" name="InvType" id="InvType" />
+                        <input type="hidden" name="IE_GUID" id="IE_GUID" />
+                        <input type="hidden" name="State" id="State" value="应收" />
+                        @*<div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900;color: #074592;text-decoration:underline">记录收入</span></div>*@
+                        <div class="col-md-12" style="margin-bottom: 20px; text-align: center">
+                            <span style="font-size: 25px; font-weight: 900; color: #074592; text-decoration: underline"
+                                id="Type"></span>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="RPer" name="RPer" required="true">
+                                            @*<option value="苏州金融" selected="selected">苏州金融</option>
+                                                    <option value="西门子">西门子</option>*@
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="btn-group  btn-group-sm pull-left" style="margin: 0">
+                                        <button onclick="javascript:window.location = '/Common/Index'" type="button" style="width: 150px;
+                                            border-radius: 0px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold"
+                                            class="btn btn-primary">
+                                            新客户登记</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;收入确认日期&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="AffirmDate" name="AffirmDate" class="form-control datepicker mtn" value="@ViewData["DateNow"]" required="true">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;收入截止日期&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="Date" name="Date" class="form-control datepicker mtn" value="@ViewData["DateNow"]" required="true">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收&nbsp;入&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="Amount" name="Amount" onkeyup="checkAmount()" class="form-control money"
+                                            maxlength="10" autocomplete="off" placeholder="" required="true">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="Currency" name="Currency" required="true">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税&nbsp;&nbsp;种&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="TaxationType" name="TaxationType" required="true">
+                                            <option value="价内税" selected="selected">价内税</option>
+                                            <option value="价外税">价外税</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税&nbsp;费&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input id="TaxationAmount" name="TaxationAmount" onkeyup="checkAmount()" type="text"
+                                            class="form-control" placeholder="" required="true">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <fieldset disabled>
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;含&nbsp;税&nbsp;总&nbsp;收&nbsp;入&nbsp;&nbsp;&nbsp;</span>
+                                            <input id="SumAmount" name="SumAmount" type="text" class="form-control" placeholder=""
+                                                required="true">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input id="Remark" name="Remark" type="text" class="form-control" placeholder=""
+                                            required="true">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "CancelRecordFour";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%;height: 100%">
+<div id="CRTtoolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	</div>
+	<div>
+	    <form id="conditionForm">
+	        <input  id="conIncomeGrpdts" type="hidden" name="incomeGrpdts" value="收到的其他与投资活动有关的款" />
+	        <table>
+	            <tr>
+	                <td>
+	                    日期:
+	                </td>
+	                <td>
+	                    <input class="easyui-datebox" id="conDateBegin" name="DateBegin" data-options="width:100,panelHeight:'auto'"/>-<input
+	                                                                                                                                       class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    收款方:
+	                </td>
+	                <td>
+	                    <input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayee',textField:'Name',valueField:'BP_GUID'"/>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    付款类别:
+	                </td>
+	                <td>
+	                    <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+	                        <option value="投资活动付款">投资活动付款</option>
+	                    </select>
+	                </td>
+	            </tr>
+	        </table>
+	    </form>
+	</div>
+</div>
+<table id="CRT_List"></table>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    $("#CRT_List").datagrid({
+	        onLoadSuccess: compute,
+	        url: '/PaymentClassify/GetPaymentSelfList?incomeGrp=投资活动付款'+'&incomeGrpdts=支付的其他与投资活动有关的款',
+	        checkOnSelect: true,
+	        selectOnCheck: true,
+	        singleSelect: true,
+	        columns: [[
+	            { checkbox: true },
+	            { field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: ChangeDateFormat },
+	            { field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payee' },
+	            { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+	            { field: 'InvType', title: "@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.Group"},
+                { field: 'InvTypeDts', title: "付款类别明细"},
+	            { field: 'BankAccount', title: '付款账户' },
+	            { field: 'Remark', title: '@General.Resource.Common.Remark' }
+	            ]
+	        ],
+            fit:true,
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        toolbar: "#CRTtoolbar"
+	    });
+	});
+
+	function Search() {
+		$("#CRT_List").datagrid("load",$("#CRT_Form").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#CRT_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#CRT_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

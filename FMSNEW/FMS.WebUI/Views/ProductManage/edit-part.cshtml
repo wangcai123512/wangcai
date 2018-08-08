@@ -1,0 +1,41 @@
+﻿
+
+
+<div class="panel panel-default" id="productDetail">
+    <div class="panel-heading">产品明细</div>
+    <div class="panel-body">
+        <div class="alert alert-success" role="alert" id="message" style="display:none"></div>
+        <div class="row">
+            <div id="tree" class="col-md-5"></div>
+
+            <div id="tree-detail" class="col-md-5">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon">名称 </span>
+                            <input type="text" id="nodeNames" class="form-control" required name="nodeName" readonly>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon"> 数量 </span>
+                            <input type="number" id="count" class="form-control" required name="count" placeholder="" max="100">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <button onclick="Update()" type="button" class="btn  btn-primary button-radius">
+                        更新数量
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

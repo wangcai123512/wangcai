@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "CompanySetting";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@*<h2>CompanySetting</h2>*@
+@model FMS.Model.T_CompanySetting
+<form id="CompanySettingForm" method="post">
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]" />
+<input type="hidden" id = "UsingCurrency" value="@(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model.CompanyCy))" />
+<table id="CompanySettingList" class="Porps">
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.StandardCoin:
+        </td>
+        <td>
+            <input id="StandardCoin"  name="StandardCoin" style="width: 200px;" value="@Model.StandardCoin">
+            </input>
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.ReportStartDate:
+        </td>
+        <td>
+            <input type="text" id="Year" value="@Model.Year" style="width:80px" name="Year"/>年
+            <input id="Month" class="easyui-combobox"  name="Month" style="width: 80px;" value="@Model.Month"></input>月
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.CompanyCy:
+        </td>
+        <td>
+            <input id="CompanyCy" name="CompanyCy" value="" style="width: 200px" />
+        </td>
+    </tr>
+</table>
+</form>
+<script>
+    $(function(){
+        //combobox
+        $('#StandardCoin').combobox({
+            url: '/InternalAPI/GetCommonCurrency',
+            valueField: 'value',
+            textField: 'text',
+            onSelect:function(rec)
+            {
+                if(rec.value=="-1")
+                {
+                    $('#StandardCoin').combobox('clear');
+                    $('#StandardCoin').combobox('reload','/InternalAPI/GetCurrency'); 
+                    $('#StandardCoin').combobox('setValue',"@Model.StandardCoin");
+                }
+            },
+            onLoadSuccess:function(data)
+            {
+                var flag = true;
+                $(data).each(function(i,n){
+                    if(n.value == "-1")
+                    {
+                        flag = flag & false;
+                    }
+                    else {
+                        flag = flag & true;
+                    }
+                    
+                });
+                if (flag) {
+                        $('#StandardCoin').combobox('showPanel');
+                    }
+            }
+        });
+
+        //combobox
+        $('#Month').combobox({
+        url:'@Url.Content("~/Json/Month.json")',
+        valueField:'value',
+        textField:'text',
+        method:'get'
+        });
+        
+        //numberbox
+        $('#Year').numberbox({
+            min: 0,
+        });
+
+        //combogrid
+       $('#CompanyCy').combogrid({
+            panelWidth: 200,
+            multiple: true,
+            idField: 'value',
+            textField: 'text',
+            url: '/InternalAPI/GetCommonCurrency',
+            method: 'get',
+            columns: [[
+                {field:'ck',checkbox:true},
+                {field:'text',title:'Code',width:100}
+            ]],
+            onSelect:function(index,row){ 
+                if(row.value==-1)
+                {
+                    var data=$("#CompanyCy").combogrid("getValues");
+                    data.splice(data.length-1,1);
+                    $.ajax({
+                        url:'/InternalAPI/GetCurrency',
+                        type:'get',
+                        dataType:'Json',
+                        success: function(rec)
+                        {
+                         $('#CompanyCy').combogrid('grid').datagrid('loadData',rec);
+                        }
+                      });
+                    $("#CompanyCy").combogrid('setValues',data);
+                }
+             },
+            fitColumns: true
+});
+        $("#CompanyCy").combogrid('setValues',JSON.parse($("#UsingCurrency").val()));
+        
+        });
+</script>

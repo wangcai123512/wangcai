@@ -1,0 +1,840 @@
+﻿@{
+    ViewBag.Title = "BusinessPartner";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+@model FMS.Model.T_BusinessPartner
+
+@{ List<FMS.Model.T_BankAccount> BankList = ViewBag.BankList;
+}
+<style type="text/css">
+    .AddOn
+    {
+        color: Black;
+        width: 30%;
+        font-size: 12px !important;
+    }
+    .edit-input
+    {
+        width: 100% !important;
+    }
+</style>
+
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            @*<ul class="nav" style="">
+                <li class="active"> 
+                <a onclick="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'">
+                <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px; color: #08C">往来公司登记</span>
+                 <span class="sidebar-title-tray"></span> </a>
+                  </li>
+              
+                <li>
+                 <a onclick="javascript:window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location='/BusinessPartnerSetting/Index'">
+                 <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>
+                 <span class="sidebar-title" style="font-size: 14px">往来公司查询</span>
+                 </a> </li>
+                <li> 
+                <a onclick="javascript:window.location = '#'" href="javascript:window.location = '#'">
+                <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>
+                <span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span>
+                </a>
+                </li>
+            </ul>*@
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                        @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                    </ul>
+                </li>
+                <li>
+                    <a class="accordion-toggle menu-open" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                    <ul id="sidecompany" class="nav sub-nav">
+                        <li class="active"> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'"><span class="sidebar-title" style="font-size: 14px; color: #08C">往来公司登记</span></a></li>
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                 <form class="cmxform" id="BusinessPartner" method="Post"  >
+                    <div class="col-md-12"> 
+                        @Html.Hidden("BP_GUID", Model.BP_GUID)
+
+                        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline" id="PageTitle">往来公司登记</span></div>
+                        <div class="col-md-12" style="margin-bottom: 20px">
+                            <div class="form-group">
+                                <div class="col-md-9 pt5">
+                                    <div class="cBox cBox-inline">
+                                        @if (@Model.IsCustomer)
+                                        { 
+                                                <input type="checkbox" id="IsCustomer" name="IsCustomer"  checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" id="IsCustomer" name="IsCustomer"  />
+                                        }
+                                                                                                       
+                                        <label for="IsCustomer" style="color: #000000; font-size: 14px">客户</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                            
+                                            @if (@Model.IsSupplier)
+                                            { 
+                                                <input type="checkbox" id="IsSupplier" name="IsSupplier"  checked />
+                                            }
+                                            else
+                                            {
+                                            <input type="checkbox" id="IsSupplier" name="IsSupplier"  />
+                                            }
+                                        <label for="IsSupplier" style="color: #000000; font-size: 14px">供应商</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+
+                                        @if (@Model.IsPartner)
+                                        {
+                                        <input type="checkbox" id="IsPartner" name="IsPartner" checked />
+                                        }
+                                        else
+                                        {
+                                        <input type="checkbox" id="IsPartner" name="IsPartner" />
+                                        }
+                                        <label for="IsPartner" style="color: #000000; font-size: 14px">合作伙伴</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">公司中文全称</span>
+                                    <input type="text" id="ChineseFullName" name="ChineseFullName" class="form-control money" maxlength="50" autocomplete="off"
+                                            placeholder="必须输入" required="true" value="@Model.ChineseFullName"  />  
+                                </div> 
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;公司简称&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="Name" name="Name" class="form-control money" maxlength="50" autocomplete="off"
+                                            placeholder="必须输入"  required="true" value="@Model.Name">
+                                </div>
+                            </div>
+                           
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;公司地址&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="RegisteredAddress" name="RegisteredAddress" class="form-control money" maxlength="100" autocomplete="off"
+                                            placeholder="选填" value="@Model.RegisteredAddress">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="Remark" name="Remark" class="form-control money" maxlength="100" autocomplete="off"
+                                            placeholder="" value="@Model.Remark">
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0;width: 100%">
+                                     
+                                    <input class="file_upload" id="certificate" name="certificate" type="file"   >
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-6" style="padding-left: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">公司英文全称</span>
+                                    <input type="text" id="EnglishFullName" name="EnglishFullName" class="form-control money" maxlength="50" autocomplete="off"
+                                           value="@Model.EnglishFullName" placeholder="选填">
+                                </div>
+                            </div>
+                             <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税号&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="TaxNumber" name="TaxNumber" class="form-control money" maxlength="100" autocomplete="off"
+                                            placeholder="选填" value="@Model.TaxNumber" placeholder="选填" >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;网址&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="Website" name="Website" class="form-control money" maxlength="100" autocomplete="off"
+                                            placeholder="选填" value="@Model.Website">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;所属行业&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="IndustryInvolved" name="IndustryInvolved">
+                                        <option selected="selected">==请选择==</option>
+                                        <option value="机构组织">机构组织</option>
+                                        <option value="农林牧渔">农林牧渔</option>
+                                        <option value="医药卫生">医药卫生</option>
+                                        <option value="建筑建材">建筑建材</option>
+                                        <option value="冶金矿产">冶金矿产</option>
+                                        <option value="石油化工">石油化工</option>
+                                        <option value="水利水电">水利水电</option>
+                                        <option value="交通运输">交通运输</option>
+                                        <option value="信息产业">信息产业</option>
+                                        <option value="机械机电">机械机电</option>
+                                        <option value="轻工食品">轻工食品</option>
+                                        <option value="服装纺织">服装纺织</option>
+                                        <option value="专业服务">专业服务</option>
+                                        <option value="安全防护">安全防护</option>
+                                        <option value="环保绿化">环保绿化</option>
+                                        <option value="旅游休闲">旅游休闲</option>
+                                        <option value="电子电工">电子电工</option>
+                                        <option value="办公文教">办公文教</option>
+                                        <option value="玩具礼品">玩具礼品</option>
+                                        <option value="家居用品">家居用品</option>
+                                        <option value="物料专材">物料专材</option>
+                                        <option value="包装用品">包装用品</option>
+                                        <option value="体育用品">体育用品</option>
+                                        <option value="办公家具">办公家具</option>
+                                    </select> 
+                                </div>
+                            </div>
+                           
+                        </div>
+
+                        <div class="col-md-12" style="margin: auto">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="height: 35px">
+                                    <div class="col-md-2" style="margin: auto;margin-left:-20px">
+                                        <span>银行信息</span>
+                                    </div>
+                                    <div class="col-md-10" style="margin: auto; text-align:right">
+                                        <a onclick="BankAccountAdd()" class="btn btn-primary" style=" font-size: 10px;margin-top:-8px">增加新账户</a>
+                                    </div>                                     
+                                </div>
+
+                                <div class="panel-body"  id="bankList" name='bankList'>
+                                    @if (BankList != null)
+                                    {
+                                        foreach (var bank in BankList)
+                                        {
+                                                <div class="col-md-12" >
+                                                <div class="col-md-11" >
+                                                    <a id="@bank.Account" href='#' onclick="BankAccountAdd(this)"  class="list-group-item"> @bank.AccountAbbreviation </a>  
+                                                    @Html.Hidden("hid" + bank.Account, Json.Encode(bank))
+                                                </div> 
+                                                <div class="col-md-1" style= "padding-left: 0px; padding-top:8px">
+                                                    <a onclick="RemoveBankInfo('@bank.BA_GUID',this)" class="btn badge" style="left:-10px">删除</a> 
+                                                    </div> 
+                                         
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                            <span id='noBank'>无</span>
+                                    }                           
+                            </div>
+                            
+                            </div>                           
+                        </div>
+                   </div>
+
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-6" style="margin: auto">
+                            <button onclick="BPSubmit()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">提交</button>
+                        </div>
+                        <div class="col-md-6" style="margin: auto">
+                        
+                            <button id="btnReturn"  type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>
+                        </div>
+                    </div>
+                </form>
+                  
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true" style="border-radius: 4px;">
+    <div class="modal-dialog" style="z-index: 10000">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    银行信息登记
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="editBankId" name="editBankId" value="" />
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <form class="cmxform" id="bankInfoForm">
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group " style="margin: 0">
+                                    <span class="input-group-addon AddOn">账号</span>
+                                    <input type="text" class="BankAccount form-control edit-input" maxlength="20" autocomplete="off"
+                                        placeholder="" id="Account" name="Account" />
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group" style="margin: 0">
+                                    <span class="input-group-addon AddOn">账户简称</span>
+                                    <input type="text" class="AccountAbbreviation form-control edit-input" maxlength="20"
+                                        autocomplete="off" placeholder="" id="AccountAbbreviation" name="AccountAbbreviation" />
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group" style="margin: 0">
+                                    <span class="input-group-addon AddOn">账户名称</span>
+                                    <input type="text" class="Account form-control edit-input" maxlength="20" autocomplete="off"
+                                        placeholder="" id="AccountName" name="AccountName" />
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group" style="margin: 0">
+                                    <span class="input-group-addon AddOn">银行名称</span>
+                                    <input type="text" class="AccountName form-control edit-input" id="B_GUID" name='B_GUID' />
+                                </div>
+                            </div>
+                        </div>
+
+                            
+
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon AddOn">SWIFT码</span>
+                                    <input type="text" class="SwiftCode form-control edit-input" placeholder="" required="true"
+                                        id="SwiftCode" name="SwiftCode" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                            <div class="col-md-6" style="">
+                                <div class="form-group">
+                                    <div class="input-group" style="margin: 0">
+                                        <span class="input-group-addon AddOn">支行名称</span>
+                                        <input type="text" class="AccountName form-control edit-input" id="OtherBank" name='OtherBank' />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon AddOn">银行地址</span>
+                                    <input type="text" class="BankAddress form-control edit-input" required="true" id="BankAddress"
+                                        name="BankAddress" />
+                                </div>
+                            </div>
+                        </div>
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="input-group" style="width: 100%">
+                                    <span class="input-group-addon AddOn">货币</span>
+                                    <select id="AccountCurrency" name="AccountCurrency">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6" style="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon AddOn">备注</span>
+                                    <input type="text" class="Remark form-control edit-input" placeholder="" required="true"
+                                        id="txtBankRemark" name="txtBankRemark" />
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button type="button" class="btn btn-sm bg-purple2" onclick="SubmitBank()">
+                    保存
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div> 
+
+<script type="text/javascript">
+    (function ($) {
+        $.getUrlParam
+         = function (name) {
+             var reg
+              = new RegExp("(^|&)" +
+              name + "=([^&]*)(&|$)");
+             var r
+              = window.location.search.substr(1).match(reg);
+             if (r != null) return unescape(r[2]); return null;
+         }
+    })(jQuery);
+    jQuery(document).ready(function () {
+        var SelectConfigSetting = {
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择'
+        };
+        $("#IndustryInvolved").multiselect(SelectConfigSetting);
+        $("#IndustryInvolved").val('@Model.IndustryInvolved');
+        $("#IndustryInvolved").multiselect("refresh");
+        //        var industryInvolved = '@Session["IndustryInvolved"]';
+        //        $("#IndustryInvolved option[text='信息产业']").attr("selected", true)
+        //$("#IndustryInvolved").find("option[text='industryInvolved']").attr("selected", true);
+
+        //        $("#IndustryInvolved").multiselect({
+        //            multiple: true,
+        //            header: false,
+        //            selectedList: 5,
+        //            minWidth: 160,
+        //            height: 100
+        //        });
+        var Request = new UrlSearch(); //实例化
+
+        if (Request.IsSupplier == 1) {
+            $("#IsSupplier").attr("checked", true);
+        }
+        if (Request.IsPartner == 1) {
+            $("#IsPartner").attr("checked", true);
+        }
+        if (Request.IsCustomer == 1) {
+            $("#IsCustomer").attr("checked", true);
+        }
+
+        if ("@Model.IndustryInvolved" == "") {
+            $("#IndustryInvolved").val('==请选择==');
+        }
+        else {
+            $("#IndustryInvolved").val('@Model.IndustryInvolved');
+        }
+        //        $('#IndustryInvolved').multiselect("refresh");
+
+
+
+        $.extend({
+            getUrlVars: function () {
+                var vars = [], hash;
+                var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                for (var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            },
+            getUrlVar: function (name) {
+                return $.getUrlVars()[name];
+            }
+        });
+
+        $('#btnReturn').click(function () {
+            if ($.getUrlVar("op") == "edit") {
+                window.location = '../BusinessPartnerSetting/Index';
+            }
+            else {
+                history.go(-1);
+            }
+        })
+        if ($.getUrlVar("op") == "edit") {
+            $('#PageTitle').html("往来公司编辑");
+
+        }
+
+        $('#AccountCurrency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false
+
+        });
+        $("#AccountCurrency").multiselect('dataprovider', currency);
+        $("#AccountCurrency").multiselect('select', standardCoin);
+
+        FileInputBaseSetting("#certificate")
+        $("#certificate").fileinput('refresh', {
+
+            autoReplace: true,
+            uploadUrl: '/InternalAPI/FileUpload',
+
+            allowedFileExtensions: ['jpg', 'png', 'gif'],
+            uploadExtraData: function () { // callback example
+                var out = {};
+                out['frGuid'] = $("#BP_GUID").val();
+                //out['number'] = $(divName + ' .Pnumber').val();
+                return out;
+            }
+        });
+    });
+
+    function UrlSearch() {
+        var name, value;
+        var str = location.href; //取得整个地址栏
+        var num = str.indexOf("?")
+        str = str.substr(num + 1); //取得所有参数   stringvar.substr(start [, length ]
+
+        var arr = str.split("&"); //各个参数放到数组里
+        for (var i = 0; i < arr.length; i++) {
+            num = arr[i].indexOf("=");
+            if (num > 0) {
+                name = arr[i].substring(0, num);
+                value = arr[i].substr(num + 1);
+                this[name] = value;
+            }
+        }
+    } 
+
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+
+    function BPSubmit() {
+        if (!$('#IsCustomer')[0].checked && !$('#IsPartner')[0].checked && !$('#IsSupplier')[0].checked) {
+            alert("请选择客户、供应商或者合作伙伴！");
+            return false;
+        }
+
+        if (!$("#BusinessPartner").valid()) {
+            return false;
+        }
+
+        var banks = new Array();
+
+        var lst = $('#bankList').find('[id^=hid]');
+        for (var i = 0; i < lst.length; i++) {
+            banks.push(JSON.parse(decodeURIComponent(lst[i].attributes['value'].value)));
+        }
+
+        var param = new Array();
+        var bpartner = conveterParamsToJson(decodeURIComponent($('#BusinessPartner').serialize().replace(/\+/g, '%20')));
+        if (bpartner.IsCustomer == 'on') {
+            bpartner.IsCustomer = true;
+        }
+        if (bpartner.IsSupplier == 'on') {
+            bpartner.IsSupplier = true;
+        }
+        if (bpartner.IsPartner == 'on') {
+            bpartner.IsPartner = true;
+        }
+        param = { bankItems: banks, partner: bpartner };
+        ////
+        var alllist;
+        $.ajax({
+            url: "/InternalAPI/GetPartnersAll",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                for (var i = 0; i < d.length; i++) {
+                    d[i]["id"] = d[i]["value"];
+                    d[i]["value"] = d[i]["label"];
+                 }
+                alllist = d;
+            }
+        });
+        
+        var log = $("#Name").val();
+        for (var j = 0; j < alllist.length; j++) {//通过length属性获取数组长度，循环遍历数组元素
+            if ($("#BP_GUID").val() == "") {
+                if (alllist[j]["value"] == log) {//通过==比较数组元素是否和变量a的值相等
+                    alert("该公司简称已存在，请输入其他公司简称");
+                    return false;
+                }
+            } else {
+                if (alllist[j]["value"] == log) {//通过==比较数组元素是否和变量a的值相等
+                    if (log == "@Model.Name") {//通过==比较数组元素是否和变量a的值相等
+                    } else {
+                        alert("该公司简称已存在，请输入其他公司简称");
+                        return false;
+                    }
+                    
+                }
+               
+            }
+            
+        }
+        ////
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "/BusinessPartnerSetting/UpdPartner",
+            data: JSON.stringify(param),
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            success: function (data) {
+                var rs = JSON.parse(data);
+                if (rs.Result) {
+                    $('#certificate').fileinput('upload');
+                    alert("提交成功！");
+                    var IsCust = $.getUrlParam('IsCustomer');
+                    var IsSupplier = $.getUrlParam('IsSupplier');
+                    var IsPartner = $.getUrlParam('IsPartner');
+                    var Style = $.getUrlParam('addStyle');
+                    var CustomerType = $.getUrlParam('CustomerType');
+                    var name = $('#Name').val();
+                    name = encodeURI(name);
+                    var rPer = rs.guid;
+                    if (IsCust == 1) {
+                        if (Style != undefined) {
+                            window.location.href = '/IncomeRecord/Temporary?RPer=' + rPer + '&name=' + encodeURI(name) + '&addStyle=' + Style;
+                        }else {
+                            window.location.href = '/ReceivablesRecord/ReceivablesRecord';
+                        }
+                        if (CustomerType == 1) {
+                            window.location.href = '/DirectMaterialPurchasingQuery/Index?RPer=' + rPer + '&name=' + encodeURI(name) + '&CustomerType=' + Style;
+                        } else if(CustomerType == 2) {
+                            window.location.href = '/IndirectMaterialPurchasingQuery/Index?RPer=' + rPer + '&name=' + encodeURI(name) + '&CustomerType=' + Style;
+                        } else if (CustomerType == 3) {
+                            window.location.href = '/AssetPurchaseQuery/Index?RPer=' + rPer + '&name=' + encodeURI(name) + '&CustomerType=' + Style;
+                        } else if (CustomerType == 4) {
+                            window.location.href = '/IncomeQuery/Index';
+                        }
+                    }
+
+
+
+                    if (IsSupplier == 1) {
+                        window.location.href = '/ExpenseRecord/Temporary?RPer=' + rPer + '&name=' + encodeURI(name) + '&addStyle=' + Style;
+                    }
+                    if (IsPartner == 1) {
+                        
+                    }
+                    
+                }
+                else {
+                    alert("提交失败！" + rs.Msg);
+                }
+
+            },
+            error: function (err) {
+                alert(err);
+            }
+
+        });
+        
+        if ($('#PageTitle').html().indexOf("编辑") < 0) {
+            $('#BusinessPartner')[0].reset();
+            $('#bankList').html(" <span id='noBank'>无</span>");
+
+        }
+        
+        return false;
+    }
+
+    function BankAccountAdd(obj) {
+        if (obj == null) {
+            $('.modal-body :text').val("")
+            $('.modal-body #editBankId').val("");
+        }
+        else {
+            $('#editBankId').val(obj.id);
+             
+            var recipient = $("#bankList").find('#hid' + obj.id).attr('value')
+
+            var obj = JSON.parse(recipient);
+
+            for (var key in obj) {
+                if (key == 'AccountCurrency') {
+                    $("#AccountCurrency").multiselect('select', obj[key]);
+                }
+                else {
+                    $('.modal-body #' + key).val(decodeURIComponent(obj[key]))
+                }
+            }
+        }
+        $('#myModal').modal({ show: true, backdrop: 'static' });
+    }
+
+   
+
+    function SubmitBank() {
+        //serializeArray
+        var bankInfo = $("#bankInfoForm").serialize();
+        var id = $('#Account').val();
+
+        if (!BankCheck()) {
+            return false;
+        }
+
+        var bankItem;
+        var bankHide;
+        var isNew;
+        var item = $("#bankList #" + id);
+        var isReplace = false;
+
+        var editBId = $('#editBankId').val();
+        if (editBId == "" && item.length > 0) {
+            alert("存在相同的账号,不可提交");
+            return false;
+        }
+
+        if (editBId != id && item.length > 0) {
+            alert("存在相同的账号,不可提交");
+            return false;
+        }
+
+        if (editBId == "") {
+            bankItem = document.createElement("a");
+            bankHide = document.createElement("hide");
+            isNew = true;
+        }
+        else {
+            bankItem = $("#bankList #" + editBId)[0];
+            bankHide = $("#bankList #hid" + editBId)[0];
+            isNew = false;
+        }
+        bankItem.id = $('#Account').val();
+
+        bankItem.innerHTML = $('#AccountAbbreviation').val();
+        // bankItem.setAttribute('data-whatever', JSON.stringify(bankInfo));
+        bankItem.setAttribute('href', '#');
+        bankItem.setAttribute('onclick', 'BankAccountAdd(this)');
+
+        bankItem.className = 'list-group-item';
+
+        bankHide.id = "hid" + $('#Account').val();
+        bankHide.setAttribute('name', bankHide.id)
+        bankHide.setAttribute('value', JSON.stringify(conveterParamsToJson(bankInfo))); 
+
+        if (isNew) {
+
+            $('#bankList').append(' <div class="col-md-12" ><div class="col-md-11" >' + bankItem.outerHTML + bankHide.outerHTML + '</div> <div class="col-md-1" style= "padding-left: 0px; padding-top:8px">'
+                                      + ' <a onclick="RemoveBankInfo1(this)" class="btn badge" style="left:-10px">删除</a> </div></div></div>')
+        }
+
+        if ($("#noBank").length > 0) {
+            $("#noBank").remove();
+        }
+        $('#editBank').val("");
+        $('#myModal').modal('hide');
+
+    }
+
+    function BankCheck() {
+        var id = $('#Account').val();
+
+        var checkDiv = $("#bankInfoForm");
+
+        if (checkDiv.find("#Account").val().trim() == "") {
+            alert('请输入银行账号');
+            return false;
+        }
+
+        if (checkDiv.find("#AccountAbbreviation").val().trim() == "") {
+            alert('请输入账户简称');
+            return false;
+        }
+
+        if (checkDiv.find("#AccountName").val().trim() == "") {
+            alert('请输入账户名称');
+            return false;
+        }
+        if (checkDiv.find("#B_GUID").val().trim() == "") {
+            alert('请输入银行名称');
+            return false;
+        }
+        if (checkDiv.find("#SwiftCode").val().trim() == "") {
+            alert('请输入SWIFT码');
+            return false;
+        }
+
+        if ($("#bankInfoForm #BankAddress").val().trim() == "") {
+            alert('请输入银行地址');
+            return false;
+        }
+        return true;
+    }
+    function RemoveBankInfo1(obj) {
+        if (confirm("确认要删除？")) {
+            obj.parentElement.parentElement.remove()
+        }
+     }
+    function RemoveBankInfo(id,obj) {
+        if (confirm("确认要删除？")) {
+            $.ajax({
+                url: '/BusinessPartnerSetting/RemoveBankInfo?id=' + id, // 跳转到 action    
+                data: {
+                    id: id
+                },
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function (data) {
+                    $('#bankList').bootstrapTable('refresh');
+                   RemoveBankInfo1(obj)
+                    alert("删除成功")
+                },
+                error: function () {
+
+                    alert("删除失败");
+                }
+            });  
+
+        }
+    }
+</script>

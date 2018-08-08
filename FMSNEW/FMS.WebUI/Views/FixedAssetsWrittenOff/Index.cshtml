@@ -1,0 +1,68 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="AssetsList"></table>
+
+<script>
+	var LinkFormatter = function (value, row) {
+		var Para = '"' + value + '"';
+		var scrap = ',"Scrap"';
+		var sell = ',"Sell"';
+		if (ChangeDateFormat(row.ScrapDate) == '1-01-01') {
+			return "<a onclick='ChangeAssetsStat(" + Para + scrap + ")' >@FMS.Resource.FixedAssets.FixedAssets.Scrap</a>   "
+		 + "<a onclick='ChangeAssetsStat(" + Para + sell + ")' >@FMS.Resource.FixedAssets.FixedAssets.Sell</a> ";
+		} else {
+			return "<a onclick='ChangeAssetsStat(" + Para + sell + ")' >@FMS.Resource.FixedAssets.FixedAssets.Sell</a> ";
+		}
+	};
+
+	$(function () {
+		$('#AssetsList').datagrid({
+			url: "/FixedAssetsWrittenOff/GetAssetses",
+			rownumbers: true,
+			singleSelect: true,
+			pagination: true,
+			columns: [[
+					{ field: 'No', title: '@FMS.Resource.FixedAssets.FixedAssets.No' },
+					{ field: 'Name', title: '@General.Resource.Common.Name' },
+					{ field: 'AssetsCost', title: '@FMS.Resource.FixedAssets.FixedAssets.AssetsCost', align: 'right', formatter: DecimalFmter },
+					{ field: 'PurchaseDate', title: '@FMS.Resource.FixedAssets.FixedAssets.PurchaseDate', formatter: function (value, row, index) { return ChangeDateFormat(value); } },
+					{ field: 'RegisterDate', title: '@FMS.Resource.FixedAssets.FixedAssets.RegisterDate', formatter: function (value, row, index) { return ChangeDateFormat(value); } },
+					{ field: 'A_GUID', formatter: LinkFormatter }
+					]]
+		});
+	});
+
+	function ChangeAssetsStat(id, flag) {
+		var msg ="";
+		if (flag == 'Scrap') {
+			msg = "@FMS.Resource.FixedAssets.FixedAssets.ConfirmScrap";
+		}
+		else if (flag == 'Sell') {
+			msg = "@FMS.Resource.FixedAssets.FixedAssets.ConfirmSell";
+		}
+		$.messager.confirm("Confirm", msg ,
+		function (r) {
+			if (r) {
+				$.ajax({
+					url: "/FixedAssetsWrittenOff/UpdAssetsStat",
+					data : "&flag=" + flag + "&id=" + id,
+					type : "POST",
+					success : function (data) {
+						$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+						if ($.parseJSON(data).Result) {
+							$('#AssetsList').datagrid("reload");
+						}
+					},
+					error : errorHandle
+				});
+			}
+		});
+	}
+</script>
+
+
+
+

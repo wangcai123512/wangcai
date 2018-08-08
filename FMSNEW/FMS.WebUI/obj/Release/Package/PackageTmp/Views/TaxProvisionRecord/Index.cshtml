@@ -1,0 +1,466 @@
+﻿@using FMS.Model
+@{ ViewBag.Title = "利润表"; Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+
+
+<div id="main" style="margin-top: 100px; background-color: #FFF;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li class="active"> <a onclick="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'" href="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px; color: #08C">记录税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+                <li> <a onclick="javascript:window.location = '/ExpenseQuery/TaxQuery'" href="javascript:window.location = '/ExpenseQuery/TaxQuery'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">查询税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+                <li> <a><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <script type="text/javascript" src="@Url.Content("~/js/views/Report/report.js?v=2")"></script>
+
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF;">
+            <div id="content">
+                <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">记录增值税</span></div>
+                @*@Html.Partial("_ReportDateTemplate")*@ 
+                <div class="col-md-12" style="margin: auto">
+                    <div class="col-md-4" style="margin-left:5%">
+                        <input type="hidden" id="hidDate" name="salesPID" />
+                        <div class="form-group">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000;">月度</span>
+                                <select id="months" name="months" class="report-date"></select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    
+                    <div class="col-md-4" style="margin-left:5%">
+
+                        <div class="form-group">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000;">年度</span>
+                                <select id="years" name="years" class="report-date"></select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-12" style="margin: auto;margin-left:5%">
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary pull-left button-radius" id="btnQuery">
+                            查询
+                        </button>
+
+                    </div>
+                    
+                </div>
+                <div id="Reports" style="margin-left:5%;">
+                    <div class="col-lg-4"><table id="Reports1"></table></div>
+                    
+                    <div class="col-lg-4" style="margin-left:6%;"><table id="Reports3"></table></div>
+                </div>
+                <div class="col-md-12">
+
+                    <table id="dataList" style="font-size: 12px"></table>
+                </div>
+
+            </div>
+           
+        </div>
+ 
+
+    </section>
+</div>
+<div id="Reports">
+    <table id="Reports1"></table>
+    @*<table id="Reports2"></table>*@
+    <table id="Reports3"></table>
+</div>
+<table id="IncomeStatements"></table>
+<div class="modal fade" id="Voucher" tabindex="-1" role="dialog" aria-labelledby="AmountUsed"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    凭证
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-md-12" style="margin-bottom: 5px; text-align: center">
+                        <span style="font-size: 30px; font-weight: 900; color: #000000; text-decoration: underline">记账凭证</span>
+                    </div>
+
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4" style="text-align: center">
+                            <span id='VDate'></span>
+                        </div>
+                        <div class="col-md-4" style="text-align: center;">
+                            <span>本币：@Session["Currency"] 单位：元</span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                        <span>核算单位：</span>
+                        @Session["FullName"]
+                        <span id="num" style="float:right"></span>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 10px">
+                        <table id="VoucherTable" class="table table-striped table-bordered table-condensed" style="font-size: 12px"></table>
+                    </div>
+                    <div class="col-md-12" style="margin-left:-10px">
+                        <div class="col-md-2">
+                            <span>财务主管:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>记账:</span>
+                            @Session["NickName"]
+                        </div>
+                        <div class="col-md-2">
+                            <span>复核:</span>
+                            @Session["NickName"]
+                        </div>
+
+                        <div class="col-md-2">
+                            <span>出纳:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>制单:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>经办人:</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        var param = new Object();
+        $('#Reports1').bootstrapTable({
+            url: "/TaxProvisionRecord/GetTaxReportList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "Rep_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+                 { field: 'createDate', title: '月度', formatter: LinkDateHandle },
+                
+                 { field: 'isend' },
+
+                 { field: 'isfanjie', formatter: LinkHandle1}
+                
+                //{ field: 'TDA_GUID', formatter: LinkHandle1 }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { reportDate: "", type: "month" }
+        });
+
+
+        $('#Reports3').bootstrapTable({
+            url: "/TaxProvisionRecord/GetTaxReportList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "Rep_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+    
+                //{ field: 'rep_date', title: '年度', formatter: LinkDateHandle },
+                //{ field: 'Rep_GUID',formatter: LinkHandle1 }
+                 { field: 'createDate', title: '年度', formatter: LinkDateHandle },
+                 //{ field: 'isend' },
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { reportDate: "", type: "year" }
+        });
+
+        reportViewUrl = "/TaxProvisionRecord/TaxProvisionRecord";
+        DateInit('TaxProvisionRecord');
+        $('#btnQuery').click(function () {
+            DataBind('TaxProvisionRecord', 'GetTaxReportList')
+        })
+
+
+
+    });
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined" || s == '0') {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+    var LinkHandle1 = function (value, row, index) {
+        var affDate2 = row.createDate;
+        var status = row.isend;
+        //var type = row.period_type;
+        var period = row.Type;
+        var TaxID = row.TaxID
+        var link = "";
+        var link1 = "";
+       
+            if (row.isend == '未结转') {
+                
+                var link1 = "";
+
+            } else {
+                link = " <a class='linkbtn' style='cursor:pointer;color:blue'  onclick='settled(\"" + affDate2 + '","' + status + '","' + TaxID + '","' + period + "\")'>反结转</a> ";
+                /*var link1 = "<a class='linkbtn'   onclick='GetVoucher(\"" + value + '","' + affDate2 + '","' + type + "\")'>凭证</a> ";*/
+
+            }
+       
+        
+        return link+link1;
+    };
+
+    var LinkDateHandle = function (value, row) {
+
+        if (row.period_type == 'month') {
+            if (row.isend == '未结转') {
+                link = "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.createDate + '","' + row.isend + '","' + row.period_type + "\")'>" + row.createDate + "</a>";
+            } else {
+                //link = row.createDate
+                link = "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.createDate + '","' + row.isend + '","' + row.period_type + "\")'>" + row.createDate + "</a>";
+            }
+        } else {
+           
+                link = "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.createDate + '","' + row.isend + '","' + row.period_type + "\")'>" + row.createDate + "</a>";
+            
+        }
+        
+        
+        //return "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.createDate + '","' + row.period_type + '","' + row.XiaoAmount + "\")'>" + row.rep_date + "</a>";
+        return link;
+    };
+    function ShowDetailsThree(a, b,c) {
+        if (b == '未结转') {
+            b = 0;
+        } else {
+            b = 1;
+        }
+        //window.location.href = reportViewUrl + "?id=" + a + "&reportDate=" + b + "&type=" + c + "&status=" + d + "&period=" + e
+        window.location.href = reportViewUrl + "?reportDate=" + a + "&isend=" + b + "&period=" + c
+
+    }
+
+   
+    function settled(RepDate, status, TaxID, period) {
+        $.ajax({
+            url: "/TaxProvisionRecord/isFinish?RepDate=" + RepDate + "&status=" + status ,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data).Result) {
+                    if (confirm('确认修改?')) {
+                        $.ajax({
+                            url: "/TaxProvisionRecord/DeleteTaxProvisionRecord?TaxID=" + TaxID + "&RepDate=" + RepDate,
+                            type: "POST",
+                            success: function (data) {
+                                //if ($.parseJSON(data).Result) {
+                                //    //alert($.parseJSON(data).Msg);
+                                //    alert('反结算成功');
+                                //    location.href = '/TaxProvisionRecord/Index';
+                                //}
+                                //alert($.parseJSON(data).Msg);
+                                alert('反结转成功');
+                                location.href = '/TaxProvisionRecord/Index';
+                            },
+                            error: function () {
+                                alert("操作失败");
+                            }
+
+                        });
+                    }
+                } else {
+                    if (status == "已结转") {
+                        alert("请先结转之前的月度账单！");
+                        location.href = '/TaxProvisionRecord/Index';
+                    } else {
+                        alert("请先反结转之前的月度账单！");
+                    }
+                }
+            },
+            error: function () {
+                alert("操作失败");
+            }
+        });
+
+    }
+    function GetVoucher(id, rep_date, type) {
+        $('#VoucherTable').bootstrapTable('destroy');
+        $('#VoucherTable').bootstrapTable({
+            url: "/IncomeStatement/GetRPVoucher?id=" + id + "&reportDate=" + rep_date + "&type=" + type,
+            method: 'get',
+            pageSize: 30,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: false,
+            rownumbers: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            //detailView:true,
+            columns: [
+            { field: "Summary", title: '摘要' },
+    { field: "item_name", title: '会计科目' },
+    { field: "amount_r", title: '借方金额', formatter: DecimalFmter },
+    { field: "amount_p", title: '贷方金额', formatter: DecimalFmter }
+            ],
+        });
+
+        var voucherDate
+        var num
+        $.ajax({
+            url: "/ExpenseQuery/GetVoucherID?id=" + id,
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                voucherDate = d.VDate;
+                num = d.id
+            }
+        });
+        if (type == "month") {
+            voucherDate = rep_date + "月度";
+        } else if (type == "quarter") {
+            voucherDate = rep_date + "季度";
+        } else if (type == "year") {
+            voucherDate = rep_date + "年度";
+        }
+        document.getElementById("VDate").innerText = voucherDate;
+        if (num.length == 1) {
+            num1 = '第' + '00' + num + '号' + ' - 0001/0001';
+        }
+        else if (num.length == 2) {
+            num1 = '第' + '0' + num + '号' + ' - 0001/0001';
+        } else {
+            num1 = '第' + num + '号' + ' - 0001/0001';
+        }
+        document.getElementById("num").innerText = num1;
+        $('#Voucher').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+    }
+
+    function DataBind(control, view) {
+
+        if (!DateCheck()) {
+            $('#Reports').show();
+            return false;
+        }
+        $('#Reports').hide();
+
+        reportViewUrl = "/" + control + "/" + view;
+        var param = GetParams();
+        //alert(param.type); exit;
+        $('#dataList').bootstrapTable({
+            url: "/" + control + "/GetTaxReportList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "Rep_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+                { field: 'createDate', title: '日期', formatter: LinkHandle },
+                { field: 'isend', title: '状态' },
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { reportDate: param.date, type: param.type }
+        });
+    }
+
+    function RepDateFmter(val, row) {
+        return row.Year + '/' + row.Month;
+    }
+
+    var LinkHandle = function (value, row) {
+        return "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetails(\"" + row.createDate + '","' + row.isend + '","' + row.period_type + "\")'>" + row.createDate + "</a>";
+
+    };
+
+    function ShowDetails(createDate,isend,period_type) {
+        var param = GetParams();
+        var reportViewUrl = "/TaxProvisionRecord/TaxProvisionRecord";
+        //var row = $('#dataList').bootstrapTable('getRowByUniqueId', id);
+
+
+        window.location.href = reportViewUrl + "?reportDate=" + createDate + "&isend=" + escape(isend) + "&period=" + period_type
+
+    }
+</script> 

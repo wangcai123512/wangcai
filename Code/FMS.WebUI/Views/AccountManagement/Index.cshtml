@@ -1,0 +1,161 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<a class="easyui-linkbutton" onclick="addBank();">新建</a>
+<table id="Banks"></table>
+<div id="Bank"></div>
+<div id="BankAccount"></div>
+
+<script type="text/javascript" language="javascript">
+	$(function () {
+		var curID = null;
+		var LinkFormatter = function (value, row) {
+			var Para = '"' + value + '"';
+			var Para2 = '""';
+			if (row.IsRoot) {
+				return "<a onclick='ShowAccount(" + Para2 + "," + Para + ")' >@General.Resource.Common.Add@FMS.Resource.Bank.Bank.BankAccount</a> "
+				+ "<a onclick='addBank(" + Para + ")' >@General.Resource.Common.Edit</a> " +
+				"<a onclick='DeleteBank(" + Para + ")' >@General.Resource.Common.Delete</a>";
+			} else {
+				return "<a onclick='ShowAccount(" + Para + ")' >@General.Resource.Common.Edit</a> " +
+				"<a onclick='DeleteBankAccount(" + Para + ")' >@General.Resource.Common.Delete</a>";
+			}
+		};
+		$("#Banks").treegrid({
+			//height: 430,
+			url: "/AccountManagement/GetBankAccounts",
+			idField: "ID",
+			treeField: "Name",
+			columns: [[
+						{ field: "Name", title: '@FMS.Resource.Bank.Bank.BankName' },
+						{ field: "ID", title: '', formatter: LinkFormatter }
+						]],
+			onLoadSuccess: function (data) {
+				if (curID != null) {
+					$('#Banks').treegrid("expandTo", curID)
+					.treegrid("expandAll", curID);
+				}
+			}
+		});
+
+		$("#BankAccount").dialog({
+			collapsible: false,
+			minimizable: false,
+			maximizable: false,
+			closed: true,
+			title: "@FMS.Resource.Account.Account.DetailedAcc",
+			width: 300,
+			height: 250,
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function(){Save();}
+			}]
+		});
+	});
+
+	function DeleteBank(id) {
+		$.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+			if (r) {
+				$.ajax({
+					url: "/AccountManagement/DelBank/" + id,
+					type: "POST",
+					success: function (data) {
+						$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+						if ($.parseJSON(data).Result) {
+							$('#Banks').treegrid("reload");
+						}
+					},
+					error: errorHandle
+				});
+			}
+		});
+	}
+
+	function DeleteBankAccount(id) {
+		$.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+			if (r) {
+				$.ajax({
+					url: "/AccountManagement/DelBankAccount/" + id,
+					type: "POST",
+					success: function (data) {
+						$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+						if ($.parseJSON(data).Result) {
+							$('#Banks').treegrid("reload");
+						}
+					},
+					error: errorHandle
+				});
+			}
+		});
+	}
+
+	function ShowAccount(id, bid) {
+		$("#BankAccount").dialog("center");
+		$("#BankAccount").dialog("open");
+		if (id.length > 0) {
+			$("#BankAccount").dialog("refresh", "/AccountManagement/BankAccount/" + id);
+		}
+		else {
+			$("#BankAccount").dialog("refresh", "/AccountManagement/BankAccount?bid=" + bid);
+		}
+	}
+
+	function Save() {
+		if ($("#AccountForm").form("validate")) {
+			$.ajax({
+				url: "/AccountManagement/UpdBankAccount",
+				processData: false,
+				type: "POST",
+				data: $("#AccountForm").serialize(),
+				success: function (data) {
+					$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+					if ($.parseJSON(data).Result) {
+						$('#BankAccount').dialog("close");
+						$('#Banks').treegrid("reload");
+					}
+				},
+				error: errorHandle
+			});
+		}
+		return false;
+	}
+
+	function addBank(id) {
+		$("#Bank").dialog({
+			title: ' ',
+			width: 400,
+			height: 200,
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { SubmitForm(); }
+			}]
+		});
+		if (id == null) {
+			$("#Bank").dialog("refresh", "/AccountManagement/Bank");
+		}
+		else {
+			$("#Bank").dialog("refresh", "/AccountManagement/Bank/" + id);
+		}
+		
+	}
+	function SubmitForm() {
+		if ($("#BankForm").form("validate")) {
+			$.ajax({
+				url: "/AccountManagement/UpdBank",
+				processData: false,
+				type: "POST",
+				data:$("#BankForm").serialize(),
+				success: function (data) {
+					$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+					if ($.parseJSON(data).Result) {
+						$('#Bank').dialog("close");
+						$('#Banks').treegrid("reload");
+					}
+				},
+				error: errorHandle
+			});
+		}
+		return false;
+	}
+</script>

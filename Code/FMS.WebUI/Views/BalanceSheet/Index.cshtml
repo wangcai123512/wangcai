@@ -1,0 +1,158 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<div id="Flag"  />
+<table id="BalanceSheets"></table>
+<div id="WinBeginningBalance"></div>
+<script type="text/javascript">
+    var curRepID=null;
+
+    function RepDateFmter(val, row) {
+        return row.Year + '.' + row.Month;
+    }
+
+    function LinkFmter(val) {
+        return "<a onclick='ShowDialog(\"" + val + "\")' >@General.Resource.Common.Details</a> ";
+    }
+
+    function InitPerviewDialog() {
+        $("#Flag").after("<div id='WinPerviewBalanceSheet'></div>");
+        $("#WinPerviewBalanceSheet").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.Preview@FMS.Resource.FinanceReport.FinanceReport.Report",
+            buttons: [{
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate',
+                handler: function () { GenerateBalanceSheet(); }
+            }],
+            onClose: function () { $("#WinPerviewBalanceSheet").dialog("destroy"); }
+        });
+    }
+
+    function InitBalanceSheetDialog() {
+        $("#Flag").after("<div id='WinBalanceSheet'></div>");
+        $("#WinBalanceSheet").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.BalanceSheet",
+            onClose: function () { $("#WinBalanceSheet").dialog("destroy"); }
+        });
+    }
+
+    $(function () {
+        $("#BalanceSheets").datagrid({
+            url: '/BalanceSheet/GetBalanceSheets',
+            singleSelect: true,
+            fitColumns: true,
+            pagination: true,
+            columns: [[
+                { field: 'RepNo', title: '@FMS.Resource.FinanceReport.FinanceReport.RepNo' },
+                { field: 'Year', title: '@FMS.Resource.FinanceReport.FinanceReport.RepDate', formatter: RepDateFmter },
+                { field: 'Rep_GUID', title: '', formatter: LinkFmter }
+                ]],
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate@FMS.Resource.FinanceReport.FinanceReport.Report',
+                handler: function () { ShowDialog(''); }
+            }]
+        });
+
+        $("#WinBeginningBalance").dialog({
+            maximized: true,
+            closed: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.BeginningBalanceSetting",
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () { SaveBeginningBalance(); }
+            }]
+        });
+    });
+
+    function ShowDialog(id) {
+        curRepID = id;
+        $.ajax({
+            url: '/BalanceSheet/VaildBeginningBalance',
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                if (data.Result) {
+                    if (curRepID.length == 0) {
+                        $("#WinBalanceSheet").dialog("destroy");
+                        InitPerviewDialog();
+                        $("#WinPerviewBalanceSheet").dialog("open");
+                        $("#WinPerviewBalanceSheet").dialog("refresh", "/BalanceSheet/BalanceSheet/" + id);
+                    }
+                    else {
+                        $("#WinPerviewBalanceSheet").dialog("destroy");
+                        InitBalanceSheetDialog();
+                        $("#WinBalanceSheet").dialog("open");
+                        $("#WinBalanceSheet").dialog("refresh", "/BalanceSheet/BalanceSheet/" + id);
+                    }
+                }
+                else {
+                    $.messager.alert("Message", data.Msg, 'warning', function () {
+                        $("#WinBeginningBalance").dialog("open");
+                        $("#WinBeginningBalance").dialog("refresh", '/BalanceSheet/BeginningBalance');
+                    });
+                }
+            },
+            error: errorHandle
+        });
+    }
+
+    function GenerateBalanceSheet() {
+        if ($("#VaildFlag").val().toLowerCase() == 'true') {
+            $.ajax({
+                url: '/BalanceSheet/UpdBalanceSheet',
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    if (data.Result) {
+                        $("#WinPerviewBalanceSheet").dialog("close");
+                        $.messager.alert("Msg", data.Msg, "info");
+                        $("#BalanceSheets").datagrid("reload");
+                    }
+                    else {
+                        $.messager.alert("Msg", data.Msg, "error");
+                    }
+                },
+                error: errorHandle
+            });
+        }
+        else {
+            $.messager.alert("Msg", '@FMS.Resource.FinanceReport.FinanceReport.VaildError', "error");
+        }
+    }
+
+    function SaveBeginningBalance() {
+        if (VaildBeginningBalance($("#BeginningBalance").treegrid("getFooterRows"))) {
+            $.ajax({
+                url: '/BalanceSheet/UpdBeginningBalance',
+                type: "Post",
+                async: false,
+                data: "data=" + JSON.stringify($("#BeginningBalance").treegrid("getData")),
+                dataType: "json",
+                success: function (data) {
+                    if (data.Result) {
+                        $.messager.alert("Msg", data.Msg, "info", function () {
+                            $("#WinBeginningBalance").dialog("close");
+                            InitPerviewDialog();
+                            $("#WinPerviewBalanceSheet").dialog("open");
+                            $("#WinPerviewBalanceSheet").dialog("refresh", "/BalanceSheet/BalanceSheet/" + curRepID);
+                        });
+                    }
+                    else {
+                        $.messager.alert("Msg", data.Msg, "error");
+                    }
+                },
+                error: errorHandle
+            });
+        }
+        else {
+            $.messager.alert("Msg", '@FMS.Resource.FinanceReport.FinanceReport.VaildError', "error");
+        }
+    }
+
+    function VaildBeginningBalance(data) {
+        return data[0]['Money'] == data[1]['Money'];
+    }
+</script>

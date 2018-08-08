@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "BalanceSheet";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.BalanceSheet
+<script type="text/javascript" src="@Url.Content("~/Content/EasyUI/View/datagrid-groupview.js")"></script>
+<input id="VaildFlag" type="hidden" value = '@Model.Vaild()' />
+<input id="bsDtl" type="hidden" value = '@Model.GetDetailsJSON_BS()' />
+<table class="Props">
+    <tr>
+        <td>@FMS.Resource.FinanceReport.FinanceReport.RepNo</td><td>@Model.RepNo</td>
+        <td>@FMS.Resource.FinanceReport.FinanceReport.RepDate</td><td>@Model.GetRepDate()</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+<table id="BalanceSheet"></table>
+
+<script type="text/javascript">
+    var group = null;
+
+    $(function () {
+        $.ajax({
+            url: "/Json/GeneralLedgerAccountGroup.json",
+            async: false,
+            dataType:"json",
+            success: function (data) { group = data; },
+            error: errorHandle
+        });
+        $("#BalanceSheet").datagrid({
+            columns: [[
+                        { field: 'Name', title: '@FMS.Resource.FinanceReport.FinanceReport.Account' },
+                        { field: 'BeginningValue', title: '@FMS.Resource.FinanceReport.FinanceReport.BeginningValue', align: 'right', formatter: DecimalFmter,width:150 },
+                        { field: 'EndingValue', title: '@FMS.Resource.FinanceReport.FinanceReport.EndingValue', align: 'right', formatter: DecimalFmter, width: 150 },
+                    ]],
+            showFooter: true,
+            singleSelect: true,
+            collapsible: true,
+            data: JSON.parse($("#bsDtl").val()),
+            view: groupview,
+            groupField: 'AccGrp',
+            groupFormatter: function (value, rows) {
+                return GetGroup(Number(value))
+                + ': @FMS.Resource.FinanceReport.FinanceReport.EndingValue@FMS.Resource.FinanceReport.FinanceReport.Sum' 
+                + GetAccGrpSum(rows); 
+            }
+        });
+    });
+
+    function GetGroup(flag) {
+        var result = null;
+        $(group).each(function (i, n) {
+            if (n.Code == flag) {
+                result = n.Name;
+            }
+        });
+        return result;
+    }
+
+    function GetAccGrpSum(rows) {
+        var sum = 0;
+        $(rows).each(function (i, n) {
+            sum = Number(Number(sum)+ Number(n.EndingValue)).toFixed(2);
+        });
+        return sum;
+    }
+</script>

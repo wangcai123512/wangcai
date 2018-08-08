@@ -1,0 +1,1057 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml"; 
+}
+<script type="text/javascript" src="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.css")">
+<script type="text/javascript">
+    $(document).ready(function () {
+        //获取参数判断物料类型
+        if (FLAG == "D") {
+            $("#title").html("物料类别设置");
+        }else if (FLAG == "A") {
+            $("#title").html("资产类别设置");
+            $("#Depreciation_year_group").css("display", "block");
+            $("#Asset_class_group").css("display", "block");
+        } else if (FLAG == "P") {
+            $("#title").html("制造产品类别设置");
+            GetComInvType("#parentnodes", "#nodesas");
+        }
+        var pat;
+        $.ajax({
+            url: "/PurchasingTypeRecord/GetParentAidType?AID_FLAG=" + FLAG,
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                pat = d;
+            }
+        });
+        $('#Example_1 #InvType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+        });
+        $('#Example_1 #InvType').val("").multiselect('refresh');
+        $('#nodesas').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择',
+        });
+        $('#nodesas').val("").multiselect('refresh');
+        $('#ParentAidType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            nonSelectedText: '请选择',
+            includeFilterNewBtn: false
+        });
+        $("#ParentAidType").multiselect('dataprovider', pat);
+    });
+    //点击子类别触发事件
+    function OnclickProductBom(AidTypeName, GUID) {
+        $("#AddShowProductBomproductGUID").val(GUID);
+        $("#productGUID").val(GUID);
+        var treeData = "";       
+        ProductView(GUID);
+    }       
+    function ProductView(GUID) {
+        document.getElementById("inputnodeName").style.display = "none";
+        document.getElementById("inputnodeNumberaa").style.display = "none";
+        document.getElementById('BtnProductBomAdd').style.display = "none";
+        document.getElementById('BtnProductBomEdit').style.display = "none";
+        document.getElementById('inputtotalnodeNumberaa').style.display = "none";
+        document.getElementById('BtnProductBomDelete').style.display = "none";
+        $('#ShowProductBom').modal({ show: true, backdrop: 'static' });
+        treeData = "";
+        treeData = getTree(GUID);
+        if (treeData != "") {
+            InitializeTree();
+        }
+    }
+    function InitializeTree() {
+        $('#tree').treeview({
+            color: "#428bca",
+            showTags: true,
+            text: "Node 1",
+            icon: "glyphicons glyphicons-beer",
+            selectedIcon: "glyphicons glyphicons-beer",
+            color: "#000000",
+            backColor: "#FFFFFF",
+            href: "#node-1",
+            selectable: true,
+            state: {
+                checked: true,
+                disabled: true,
+                expanded: true,
+                selected: true
+            },
+
+            data: treeData
+        });
+        $('#tree').on('nodeSelected', function (event, data) {
+            $("#nodelevel").val(data.nodeId);
+            $("#AddShowProductBomNodelevel").val(data.nodeId);
+            $("#ShowProductBomNodelevel").val(data.nodeId);
+            $("#AddProductBomId").val(data.id);
+            $("#nodes").val(data.value);
+            $("#nodesid").val(data.id);
+            $('#nodeNames').val(data.text);
+            $("#nodeNumberaa").val(data.tags);
+            //判断是否可以修改数量
+            ModifyNumber(data.nodeId,data.id);
+           
+         
+
+        });
+    }
+    function getTree(GUID) {
+        var treeData = "";
+        $.ajax({
+            url: "/PurchasingTypeRecord/GetProductBom",
+            type: "POST",
+            async: false,
+            data: { subId: GUID },
+            dataType: "JSON",
+            ContentType: "application/json",
+            success: function (data) {
+                if (data.success == true) {
+                    treeData = data.msg;
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                alert(event);
+            }
+        })
+        return treeData;
+    }
+    //关闭model框,对model框的清空
+    function CloseShowProductBom() {
+        $("#AddShowProductBom #tree").text("");
+        $("#AddShowProductBom #nodeName").val("");
+        $("#AddShowProductBom #nodeNumberaa").val("");
+        GetComInvType("#parentnodes", "");
+        GetSubType("#parentnodes", "#nodesas");
+    }
+    function EditProductBomRecord() {
+        var productguid = $("#productGUID").val();
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/PurchasingTypeRecord/    ",
+            data: $('#ba_Form').serialize(),
+            async: false,
+            onSubmit: function () {
+                return $("#ba_Form").form('validate');
+            },
+            error: function (request) {
+                alert(request.toString());
+            },
+            success: function (data) {
+                var data = eval('(' + data + ')');
+                if (data.success == true) {
+                    //提交成功，开始上传附件
+                    alert("修改成功");
+                    $('#ShowProductBom').modal('hide');
+                    CloseShowProductBom();
+                    var treeData = "";
+                    ProductView(productguid);
+                } else {
+                    alert(data.msg);
+                    $('#ShowProductBom').modal('hide');
+                    CloseShowProductBom();
+                    var treeData = "";
+                    ProductView(productguid);
+                }
+            }
+        });
+    }
+    function ModifyNumber(nodeId,id) {
+        if (nodeId == 0) {
+            document.getElementById("inputnodeName").style.display = "none";
+            document.getElementById("inputtotalnodeNumberaa").style.display = "none";
+            document.getElementById("inputnodeNumberaa").style.display = "none";
+            document.getElementById('BtnProductBomEdit').style.display = "none";
+            document.getElementById('BtnProductBomAdd').style.display = "";
+            document.getElementById('BtnProductBomDelete').style.display = "none";
+          
+        } else if (nodeId == 1) {
+            document.getElementById("inputnodeName").style.display = "none";
+            document.getElementById("inputtotalnodeNumberaa").style.display = "none";
+            document.getElementById("inputnodeNumberaa").style.display = "";
+            document.getElementById('BtnProductBomEdit').style.display = "";
+            document.getElementById('BtnProductBomAdd').style.display = "";
+            document.getElementById('BtnProductBomDelete').style.display = "";
+           
+        } else if (nodeId == 2) {
+            document.getElementById("inputnodeName").readOnly = "readonly";
+            document.getElementById("inputtotalnodeNumberaa").style.display = "";
+            document.getElementById("inputnodeNumberaa").style.display = "";
+            document.getElementById('BtnProductBomEdit').style.display = "";
+            document.getElementById('BtnProductBomAdd').style.display = "none";
+            document.getElementById('BtnProductBomDelete').style.display = "";
+            //查询当前id在表中的记录
+            QueryBom(id);
+        }
+
+    }
+    function QueryBom(id) {
+            $.ajax({
+                //url: "/PurchasingTypeRecord/GetQueryBom/" + id,
+                url: "/PurchasingTypeRecord/GetQueryBom?nodesid="+id,
+                async: false,
+                contentType: 'application/json',
+                dataType: 'html',
+                success: function (data) {
+                    var obj = JSON.parse(data);                   
+                    $('#nodeNumberaa').val(obj.number);
+                    $('#totalnodeNumberaa').val(obj.tags);
+                    var totalnodeNumberaa = document.getElementById("totalnodeNumberaa");
+                    totalnodeNumberaa.setAttribute("readOnly", 'true');
+                },
+                error: function (err) {
+                    alert(err);
+
+                }
+            })
+    }
+    function ShowSubmitProductBomRecord() {        
+        $('#ShowProductBom').modal('hide');
+        $('#AddShowProductBom').modal({ show: true, backdrop: 'static' });
+    }
+    function ProductBomSubmit() {
+        //物料类别
+        var parentnodes = $("#parentnodes").val();
+        //物料子类别
+        var nodesas = $("#nodesas").val();
+        //数量
+        var nodeNumberaa = $("#nodeNumberaa").val();
+        var AddShowProductBomNodelevel = $("#AddShowProductBomNodelevel").val();
+        var AddShowProductBomproductGUID = $("#AddShowProductBomproductGUID").val();
+        if (parentnodes == "") {
+            alert("请选择物料类别！");
+            return;
+        }
+        if (nodesas == null) {
+            alert("请选择物料子类别");
+            return;
+        }
+        if (parentnodes == 0 || parentnodes == "") {
+            alert("输入的数量为空或输入数量错误！");
+            return;
+        } else {
+            var p = $.ajax({
+                url: "/PurchasingTypeRecord/GetUpdPurchasingBomTypeRecord?nodes=" + parentnodes +"&nodelevel=" + AddShowProductBomNodelevel + "&nodesid=" + AddProductBomId+ "&subnodes=" + nodesas ,
+                type: "GET",
+                success: function (data) {
+                    if (data == "false") {
+                        alert("抱歉,不能添加相同物料！");
+                        CloseShowProductBom();
+                    }
+                    else {
+                        $.ajax({
+                            cache: true,
+                            type: "POST",
+                            url: "/PurchasingTypeRecord/SubmitProductBomRecord",
+                            data: $('#as_Form').serialize(),
+                            async: false,
+                            onSubmit: function () {
+                                return $("#as_Form").form('validate');
+                            },
+                            error: function (request) {
+                                alert(request.toString());
+                            },
+                            success: function (data) {
+                                var data = eval('(' + data + ')');
+                                if (data.success == true) {
+                                    //提交成功，开始上传附件
+                                    alert('提交成功');
+                                    CloseShowProductBom();
+                                    $('#AddShowProductBom').modal('hide');
+                                    var treeData = "";      
+                                    ProductView(AddShowProductBomproductGUID);
+                                } else {
+                                    alert('提交失败');
+                                    CloseShowProductBom();
+                                    $('#AddShowProductBom').modal('hide');
+                                    var treeData = "";
+                                    ProductView(AddShowProductBomproductGUID);
+                                }
+                            },
+                            error: function (err) {
+                                alert(err);//结果
+                            }
+
+                        });
+                    }
+                }   
+                    });
+                }
+            return false;
+    }
+    //同时获取直接物料和间接物料的所有类别此处Aid_Flag无用
+    function GetComInvType(selector, Aid_Flag) {
+        $.ajax({
+            url: "/PurchasingTypeRecord/GetComParentAidType",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                InitSelect(selector, d);
+
+            }
+        });
+
+    }
+    //
+    function DeleteProductBomRecord() {
+        var nodesid = $("#ShowProductBom #nodesid").val();
+        var ShowProductBomNodelevel = $("#ShowProductBom #ShowProductBomNodelevel").val();
+        var productguid = $("#productGUID").val();
+        if (confirm('确认删除?')) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/PurchasingTypeRecord/DelProductBomDetail?id=" + nodesid + "&nodelevel=" + ShowProductBomNodelevel,
+                success: function (data) {
+                    if (data == 'success') {
+                        alert("删除成功");
+                        var treeData = "";
+                        ProductView(productguid);
+                    }
+                    else {
+                        alert('删除失败');
+                        var treeData = "";
+                        ProductView(productguid);
+                    }
+                }
+            });
+        }
+    }
+</script>
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF" >
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span id="title" style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">物料类别设置</span></div>          
+                    <div class="col-md-12">                        
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <a onclick="ShowAddCategory()" style="width: 100%; border: 2px solid #000000; border-radius: 100px; font-size: 14px; color: #000000;" class="zocial">新建类别</a>
+                                    </div>
+                                </div> 
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <a onclick="ShowAddSubCategory()" style="width: 100%; border: 2px solid #000000; border-radius: 100px; font-size: 14px; color: #000000;" class="zocial">新建子类别</a>
+                                    </div>
+                                </div>                           
+                            </div> 
+                    <div class="col-md-12" style="margin: auto">
+                            <input type="text" id="FLAG" name="FLAG" hidden />
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <div id="toolbar">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+
+                                        </div>
+                                    </div>
+                                    <table id="dataList" style="font-size: 12px"></table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+ 
+            </div>
+        </div>
+    </section>
+</div>
+<div class="modal fade" id="ShowProductBom" tabindex="-1" role="dialog" aria-labelledby="ShowProductBom"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick='CloseShowProductBom()'>
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ShowProductBom">
+                </h4>
+            </div>
+            <div class="modal-body">
+                
+                    <div class="row ">
+                        <form class="ba_Form" id="ba_Form" method="post">
+                            <input type="hidden" id="nodes" name="nodes" />
+                            <!--当前产品id-->
+                            <input type="hidden" id="nodesid" name="nodesid" />
+                            <input type="hidden" id="productGUID" name="" />
+                            <input type="hidden" id="ShowProductBomNodelevel" name="nodelevel" />
+                            <div id="tree" class="col-md-6"></div>
+                            <div id="tree-view" class="col-md-5">
+                                <div class="form-group">
+                                    <div id="inputnodeName" class="input-group input-group-sm" style="margin-top:5px">
+                                        <span class="input-group-addon">物料名称</span>
+                                        <input type="text" id="nodeNames" class="form-control" required name="nodeName" placeholder="请输入节点数量" >
+                                    </div>
+                                    <div id="inputtotalnodeNumberaa" class="input-group input-group-sm" style="margin-top:5px">
+                                       <span class="input-group-addon">物料总数量</span>
+                                        <input type="text" id="totalnodeNumberaa" class="form-control" required name="" placeholder="请输入物料数量" >
+                                    </div>                 
+                                    <div id="inputnodeNumberaa" class="input-group input-group-sm" style="margin-top:5px">
+                                       <span class="input-group-addon">物&nbsp;料&nbsp;数&nbsp;量&nbsp;</span>
+                                        <input type="text" id="nodeNumberaa" class="form-control" required name="tags" placeholder="请输入物料数量" >
+                                    </div>                                   
+                                     <div class="input-group input-group-sm"  style="margin-top:15px">                                  
+                                          <div class="col-md-4" >                        
+                                                <button type="button" style="width: 70px; border-radius: 10px; font-size:4px; 
+                                                    border: 0px solid #c0c0c0; font-weight: bold" id="BtnProductBomEdit" class="btn btn-primary "onclick='EditProductBomRecord()'>
+                                                   更新数量
+                                                </button>
+                                          </div>
+                                          <div class="col-md-4" >
+                                                <button type="button" style="width: 70px; border-radius: 10px; font-size:4px; 
+                                                    border: 0px solid #c0c0c0; font-weight: bold" id="BtnProductBomAdd" class="btn btn-primary "onclick='ShowSubmitProductBomRecord()'>
+                                                    添加物料
+                                                </button>
+                                          </div>
+                                         <div class="col-md-4" >
+                                                <button type="button" style="width: 70px; border-radius: 10px; font-size:4px; 
+                                                    border: 0px solid #c0c0c0; font-weight: bold" id="BtnProductBomDelete" class="btn btn-primary "  onclick='DeleteProductBomRecord()' >
+                                                    删除物料
+                                                </button>
+                                          </div>                         
+                                    </div>
+                                </div>                             
+                             </div>
+                          </form>
+                       </div>
+           
+            </div>
+            <div class="modal-footer">
+            
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick='CloseShowProductBom()'>
+                    关闭
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--添加树形结构图-->
+<div class="modal fade" id="AddShowProductBom" tabindex="-1" role="dialog" aria-labelledby="AddShowProductBom"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick='CloseShowProductBom()'>
+                    &times;
+                </button>
+                <h4 class="modal-title" id="AddShowProductBom"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row ">
+                    <form class="as_Form" id="as_Form" method="post">
+                        <input type="hidden" id="AddShowProductBomproductGUID" name="" />
+                        <input type="hidden" id="AddProductBomId" name="nodesid" />
+                        <input type="hidden" id="AddShowProductBomNodelevel" name="nodelevel" />
+                        <div  class="col-md-1"></div>
+                        <div id="tree-view" class="col-md-10">
+                            <div class="form-group">
+                                <div class="input-group" style="margin-top:5px">                                    
+                                    <span class="input-group-addon">物&nbsp;料&nbsp;类&nbsp;别</span>
+                                      <select id="parentnodes" name="parentnodes" onchange="GetSubType('#parentnodes', '#nodesas')"></select>
+                                </div>
+                                <div class="input-group" style="margin-top:5px">
+                                    <span class="input-group-addon">物料子类别</span>
+                                     <select id="nodesas" name="subnodes"></select>
+                                </div>
+                                <div class="input-group " style="margin-top:5px">
+                                    <span class="input-group-addon">物&nbsp;料&nbsp;数&nbsp;量</span>
+                                    <input type="text" id="nodeNumberaa" class="form-control" required name="tags" placeholder="请输入节点数量">
+                                </div>
+
+                                <div class="input-group" style="margin-top:15px">
+                                    <div class="col-md-10" style="margin: auto">
+                                    </div>
+                                    <div class="col-md-2" style="margin: auto">
+                                        <button type="button" style="width: 150px; border-radius: 80px; font-size: 10px; 
+                                         border:0px solid #c0c0c0; font-weight:bold" class="btn btn-primary " onclick='ProductBomSubmit()'>
+                                            提交
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick='CloseShowProductBom()'>
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<div class="modal fade" id="ShowAddCategory" tabindex="-1" role="dialog" aria-labelledby="ShowAddCategory"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ShowAddCategory">
+                    新增类别
+                </h4>
+            </div>
+            <div class="modal-body"> 
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                             <form id="Add_Form" style="text-align: center;">
+                                 <input id="guid" name="guid" hidden /><input id="hiddenName" name="hiddenName" hidden />
+                                 <div class="form-group" id="Asset_class_group" style="display:none">
+                                     <div class="input-group " style="margin: 0">
+                                         <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;资产分类&nbsp;&nbsp;&nbsp;</span>
+                                         <select id="Asset_class" name="Asset_class" class="form-control">
+                                             <option value="固定资产">固定资产</option>
+                                             <option value="无形资产">无形资产</option>
+                                         </select>
+                                     </div>
+                                 </div>
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;类别名称&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="CategoryName" name="CategoryName" class="form-control" required=""/>
+                                    </div>
+                                </div>  
+                            </form>
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn1" onclick="Submit()" class="btn btn-primary">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--子类别添加 model-->  
+<div class="modal fade" id="ShowAddSubCategory" tabindex="-1" role="dialog" aria-labelledby="excelImportModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="excelImportModalLabel">
+                    新增子类别
+                </h4>
+            </div>
+            <div class="modal-body"> 
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                          <form id="Add_Form" style="text-align: center;">
+                              <input id="guid" name="guid" hidden /><input id="hiddenName" name="hiddenName" hidden />
+                              
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;类&nbsp;别&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="ParentAidType" name="ParentAidType" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;子&nbsp;类&nbsp;别&nbsp;名&nbsp;称&nbsp;&nbsp;</span>
+                                        <input type="text" id="SonCategoryName" name="SonCategoryName" class="form-control" required="" />
+                                    </div>
+                                </div>
+                              <div class="form-group" id="Depreciation_year_group" style="display:none">
+                                  <div class="input-group " style="margin: 0">
+                                      <span class="input-group-addon" style="color: #000000">折旧周期（年）</span>
+                                      <input type="number" id="Depreciation_year" name="Depreciation_year" class="form-control" required="" />
+                                  </div>
+                              </div>
+                              <div class="form-group">
+                                  <div class="input-group " style="margin: 0">
+                                      <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                      <input type="text" id="Remark" name="Remark" class="form-control" required="" />
+                                  </div>
+                              </div>
+                          </form>
+                 </div>                           
+              </div>                  
+           </div>
+            <div class="modal-footer">
+                <button type="button" id="btn1" onclick="SonSubmit()" class="btn btn-primary ">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+            </div>
+           
+        </div>
+        <!-- /.modal-content -->
+    </div>
+<script type="text/javascript">
+    (function ($) {
+        $.getUrlParam
+         = function (name) {
+             var reg
+              = new RegExp("(^|&)" +
+              name + "=([^&]*)(&|$)");
+             var r
+              = window.location.search.substr(1).match(reg);
+             if (r != null) return unescape(r[2]); return null;
+         }
+    })(jQuery);
+    //通过getUrlParam获取超链接参数
+    $('#FLAG').val($.getUrlParam('FLAG'));
+    var FLAG = $('#FLAG').val();
+    var col = "";
+    //通过判断参数，获取列表
+    jQuery(document).ready(function () {
+        if (FLAG == "A") {
+                    col = [[
+                            { field: 'Asset_class',title: '资产分类'},
+                            { field: 'AidTypeName', title: '类别', formatter: TtileHandle },
+                            { field: 'AST_ParentAidType', title: '子类别', formatter: SonHandle },
+                            { field: 'Depreciation_year', title: '折旧周期（年）'},
+                            { field: 'Remark', title: '@General.Resource.Common.Remark '},
+                            { field: 'GUID', title: '', formatter: LinkHandle }
+                    ]];
+                } else {
+                    col = [[
+                            { field: 'AidTypeName', title: '类别', formatter: TtileHandle },
+                            { field: 'AST_ParentAidType', title: '子类别', formatter: SonHandle },
+                            { field: 'Remark', title: '@General.Resource.Common.Remark ' },
+                            { field: 'GUID', title: '', formatter: LinkHandle }
+                    ]];
+                }
+        $('#dataList').bootstrapTable({
+            url: "/PurchasingTypeRecord/GetPurchasingTypeRecordList?AID_FLAG=" + FLAG,
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            sortName: '', // 设置默认排序为 name
+            sortOrder: '', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: col,
+            queryParams: queryParams
+        });
+    });
+            function queryParams(params) {  //配置参数
+                var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                    pageSize: params.limit,   //页面大小
+                    pageIndex: params.pageNumber  //页码
+                };
+                return temp;
+            }
+            //添加类别model
+            function ShowAddCategory() {
+                $("#CategoryName").val("");
+                $('#ShowAddCategory').modal({ show: true, backdrop: 'static' });
+            }
+            //添加子类别model
+            function ShowAddSubCategory() {
+                $("#guid").val("");
+                $('#ParentAidType').val("").multiselect('refresh');
+                $("#SonCategoryName").val("");
+                $("#Remark").val("");
+                $("#Depreciation_year").val("");
+                $("#Depreciation_year_group").val("");
+                $('#ShowAddSubCategory').modal({ show: true, backdrop: 'static' });
+            }
+            var LinkHandle = function (value, row, index) {
+                var link3; 
+                link3 = " <a class='linkbtn' onclick='EditClick(\"" + value + "\",\"" + row.AT_GUID + "\",\"" + row.AID_FLAG + "\",\"" + row.Remark + "\",\"" + row.AST_ParentAidType + "\",\"" + row.Asset_class + "\",\"" + row.Depreciation_year + "\",\"" + row.AidTypeName + "\")'>编辑</a> ";
+                link3+=  " <a class='linkbtn' onclick='DelClick(\"" + value + "\",\"" + row.AT_GUID + "\",\"" + row.AID_FLAG + "\",\"" + row.AST_ParentAidType + "\")'>删除</a> ";
+                return link3;   
+            };
+            var TtileHandle = function (value, row, index) {
+                var link2 = value;
+                if (row.AST_ParentAidType != null) {
+                    link2 = "";
+                }
+                return link2;
+            };
+            var SonHandle = function (value, row, index) {
+                var va = value;
+                if (row.AST_ParentAidType != null) {
+                    if (FLAG == "D"|| FLAG == "A") {
+
+                        va = row.AidTypeName;
+                    }
+                    else if (FLAG == "P") {
+                        va = " <a class='linkbtn'>\ " + row.AidTypeName + "\</a> ";
+                    }
+                }
+                return va;
+            };
+            function query() {
+                $('#dataList').bootstrapTable('refresh');
+            }
+</script> 
+<script type="text/javascript">
+    function EditClick(guid, AT_GUID, AID_FLAG, Remark, AST_ParentAidType, Asset_class, Depreciation_year, AidTypeName) {
+        if (FLAG == "A") {
+            $("#guid").val(guid);
+            $("#hiddenName").val(AidTypeName);
+            $("#Asset_class").val(Asset_class);
+            $("#Depreciation_year").val(Depreciation_year);
+            $("#CategoryName").val(AidTypeName);
+            $('#ParentAidType').val(AST_ParentAidType).multiselect('refresh');
+            $("#SonCategoryName").val(AidTypeName);
+            if (Remark == "" || Remark == "null") {
+                $("#Remark").val("");
+            } else {
+                $("#Remark").val(Remark);
+            }
+            if (AST_ParentAidType == "" || AST_ParentAidType == "null") {
+                $('#ShowAddCategory').modal({ show: true, backdrop: 'static' });
+            } else {
+                $('#ShowAddSubCategory').modal({ show: true, backdrop: 'static' }); 
+            }
+        } else {
+            $("#guid").val(guid);
+            $("#hiddenName").val(AidTypeName);
+            $("#CategoryName").val(AidTypeName);
+            $('#ParentAidType').val(AT_GUID).multiselect('refresh');
+            $("#SonCategoryName").val(AidTypeName);
+            if (Remark == "" || Remark == "null") {
+                $("#Remark").val("");
+            } else {
+                $("#Remark").val(Remark);
+            }
+            if (AST_ParentAidType == "" || AST_ParentAidType == "null") {
+                $('#ShowAddCategory').modal({ show: true, backdrop: 'static' });
+            } else {
+                $('#ShowAddSubCategory').modal({ show: true, backdrop: 'static' });
+            }
+        }
+    }
+    var FLAG = $('#FLAG').val();
+    //类别提交
+    function Submit() {
+        var CategoryName = $("#CategoryName").val();
+        var AT_GUID = $("#guid").val();
+        if (FLAG == "D") {
+            var asset_class = "";
+        } else if (FLAG == "I") {
+            var asset_class = "";
+        } else if (FLAG == "A") {
+            var asset_class = $("#Asset_class").val();
+        } else if (FLAG == "P") {
+            var asset_class = "";
+        }
+
+        if (CategoryName == "") {
+            alert("请输入类别名！");
+        } else {
+            if ($("#hiddenName").val() == CategoryName) {
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "/PurchasingTypeRecord/UpdPurchasingTypeRecord?AID_FLAG=" + FLAG + "&AT_GUID=" + AT_GUID,
+                    data: { AidTypeName: CategoryName, Asset_class: asset_class },
+                    async: false,
+                    contentType: 'application/json',
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data == "true") {
+                            alert("新增类别成功！");
+                            $("#CategoryName").val("");
+                            $("#Depreciation_year_group").val("");
+                            $('#dataList').bootstrapTable('refresh');
+                            $('#ShowAddCategory').modal('hide');
+
+                            var pat;
+                            $.ajax({
+                                url: "/PurchasingTypeRecord/GetParentAidType?AID_FLAG=" + FLAG,
+                                async: false,
+                                dataType: "json",
+                                success: function (d) {
+                                    pat = d;
+                                }
+                            });
+
+                            $('#ParentAidType').multiselect({
+                                buttonWidth: '100%',
+                                maxHeight: 200,
+                                enableFiltering: true,
+                                nonSelectedText: '请选择',
+                                includeFilterNewBtn: false
+                            });
+                            $("#ParentAidType").multiselect('dataprovider', pat);
+                        }
+                        else {
+                            alert("提交失败！");
+                        }
+
+                    },
+                    error: function (err) {
+                        alert(err);//结果
+                    }
+
+                });
+            }else{
+                var p = $.ajax({
+                    url: "/PurchasingTypeRecord/GetUpdPurchasingTypeRecord?AidTypeName=" + CategoryName + "&AID_FLAG=" + FLAG,
+                    type: "GET",
+                    success: function (data) {
+                        if (data == "false") {
+                            alert("抱歉,当前类别已存在！");
+                            $("#CategoryName").val("");
+                        }
+                        else {
+                            $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "/PurchasingTypeRecord/UpdPurchasingTypeRecord?AID_FLAG=" + FLAG + "&AT_GUID=" + AT_GUID,
+                                data: { AidTypeName: CategoryName, Asset_class: asset_class },
+                                async: false,
+                                contentType: 'application/json',
+                                dataType: 'html',
+                                success: function (data) {
+                                    if (data == "true") {
+                                        alert("新增类别成功！");
+                                        $("#CategoryName").val("");
+                                        $("#Depreciation_year_group").val("");
+                                        $('#dataList').bootstrapTable('refresh');
+                                        $('#ShowAddCategory').modal('hide');
+
+                                        var pat;
+                                        $.ajax({
+                                            url: "/PurchasingTypeRecord/GetParentAidType?AID_FLAG=" + FLAG,
+                                            async: false,
+                                            dataType: "json",
+                                            success: function (d) {
+                                                pat = d;
+                                            }
+                                        });
+
+                                        $('#ParentAidType').multiselect({
+                                            buttonWidth: '100%',
+                                            maxHeight: 200,
+                                            enableFiltering: true,
+                                            nonSelectedText: '请选择',
+                                            includeFilterNewBtn: false
+                                        });
+                                        $("#ParentAidType").multiselect('dataprovider', pat);
+                                    }
+                                    else {
+                                        alert("提交失败！");
+                                    }
+
+                                },
+                                error: function (err) {
+                                    alert(err);//结果
+                                }
+
+                            });
+                        }
+
+                    }
+                });
+            }
+            
+
+
+        }
+        return false;
+    }
+    //子类别提交
+    function SonSubmit() {
+        var AST_GUID = $("#guid").val();
+        var FLAG = $('#FLAG').val();
+        if (FLAG == "A"){
+            var Depreciation_year = $("#Depreciation_year").val();
+        }
+        var SonCategoryName = $("#SonCategoryName").val();
+        var ParentAidType = $("#ParentAidType").val();
+        var remark = $("#Remark").val();
+        var depreciation_year = $("#Depreciation_year").val();
+        if (ParentAidType == "-1") {
+            alert("请先添加类别再添加子类！");
+            return;
+        }
+        if (SonCategoryName == "") {
+            alert("请输入子类别名！");
+        } else if (SonCategoryName.length > 20) {
+            alert("子类别名不得超过二十位！");
+        }
+        if (Depreciation_year == "") {
+            alert("请输入折旧周期！");
+            return;
+        } else {
+            if ($("#hiddenName").val() == SonCategoryName) {
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "/PurchasingTypeRecord/UpdPurchasingSubTypeRecord?AID_FLAG=" + FLAG + "&AST_GUID=" + AST_GUID,
+                    data: { ASTTypeName: SonCategoryName, AST_ParentAidType: ParentAidType, Remark: remark, Depreciation_year: depreciation_year },
+                    async: false,
+                    contentType: 'application/json',
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data == "true") {
+                            alert("新增子类别成功！");
+                            $("#SonCategoryName").val("");
+                            $("#Remark").val("");
+                            $("#Depreciation_year_group").val("");
+                            $('#dataList').bootstrapTable('refresh');
+                            $('#ShowAddSubCategory').modal('hide');
+                        }
+                        else {
+                            alert("提交失败！");
+                        }
+
+                    },
+                    error: function (err) {
+                        var temp = "";
+                        for (var i in err) {//用javascript的for/in循环遍历对象的属性
+                            temp += i + ":" + err[i] + "\n";
+                        }
+                        alert(temp);//结果
+                        //alert(err);
+                    }
+                });
+            } else {
+                var p = $.ajax({
+                    url: "/PurchasingTypeRecord/GetUpdPurchasingSonTypeRecord?AT_GUID=" + ParentAidType + "&AID_FLAG=" + FLAG + "&ASTTypeName=" + SonCategoryName,
+                    type: "GET",
+                    success: function (data) {
+                        if (data == "false") {
+                            alert("抱歉,当前子类别已存在！");
+                            $("#SonCategoryName").val("");
+                        }
+                        else {
+                            $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "/PurchasingTypeRecord/UpdPurchasingSubTypeRecord?AID_FLAG=" + FLAG + "&AST_GUID=" + AST_GUID,
+                                data: { ASTTypeName: SonCategoryName, AST_ParentAidType: ParentAidType, Remark: remark, Depreciation_year: depreciation_year },
+                                async: false,
+                                contentType: 'application/json',
+                                dataType: 'html',
+                                success: function (data) {
+                                    if (data == "true") {
+                                        alert("新增子类别成功！");
+                                        $("#SonCategoryName").val("");
+                                        $("#Remark").val("");
+                                        $("#Depreciation_year_group").val("");
+                                        $('#dataList').bootstrapTable('refresh');
+                                        $('#ShowAddSubCategory').modal('hide');
+                                    }
+                                    else {
+                                        alert("提交失败！");
+                                    }
+
+                                },
+                                error: function (err) {
+                                    var temp = "";
+                                    for (var i in err) {//用javascript的for/in循环遍历对象的属性
+                                        temp += i + ":" + err[i] + "\n";
+                                    }
+                                    alert(temp);//结果
+                                    //alert(err);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            
+
+          }
+          return false;
+    }
+    //删除
+    function DelClick(id, AT_GUID,AID_FLAG,AST_ParentAidType) {
+        if (confirm('确认删除?')) {
+            //查询物料表是否有使用此类别或者此类别的子类别
+            var p = $.ajax({
+                url: "/PurchasingTypeRecord/GetDelPurchasingTypeRecord?AST_GUID=" + id + "&AST_ParentAidType=" + AT_GUID + "&AID_Flag=" + AID_FLAG + "&AidTypeName=" + AST_ParentAidType,
+                type: "GET",
+                success: function (data) {
+                    if (data == "false") {
+                        alert("抱歉,当前类别或其子类别正在被使用,无法删除！");
+                    }
+                    else {
+                        var d = $.ajax({
+                            url: "/PurchasingTypeRecord/DelPurchasingTypeRecord?AID_FLAG=" + AID_FLAG + "&AT_GUID=" + id,
+                            type: "GET",
+                            success: function (data) {
+                                if (data == "true") {
+                                    alert("删除成功！");
+                                    $('#dataList').bootstrapTable('refresh');
+                                    var pat;
+                                    $.ajax({
+                                        url: "/PurchasingTypeRecord/GetParentAidType?AID_FLAG=" + FLAG,
+                                        async: false,
+                                        dataType: "json",
+                                        success: function (d) {
+                                            pat = d;
+                                        }
+                                    });
+                                    $('#ParentAidType').multiselect({
+                                        buttonWidth: '100%',
+                                        maxHeight: 200,
+                                        enableFiltering: true,
+                                        nonSelectedText: '请选择',
+                                        includeFilterNewBtn: false
+                                    });
+                                    $("#ParentAidType").multiselect('dataprovider', pat);
+                                }
+                                else {
+                                    alert("删除失败！");
+                                }
+                            },
+                            error: function () {
+                                alert('@General.Resource.Common.NoResponse');
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    alert('@General.Resource.Common.NoResponse');
+                }
+            });
+        }
+
+
+    }
+</script>
+

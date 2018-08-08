@@ -1,0 +1,32 @@
+﻿@{
+	ViewBag.Title = "IncomeStatement";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.IncomeStatement
+<table class="Props">
+	<tr>
+		<td>@FMS.Resource.FinanceReport.FinanceReport.RepNo</td><td>@Model.RepNo</td>
+		<td>@FMS.Resource.FinanceReport.FinanceReport.RepDate</td><td>@Model.GetRepDate()</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>		   
+<div id="IncomeStatement"></div>
+
+<script type="text/javascript">
+	$(function () {
+		$("#IncomeStatement").treegrid({
+			columns: [[
+						{ field: 'Acc_Name', title: '@FMS.Resource.FinanceReport.FinanceReport.Account' },
+						{ field: 'Money', title: '@FMS.Resource.FinanceReport.FinanceReport.EndingValue', align: 'right', formatter: DecimalFmter, width: 150 }
+					]],
+			data: @Html.Raw(Model.GetDetailsJSON_PL()),
+			treeField: 'Acc_Name',
+			idField: 'Acc_Code'
+		});
+	});
+</script>

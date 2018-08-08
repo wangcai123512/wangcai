@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "BusinessPartner";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_BusinessPartner
+           
+<form id="BusinessPartner"  method="post">
+<table class="Props">
+    <input type="hidden" name="BP_GUID" value="@Model.BP_GUID" />
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td><input name="Name" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+        <td><div style="display: none"><input id="IsCustomer" name="IsCustomer" type="checkbox" value="True" checked="checked"/>@FMS.Resource.BusinessPartner.BusinessPartner.Customer</div></td>
+    </tr>
+</table >          
+</form>
+

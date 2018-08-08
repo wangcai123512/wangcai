@@ -1,0 +1,482 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        $('.datepicker').datepicker({
+            language: "zh-CN",
+            todayHighlight: true,
+            format: 'yyyy-mm',
+            autoclose: true,
+            startView: 'months',
+            maxViewMode: 'years',
+            minViewMode: 'months'
+        });
+       
+
+    });
+
+</script>
+
+<div id="main" style="margin-top: 100px;">
+     <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+            <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                @*<li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>*@
+                <li class="active">
+                    <a class="accordion-toggle menu-open" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li class="active"> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C">查询会计凭证</span></a></li>
+                    </ul>
+                </li>
+                @*<li> <a onclick="Undone()"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>*@
+
+            </ul>
+        </div>
+    </aside>
+     <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">会计凭证查询</span></div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-12" style="margin: auto">
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div id="toolbar" >
+                                            <form style="text-align:center; " >
+                                          <div class="col-md-12" style="margin-bottom: 0px">
+                                             <div class="col-md-6" style="margin: auto;text-align:center;margin-left:200px">
+                                            <div class="form-group">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;日期选择&nbsp;&nbsp;&nbsp;</span>
+                                                            <input type="text" id="Date" name="Date" class="form-control datepicker mtn" value="" required="true" autocomplete="off" readonly="true" style="cursor:pointer">
+                                                        </div>
+                                                    </div>
+                                             </div>
+                                          </div>
+                                            <div class="col-md-12" style="margin-bottom: 0px">
+                                                <div class="col-md-5" style="margin: auto">
+                                                    
+                                                </div>
+                                                <div class="col-md-2" style="margin: auto">
+                                                    <button onclick="query()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">查询</button>
+                                                </div>
+                                                <div class="col-md-5" style="margin: auto">
+                                                    <button onclick="javascript:window.location ='/Common/Index'" type="button" style="width: 100px;
+                                                      border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold"
+                                                       class="btn btn-primary pull-right">
+                                                    返回上页
+                                                </button>
+                                                </div>
+                                            </div>
+                                          </form>
+                                           
+
+                                        </div>
+                                        <table id="ERTable" class="table table-bordered" style="font-size: 12px;width:850px">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+    <div class="modal fade" id="Voucher" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                   凭证
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-bottom: 20px">
+                 <div class="col-md-12" style="margin-bottom: 5px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #000000; text-decoration: underline">记账凭证</span>
+                 </div>
+
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                         <div class="col-md-4">
+                         </div>
+                          <div class="col-md-4" style="text-align: center">
+                          <span id='VDate'></span>
+                         </div>
+                          <div class="col-md-4" style="text-align: center;">
+                          <span>本币：@Session["Currency"] 单位：元</span>
+                         </div>
+                        
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                        <span>核算单位：</span>
+                         @Session["FullName"]
+                         <span id="num" style="float:right"></span>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 10px">
+                        <table id="VoucherTable" class="table table-striped table-bordered table-condensed"  style="font-size: 12px">
+                        
+                        </table>
+                    </div>
+                    <div class="col-md-12" style="margin-left:-10px">
+                    <div class="col-md-2">
+                        <span>财务主管:</span>
+                    </div>
+                    <div class="col-md-2">
+                    <span>记账:</span>
+                    @Session["NickName"]
+                    </div>
+                    <div class="col-md-2">
+                     <span>复核:</span>
+                   
+                    </div>
+                   
+                    <div class="col-md-2">
+                    <span>出纳:</span>
+                    </div>
+                    <div class="col-md-2">
+                    <span>制单:</span>
+                    @Session["NickName"]
+                    </div>
+                    <div class="col-md-2">
+                    <span>经办人:</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" >
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+     jQuery(document).ready(function () {  
+         $("#Voucher").on("hidden.bs.modal", function () {
+            $('#VoucherTable').bootstrapTable('destroy');
+        });
+        $("#Voucher").on('show.bs.modal', function () {
+        $("#Voucher").css("top","200px");
+         $("#Voucher").css("left","200px");
+//          $("#Voucher").css("top","200px");
+        $("#Voucher").css("margin","0px");
+        });  
+     });
+
+    var CSS_GUID=""
+    var color
+    function query() {
+        var date;
+        date = $("#Date").val();
+         $('#ERTable').bootstrapTable('destroy');
+        $('#ERTable').bootstrapTable({
+            url: "/VoucherQuery/GetALLVoucher?Date="+date,
+            method: 'get',
+            pageSize: 30,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: false,
+            rownumbers: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            //detailView:true,
+            columns: [[
+                
+                { field: 'id', title: '编号',formatter:check},
+                { field: 'Summary', title: '摘要',formatter:Handle },
+                { field: 'Date', title: '日期', formatter: DateHandle },
+                { field: 'Name', title: '一级科目' ,formatter:Handle },
+                { field: 'DetailName', title: '二级及明细科目',formatter:Handle1  },
+                //{ field: 'ThName', title: '三级科目',formatter:Handle  },
+                { field: 'DebitAmount', title: '借方金额',formatter:DecimalFmter},
+				{ field: 'CreditAmount', title: '贷方金额',formatter:DecimalFmter}
+            ]],
+            rowStyle: function (row, index) {
+                   if(row.GUID !=CSS_GUID&&!(row.Summary !=null&&row.Summary.indexOf("附单") != -1)){
+                   if(color=="#FFFFFF"){color="#EEEEEE"}
+                   else{color="#FFFFFF"}
+                   CSS_GUID= row.GUID;
+                   
+                   }
+                   return {css:{"background-color":color}}
+               
+               
+               
+               
+               
+               
+//               
+//                 if(row.Summary !=null){if(row.Summary.indexOf("附单") != -1){
+//                 return { css:{"background-color":"#ff264e"}}
+//                
+//                 }}  
+//                        else{return { css:{"background-color":"#51ff35"}} }     
+             
+         } 
+        });
+            
+        }
+         var Handle1 = function(s,row,index)
+    {
+        if (s == null || s == "undefined" || s=='0') {
+            return "";
+        }else {
+            if(row.ThName == null || row.ThName == "undefined" || row.ThName=='0')
+               {return s;} else{
+                s = s+"-"+row.ThName;
+               }
+        }
+        return s;
+    }
+    var Handle3 = function(s,row,index)
+    {
+        if(row.Summary !=null&&row.Summary.indexOf("附单") != -1)
+            {
+                return ChinaCost(row.DebitAmount);
+            }
+        if (s == null || s == "undefined" || s=='0') {
+            return "";
+        }else {
+            if(row.ThName == null || row.ThName == "undefined" || row.ThName=='0')
+               {return s;} else{
+                s = s+"-"+row.ThName;
+               }
+        }
+        return s;
+    }
+        var Handle = function(s,row,index){
+       
+        if (s == null || s == "undefined" || s=='0') {
+            return "";
+        }
+        return s;
+        }
+
+        var Handle2 = function(s,row,index){
+        if(row.id !=null){
+        if(row.id.toString().length ==1){
+                 VoucherID='第'+'00'+row.id+'号'
+                }
+                if(row.id.toString().length ==2){
+                 VoucherID='第'+'0'+row.id+'号'
+                }
+                else if(row.id.toString().length >2){
+                 VoucherID='第'+row.id+'号'
+                }
+//                if(row.Flag=="E"){
+//                    num="001/003";
+//                }
+//                 if(row.Flag=="I"){
+//                    num="001/001";
+//                }
+//                 if(row.Flag=="R"){
+//                    num="001/002";
+//                }
+//                 if(row.Flag=="P"){
+//                    num="001/004";
+//                }
+//                 if(row.Flag=="DS"){
+//                    num="001/005";
+//                }
+//                 if(row.Flag=="DC"){
+//                    num="001/006";
+//                }
+//                VoucherID = VoucherID+'-'+num;
+                }
+        if (s == null || s == "undefined" || s=='0') {
+            return "";
+        }
+        return s;
+        }
+
+
+           var DecimalFmter = function (s) {
+        if (s == null || s == "undefined" || s=='0') {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+        
+        var VoucherID
+        var num
+        var check =function(value,row,index){
+            if(value==null&&row.Summary ==null){
+                return "";
+            }if(row.Summary !=null&&row.Summary.indexOf("附单") != -1)
+            {
+                return ChinaCost(row.DebitAmount);
+            }
+            else{
+                if(value.toString().length ==1){
+                 VoucherID='第'+'00'+value+'号'
+                }
+                if(value.toString().length ==2){
+                 VoucherID='第'+'0'+value+'号'
+                }
+                else if(value.toString().length >2){
+                 VoucherID='第'+value+'号'
+                }
+//                if(row.Flag=="E"){
+//                    num="001/003";
+//                }
+//                 if(row.Flag=="I"){
+//                    num="001/001";
+//                }
+//                 if(row.Flag=="R"){
+//                    num="001/002";
+//                }
+//                 if(row.Flag=="P"){
+//                    num="001/004";
+//                }
+//                 if(row.Flag=="DS"){
+//                    num="001/005";
+//                }
+//                 if(row.Flag=="DC"){
+//                    num="001/006";
+//                }
+//                VoucherID = VoucherID+'-'+num;
+            
+            return  "<a class='linkbtn' style='cursor: pointer;' onclick='GetVoucher(\"" + row.GUID +'","' +row.Flag+'","' +VoucherID+ "\")'>\ " + VoucherID + "\</a>";
+            }
+        }
+            var url;
+         function GetVoucher(id,flag,voucherID){
+//            if(flag=="E"){
+//               url = "/ExpenseQuery/GetIEVoucher?IE_GUID="+id;
+//            }
+//             if(flag=="I"){
+//               url = "/IncomeQuery/GetIEVoucher?IE_GUID="+id;
+//            }
+//            if(flag=="P"){
+//               url = "/PaymentClassify/GetRPVoucher?RP_GUID="+id;
+//            }
+//             if(flag=="R"){
+//               url = "/ReceivablesClassify/GetRPVoucher?RP_GUID="+id;
+//            }
+//            if(flag=="DC"){
+//               url = "/ReceivablesDeclareCustomerQuery/GetDCVoucher?GUID=" + id;
+//            }
+//            if(flag=="DS"){
+//               url = "/PaymentDeclareCostSpendingQuery/GetDSVoucher?GUID="+id;
+//            }
+        $('#VoucherTable').bootstrapTable({
+             url: "/VoucherQuery/GetALLVoucher?VouchGuid="+id,
+            method: 'get',
+            pageSize: 30,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: false,
+            rownumbers: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            //detailView:true,
+            columns: [[
+                { field: 'Summary', title: '摘要',formatter:Handle2 },
+//                { field: 'id', title: '编号',formatter:check},
+                { field: 'Date', title: '日期', formatter: DateHandle },
+                { field: 'Name', title: '一级科目' ,formatter:Handle },
+                { field: 'DetailName', title: '二级及明细科目',formatter:Handle3  },
+                //{ field: 'ThName', title: '三级科目',formatter:Handle  },
+                { field: 'DebitAmount', title: '借方金额',formatter:DecimalFmter},
+				{ field: 'CreditAmount', title: '贷方金额',formatter:DecimalFmter}
+            ]],
+        });
+        
+         
+         document.getElementById("num").innerText = voucherID;
+         $('#Voucher').modal({ show: true, backdrop: 'static' });
+         $(".boxed-layout").css("padding-right", "0px");
+         $('#Voucher').draggable();
+        
+    }
+
+         var DateHandle = function (jsondate) {
+       
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+         if (jsondate<0){
+            return "";
+        }  else{
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        } else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "/" + month + "/" + currentDate;
+        }
+    }
+</script>
+

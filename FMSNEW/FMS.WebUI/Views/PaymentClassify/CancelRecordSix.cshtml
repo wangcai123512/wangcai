@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "CancelRecordSix";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%;height: 100%">
+<div id="CERtoolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	</div>
+	<div>
+		<form id="CERconditionForm">
+		<table>
+			<tr>
+				<td>日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="DateBegin" data-options="width:100,panelHeight:'auto'" />-<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+			</tr>
+			<tr>
+				<td>付款方:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+		    <tr>
+		        <td>收款类别:</td>
+		        <td>
+		            <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+		                <option value="筹资活动收款">筹资活动收款</option>
+		            </select>
+		        </td>
+		    </tr>
+            <tr>
+				<td>详细类别:</td>
+				<td>
+				    <select class="easyui-combobox" id="conIncomeGrpDts" name="incomeGrpDts" data-options="width:207,panelHeight:'auto'">
+				        <option value="借款所获得的收款">借款所获得的收款</option>
+				    </select>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="CancelRecord_List"></table>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    $("#CancelRecord_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/ReceivablesClassify/GetReceivablesSelfList?incomeGrp=筹资活动收款'+'&incomeGrpDts=借款所获得的收款',
+            columns: [[
+                { checkbox: true },
+                { field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: ChangeDateFormat },
+                { field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payer' },
+                { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+                { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+                { field: "InvType", title: "@FMS.Resource.Finance.Finance.Receive@FMS.Resource.Finance.Finance.Group"},
+                { field: 'BankAccount', title: '@FMS.Resource.Finance.Finance.ReceivableAccount' },
+                { field: 'Remark', title: '@General.Resource.Common.Remark' },
+                { field: 'RPer', title: '@General.Resource.Common.Remark',hidden:true},
+                { field: 'IE_GUID', title: '',align: 'center',hidden:true},
+                { field: 'RP_GUID', title: '',hidden:true}
+                ]
+            ],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CERtoolbar"
+	    });
+
+	});
+
+	function Search() {
+		$("#CancelRecord_List").datagrid("load",$("#CERconditionForm").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#CancelRecord_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#CancelRecord_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

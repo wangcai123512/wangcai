@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Role";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model Common.Models.Role
+           
+<form id="Role"  method="post">
+<table class="Props">
+    <input type="hidden" name="Guid" value="@Model.Guid" />
+    <input type="hidden" name="SysName" value="@Model.SysName" />
+    <tr>
+        <td>@Common.Resource.RolePermission.RoleName</td>
+        <td><input name="Name" type="text" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+    </tr>
+    
+</table >          
+</form>

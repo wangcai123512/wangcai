@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "CompanyInfo";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Company
+@*<h2>CompanyInfo</h2>*@
+<form id="CompanyInfoForm">
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]" />
+<table id="CompanyInfoList">
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Name:
+        </td>
+        <td>
+            <input class="easyui-validatebox" id="Name" name="Name" data-options="required:true" value="@Model.Name"/>
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Address:
+        </td>
+        <td>
+            <input class="easyui-validatebox" id="Address" name="Address" data-options="required:true" value="@Model.Address"/>
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Contacter:
+        </td>
+        <td>
+            <input class="easyui-validatebox" id="Contacter" name="Contacter" data-options="required:true" value="@Model.Contacter"/>
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.ContactWay:
+        </td>
+        <td>
+            <input class="easyui-validatebox" id="ContactWay" name="ContactWay" data-options="required:true" value="@Model.ContactWay"/>
+        </td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Type:
+        </td>
+        <td>
+            <input class="easyui-validatebox" id="Type" name="Type" data-options="required:true" value="@Model.Type"/>
+        </td>
+    </tr>
+</table>
+</form>

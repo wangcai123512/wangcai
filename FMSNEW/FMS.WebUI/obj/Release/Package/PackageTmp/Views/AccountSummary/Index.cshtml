@@ -1,0 +1,87 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="panAccSum">
+	<table id = "AccSum"></table>
+</div>
+<div id="panAccSumDtl">
+	<table id="AccSumDtl"></table>
+	<a class="easyui-linkbutton" onclick="Toggle('')">@General.Resource.Common.Back</a>
+</div>
+
+<script type="text/javascript">
+	function LinkFmt(val,row) {
+		if ($("#AccSum").treegrid("getChildren", val).length == 0 && row._parentId.length > 0) {
+			return "<a onclick='Toggle(\"" + val + "\")' >@General.Resource.Common.Details</a> ";
+		}
+		else {
+			return "";
+		}	
+	}
+
+	$(function () {
+	$("#panAccSumDtl").slideToggle("normal");
+		$("#AccSum").treegrid({
+			url: '/AccountSummary/GetAccSum',
+			treeField: 'Acc_Name',
+			idField: 'Acc_GUID',
+			showFooter: true,
+			columns: [[
+						{ field: 'Acc_Name', title: '@General.Resource.Common.Name' },
+						{ field: 'Money', title: 'Price', width: 100, formatter: DecimalFmter, align: "right" },
+						{ field: 'Acc_GUID', title: '', formatter: LinkFmt }
+					 ]],
+			onLoadSuccess: function (node, dat) {
+				$($('#AccSum').treegrid("getRoots")).each(function (i, n) {
+					GetLeaf(n);
+				});
+			}
+		});
+		$("#AccSumDtl").datagrid({
+			url: '/AccountSummary/GetAccSumDtl',
+			columns: [[
+					{ field: "Date", title: "@FMS.Resource.Finance.Finance.Date", formatter: ChangeDateFormat },
+					{ field: "Amount", title: "@FMS.Resource.Finance.Finance.Money", formatter: DecimalFmter }
+				]]
+		});
+	});
+
+	function GetLeaf(pNode) {
+		var children = $('#AccSum').treegrid("getChildren", pNode.Acc_GUID);
+		if (children.length == 0) {
+			RefreshParent(pNode.Acc_GUID);
+		}
+		else {
+			$(children).each(function (i, n) {
+				GetLeaf(n);
+			});
+		}
+	}
+
+	function RefreshParent(id) {
+		var pNode = $('#AccSum').treegrid("getParent", id);
+		if (pNode == null) { }
+		else {
+			var result = 0;
+			$($('#AccSum').treegrid("getChildren", pNode.Acc_GUID)).each(function (i, n) {
+				if (n._parentId == pNode.Acc_GUID) {
+					result = Number(Number(result) + Number(n.Money)).toFixed(2);
+				}
+			});
+			pNode.Money = result;
+			$('#AccSum').treegrid("refresh", pNode.Acc_GUID);
+			RefreshParent(pNode.Acc_GUID);
+		}
+}
+
+	function Toggle(val) {
+		$("#panAccSumDtl").slideToggle("normal");
+		$("#panAccSum").slideToggle("normal");
+		if (val.length > 0) {
+			$("#AccSumDtl").datagrid("load", { "accId": val });
+		}
+	}
+</script>
+

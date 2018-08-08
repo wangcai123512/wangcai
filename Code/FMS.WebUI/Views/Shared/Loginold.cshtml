@@ -1,0 +1,215 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LoginLayout_V3.cshtml";
+}
+<style type="text/css">
+         .center
+        {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+        }
+        /*通用样式--容器宽度值*/
+        .sharp
+        {
+            width: 60%;
+            margin: 0px auto;
+            padding-top:50px;
+        }
+        .b1, .b2, .b3, .b4, .b5, .b6, .b7, .b8
+        {
+            height: 1px;
+            font-size: 1px;
+            overflow: hidden;
+            display: block;
+        }
+        .b1, .b8
+        {
+            margin: 0 5px;
+        }
+        .b2, .b7
+        {
+            margin: 0 3px;
+            border-right: 2px solid;
+            border-left: 2px solid;
+        }
+        .b3, .b6
+        {
+            margin: 0 2px;
+            border-right: 1px solid;
+            border-left: 1px solid;
+        }
+        .b4, .b5
+        {
+            margin: 0 1px;
+            border-right: 1px solid;
+            border-left: 1px solid;
+            height: 2px;
+        }
+        .color6 .b2, .color6 .b3, .color6 .b4, .color6 .b5, .color6 .b6, .color6 .b7, .color6 .content
+        {
+            border-color: #003366;
+        }
+        .color6 .b1, .color6 .b8
+        {
+            background: #003366;
+        }
+        /*背景色*/
+        .color6 .b2, .color6 .b3, .color6 .b4, .color6 .b5, .color6 .b6, .color6 .b7, .color6 .content
+        {
+            background: #ffffff;
+        }
+        .content
+        {
+            border-right: 1px solid;
+            border-left: 1px solid;
+            overflow: hidden;
+            
+        }
+        .VerifyMsg
+        {
+            color:Red;
+            }
+</style>
+<div id="RegForm"></div>
+<form method="Post" id="LoginInfo" >
+    <div class="center" style="height: 100%; width: 100%;">
+        <div class="sharp color6 ">
+            <b class="b1"></b>
+            <b class="b2"></b>
+            <b class="b3"></b>
+            <b class="b4"></b>
+            <div class="content">
+                <div style="margin-top: 10px; text-align: center; margin-left: auto; margin-right: auto;">
+                    <table style="width: 520px; text-align: center; margin: auto;height:150px;">
+                        <tr>
+                            <td style="width: 100px; text-align: right;">
+                                @General.Resource.Common.UserName:
+                            </td>
+                            <td style="width: 380px; text-align: left;">
+                                <input id="LoginName" name="LoginName" type="text" class="easyui-validatebox" data-options="required:true" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; text-align: right;">
+                                @General.Resource.Common.Password:
+                            </td>
+                            <td style="width: 380px; text-align: left;">
+                                <input id="Password" name="Password" type="password"  class="easyui-validatebox" data-options="required:true,width:150" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; text-align: right;">
+                                @General.Resource.Common.VerifyCode:
+                            </td>
+                            <td style="width: 380px; text-align: left;">
+                                <input id="txtValidateCode"  name="ValidateCode" type="text" class="easyui-validatebox" data-options="required:true,deltaX:50" />
+                                <img id="imgValidateCode" src="/Common/GetValidateCode" onclick="ChangeValidateCode(this)" style="cursor: pointer;" />                            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 100px; text-align: right;">
+                            </td>
+                            <td style="width: 380px; text-align: left;">
+                                @Html.CheckBox("RemberPwdFlag")
+                                @General.Resource.Common.RemberPwd
+                                <span id="ErrorMsg" style=" color:Red"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 90px; text-align: right;">
+                            </td>
+                            <td style="width: 380px; text-align: left;">
+                                <a href="#" id="BtnLoginOn" class="easyui-linkbutton"  name="Login" onclick="Login()">@General.Resource.Common.Login</a>
+                                <input type="Submit" value="" style="opacity:0;filter:alpha(opacity=0);" />
+                                <a href="#" id="BtnRegister" class="easyui-linkbutton" name="Register" onclick="Register()">@General.Resource.Common.Register</a>                               
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <b class="b5"></b><b class="b6"></b><b class="b7"></b><b class="b8"></b>
+        </div>
+    </div>   
+</form>
+ @using (Html.BeginForm("ForceLogin", "Login", FormMethod.Post, new { id = "ForceForm"}))
+    {
+         <input id="UserName" type="hidden" name="username" />
+    }
+<script type="text/javascript" language="javascript">
+    javascript: window.history.forward(1);
+    $(function () {
+        $("#LoginName").focus();
+        $("#RegForm").dialog({
+            href: "/Common/Register",
+            title: "@General.Resource.Common.Register",
+            width:400,
+            height:350,
+            closed:true,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () { SubmitForm(); }
+            }]
+        });
+
+        $("#LoginInfo").form({
+            url: "/Common/Login",
+            onSubmit: function () {
+                if ($("#LoginInfo").form("validate")) {
+                    SetPwdAndChk();
+                    $("#ErrorMsg").text("");
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            },
+            success: function (data) {
+                if (JSON.parse(data).Result) {
+                    window.location.href = "/Company/ChooseCompany";
+                }
+                else {
+                    $("#ErrorMsg").text(JSON.parse(data).Msg);
+                    $("#txtValidateCode").val("");
+                    $("#Password").val("");
+                    $("#imgValidateCode").click();
+                }
+            }
+        });
+        $("#LoginName").bind("blur", GetPwdAndChk);
+        }
+    );
+        function ChangeValidateCode(obj) {
+            obj.src = "/Common/GetValidateCode?time=" + (new Date()).getTime();
+        }
+
+        function Login() {
+            $("#BtnLoginOn").focus();
+            $("#LoginInfo").submit();
+        }
+
+        function Register() {
+            $("#RegForm").dialog("refresh").dialog("open");
+        }
+
+        function SubmitForm() {
+            $("#RegInfo").form('submit', {
+                url: "/Common/Register",
+                onSubmit: function () { return $("#RegInfo").form("validate"); },
+                success: function(data){
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $("#RegForm").dialog("close");
+                    }
+                }
+            });
+        }
+
+        var confirmMsg = function (r) {
+            if (r) {
+                $("#UserName").val($("#LoginName").val());
+                $("#ForceForm").submit();
+            }
+        }
+</script>

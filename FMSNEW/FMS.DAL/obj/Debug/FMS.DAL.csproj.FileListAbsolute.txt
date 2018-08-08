@@ -1,0 +1,7 @@
+D:\fms\FMSNEW\FMS.DAL\bin\Debug\FMS.DAL.dll
+D:\fms\FMSNEW\FMS.DAL\bin\Debug\FMS.DAL.pdb
+D:\fms\FMSNEW\FMS.DAL\bin\Debug\FMS.Model.dll
+D:\fms\FMSNEW\FMS.DAL\bin\Debug\FMS.Model.pdb
+D:\fms\FMSNEW\FMS.DAL\obj\Debug\FMS.DAL.csprojResolveAssemblyReference.cache
+D:\fms\FMSNEW\FMS.DAL\obj\Debug\FMS.DAL.dll
+D:\fms\FMSNEW\FMS.DAL\obj\Debug\FMS.DAL.pdb

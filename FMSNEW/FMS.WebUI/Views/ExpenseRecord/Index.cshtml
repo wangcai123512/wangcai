@@ -1,0 +1,131 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="ER_List"></table>
+
+
+<script language="javascript" type="text/javascript">
+    var LinkHandle = function (value, row) {
+        var link = "";
+        var EditThreshold = '@(((DateTime)Session["EditThreshold"]).ToShortDateString())';
+        EditThreshold = (new Date(EditThreshold)).getTime();
+        var date = DateHandle(row.Date);
+        date = date.replace(/-/g, "/");
+        date = (new Date(date)).getTime();
+        if (date >= EditThreshold) {
+            link = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Edit</a> "
+			+ " <a class='linkbtn' onclick='DeleteClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+        }
+        else {
+            link = "<a class='linkbtn' onclick='CheckClick(\"" + value + "\")'>@General.Resource.Common.Check</a>";
+        }
+        return link;
+    };
+
+	var DateHandle = function (value, row, index) {
+		return ChangeDateFormat(value);
+	}
+
+	$(function () {
+		$("#ER_List").datagrid({
+		    url: '/ExpenseRecord/GetExpenseList',
+			columns: [[
+				{ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee' },
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: DateHandle },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+				{ field: 'IE_GUID', title: '', formatter: LinkHandle }
+			]],
+			toolbar: [{
+				iconCls: 'icon-add',
+				text: '@General.Resource.Common.Add',
+				handler: function () { AddClick(); }
+			}],
+			pagination: true,
+			rownumbers: true,
+			singleSelect: true
+		});
+
+
+	});
+
+
+
+	function AddClick(id) {
+	    $("#ER_List").after("<div id='WinER'></div>");
+       $("#WinER").dialog({
+			title: ' ',
+			maximized: true,
+			onClose: function () { $("#WinER").dialog("destroy"); },
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { SubmitForm(); }
+			}]
+		});
+        if (id == null) {
+		    $('#WinER').dialog("refresh", "/ExpenseRecord/ExpenseRecord");
+		}
+		else {
+		    $('#WinER').dialog("refresh", "/ExpenseRecord/ExpenseRecord/" + id);
+		}
+	}
+
+	function DeleteClick(id) {
+		$.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+			if (r) {
+				$.ajax({
+				    url: "/ExpenseRecord/DelExpenseRecord/" + id,
+					type: "POST",
+					success: function (data) {
+						$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+						if ($.parseJSON(data).Result) {
+							$('#ER_List').datagrid("reload");
+						}
+					},
+					error: errorHandle
+				});
+			}
+		});
+	}
+
+	function CheckClick(id) {
+	    $("#ER_List").after('<div id="WinCheck"></div>');
+	    $("#WinCheck").dialog({
+	        title: ' ',
+	        collapsible: false,
+	        minimizable: false,
+	        maximized: true,
+	        onClose: function () { $("#WinCheck").dialog("destroy"); }
+	    });
+	    $('#WinCheck').dialog("refresh", "/ExpenseRecord/CheckExpenseRecord/" + id);
+	}
+
+	function SubmitForm() {
+	    if ($("#ExpenseRecord").form("validate")) {
+	        var h = JSON.stringify($("#ExpenseRecord").serializeObject());
+	        var b = JSON.stringify($("#ExpenseDetailsList").datagrid("getData").rows);
+			$.ajax({
+			    url: "/ExpenseRecord/UpdExpenseRecord",
+				processData: false,
+				type: "POST",
+				data: "head=" + h + "&list=" + b,
+				success: function (data) {
+					$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+					if ($.parseJSON(data).Result) {
+						$('#WinER').dialog("close");
+						$('#ER_List').datagrid("reload");
+					}
+				},
+				error: errorHandle
+			});
+		}
+		return false;
+	}
+
+</script>
+
+
+
+

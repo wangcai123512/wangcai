@@ -1,0 +1,387 @@
+﻿@{
+	ViewBag.Title = "ReceivablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@using System.Web.Security
+@model FMS.Model.T_RecPayRecord
+
+<style type="text/css">
+</style>
+<form id="ReceivablesRecord">
+<input type="hidden" id="RP_GUID" name="RP_GUID" value="@Model.RP_GUID" />
+<input type="hidden" name="Creator" value="@Model.Creator" />
+<input type="hidden" name="CreateDate" value="@(Model.CreateDate.Equals(System.DateTime.MinValue) ? System.DateTime.Now : Model.CreateDate)" />
+<input type="hidden" name="RPable" id="RPable" />
+<input type="hidden" id="CreditLedgerAccount" name="CreditLedgerAccount" value="@Model.CreditLedgerAccount"  />
+<input type="hidden" id="CreditDetailsAccount" name="CreditDetailsAccount" value="@Model.CreditDetailsAccount"  />
+<input type="hidden" id="DebitLedgerAccount" name="DebitLedgerAccount"  value="@Model.DebitLedgerAccount" />
+<input type="hidden" id="DebitDetailsAccount" name="DebitDetailsAccount"  value="@Model.DebitDetailsAccount" />
+<input type="hidden" id="CFPItemGuid" name="CFPItemGuid" value="@Model.CFPItemGuid" />
+<input type="hidden" id="CFItemGuid" name="CFItemGuid" style="width: 250px" value="@Model.CFItemGuid"/>
+<input type="hidden" id="IE_GUID" name="IE_GUID" style="width: 250px" value="@Model.IE_GUID"/>
+<input type="hidden" id="InvType" name="InvType" style="width: 250px" value="@Model.InvType"/>
+<input type="hidden" id="InvTypeDts" name="InvTypeDts" style="width:250px" value="@Model.InvTypeDts"/>
+
+<table id="ReceivablesRecord_List">
+	<tr>
+
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Payer:</td>
+		<td>
+			<input class="easyui-combobox" id="RPer" name="RPer" value="@Model.RPer" 
+				data-options="editable:false,required:true,url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID',panelHeight:'auto',panelMaxHeight:200" />
+		</td>		<td colspan="2">
+			<a id="a1" class="easyui-linkbutton" href='/ReceivablesRecord/DownLoadFile?fileID=2b2b6a2d-77b0-43a7-9a7a-fcbbd0c65cf4'>下载记录收款模板</a>
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Receive@FMS.Resource.Finance.Finance.Date: </td>
+	    <td>
+	        <input class="easyui-datebox" id="Date" name="Date" data-options="required:true"
+	               value="@(Model.Date.Equals(System.DateTime.MinValue) ? System.DateTime.Now.Date.ToShortDateString() : Model.Date.Date.ToShortDateString())" />
+	    </td>
+        <td colspan="2">
+			<a id="a2" class="easyui-linkbutton" onclick="ShowImport()">上传记录收款模板</a>
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Receive@FMS.Resource.Finance.Finance.Amount:</td>
+		<td>
+			 <input id="Amount" name="SumAmount" class="easyui-numberbox" value="@Model.SumAmount" data-options="required:true, precision:2,groupSeparator:','" />
+		</td>
+		<td>@FMS.Resource.Finance.Finance.Currency:</td>
+		<td>
+			<input id="Currency" name="Currency"  value="@Model.Currency"  />
+		</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.ReceivableAccount</td>
+		<td>
+			 <input id="Bank" name="B_GUID"  value="@Model.B_GUID" />
+		</td>
+		<td></td>
+		<td>
+			<input id="BankAccount" name="BA_GUID"  value="@Model.BA_GUID" />
+		</td>
+	</tr>
+	<tr>
+		<td>@General.Resource.Common.Remark :</td>
+	    <td>
+	        <input class="easyui-validatebox" id="Remark" name="Remark" value="@Model.Remark" />
+	    </td>
+        <td colspan='2'><a id="a3" class="easyui-linkbutton" onclick="ChooseReceivable();">从应收账款中获取</a></td>
+	</tr>
+	<tr>
+		<td colspan="4">
+			<div>
+			    <input id="file_upload1" name="file_upload" type="file" multiple="multiple"/>
+                 <a class="easyui-linkbutton" id="btnUpload" onclick="javascript: $('#file_upload1').uploadify('upload', '*')">上传收款凭证</a>
+				<div id="fileQueue1" class="fileQueue"></div>
+				<div id="div_files"></div>
+			</div>
+		</td>
+	</tr>
+</table>		
+</form>
+<div id="WinIncome"></div>
+<a class="easyui-linkbutton" onclick="SubmitForm()">@General.Resource.Common.Save</a>
+<a id="a4" class="easyui-linkbutton" onclick="GenIncome()">计入收入</a>
+<script type="text/javascript">
+	var LedgerAccount;
+	var DebitLedgerAccount = new Array();
+	var CreditLedgerAccount = new Array();
+	var DetailsAccount;
+	var DebitCode = ['1001', '1002'];
+	var CreditCode = ['1122', '1221'];
+	var DebitVal;
+	var CreditVal;
+	var CommonCurrency;
+	var StandardCoin;
+	var Subject;
+	var BankAccount;
+	var FileFlag = null;
+
+	$(function () {
+		$.ajax({
+			url: "/InternalAPI/GetUserCurrency",
+			async: false,
+			dataType: "json",
+			success: function (d) { CommonCurrency = d; }
+		});
+
+		$.ajax({
+			url: "/InternalAPI/GetCompanySetting",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				StandardCoin = d.StandardCoin;
+			}
+		});
+
+		$.ajax({
+			url: "/InternalAPI/GetBankAccounts",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				var obj = new Object();
+				obj.ID = "0";
+				obj.Name = "现金";
+				obj.children = new Array();
+				d.push(obj);
+				BankAccount = d;
+			}
+		});
+
+		$("#ReceivablesRecord #Currency").combobox({
+			editable: false,
+			required: true,
+			data: CommonCurrency,
+			onLoadSuccess: function (data) {
+				if ("@Model.Currency" == "" || "@Model.Currency" == null) {
+					$("#Currency").combobox("setValue", StandardCoin);
+				}
+			}
+		});
+
+		$("#ReceivablesRecord #Bank").combobox({
+			editable: false,
+			required: true,
+			data: BankAccount,
+			textField: "Name",
+			valueField: "ID",
+			onLoadSuccess: function (data) {
+				$("#ReceivablesRecord #Bank").combobox("select", "@Model.B_GUID");
+			},
+			onSelect: function (rec) {
+				$("#ReceivablesRecord #BankAccount").combobox("loadData", rec.children);
+			},
+			onChange: function (newV, oldV) {
+				if (newV != oldV) {
+					$("#ReceivablesRecord #BankAccount").combobox("clear");
+				}
+			}
+		});
+
+		$("#ReceivablesRecord #BankAccount").combobox({
+			editable: false,
+			required: true,
+			textField: "Name",
+			valueField: "ID"
+		});
+
+		$("#WinIncome").dialog({
+			closed: true,
+			title: ' ',
+			width: 800,
+			height: 400,
+			onLoad: function () {
+			    $("#Income_Form").form("load", $("#ReceivablesRecord").serializeObject());
+			    $("#a5").hide();
+			    $("#IsubmitI").hide();
+			    var v = $("#ReceivablesRecord #RP_GUID").val();
+			    $("#Income_Form #IE_GUID").val(v);
+			},
+            buttons: [{
+					text: '@General.Resource.Common.Save',
+					handler: function () { IESaveI();}
+				}]
+		});
+
+		//添加界面的附件管理
+		$('#ReceivablesRecord #file_upload1').uploadify({
+			width: 105,
+			height: 20,
+			swf: '/Content/uploadify/uploadify.swf',    //FLash文件路径
+			buttonText: '浏  览',               //按钮文本
+			uploader: '/ReceivablesRecord/Upload',       //处理文件上传Action
+			queueID: 'fileQueue1',                        //队列的ID
+			queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+			auto: false,                                 //选择文件后是否自动上传，默认为true
+			multi: true,                                 //是否为多选，默认为true
+			removeCompleted: true,                       //是否完成后移除序列，默认为true
+			fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+			fileTypeDesc: 'Image Files',                 //文件描述
+			fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.xlsx;*.zip',  //上传的文件后缀过滤器
+			onQueueComplete: function (event, data) {                 //所有队列完成后事件
+				//ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+			    FileFlag = true;
+			    $.messager.alert("提示", "收款凭证上传完毕！"); 
+			},
+			onUploadStart: function (file) {
+			    $("#ReceivablesRecord #file_upload1").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#RP_GUID").val(),
+					'ASPSESSID': "@Session.SessionID",
+					'AUTHID': "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)"
+				}); //动态传参数
+			},
+			onUploadError: function (event, queueId, fileObj, errorObj) {
+				console.log(errorObj);
+				FileFlag = false;
+			}
+		});
+	});
+
+	function ChooseReceivable() {
+			if ($("#WinReceivablesRecord").length > 0) {
+				$("#WinReceivablesRecord").dialog("close");
+			}
+			$("#ReceivablesRecord_List").after("<div id='WinReceivablesRecord'></div>");
+			$("#WinReceivablesRecord").dialog({
+				title: ' ',
+				width: 800,
+				height: 420,
+				onClose: function () {
+					$("#WinReceivablesRecord").dialog("destroy");
+				},
+				buttons: [{text: '提交',handler: function () { NextPage(); }}]
+			});
+			
+			$('#WinReceivablesRecord').dialog("refresh", "/ReceivablesRecord/ChooseReceivablesRecord/");
+}
+
+	function Save() {
+	    var row = $("#ChooseReceivablesRecord_List").datagrid("getSelected");
+		if (row != null) {
+			$('#ReceivablesRecord #RPer').combobox('setValue', row.Payer);
+			$('#ReceivablesRecord #Currency').combobox('setValue', row.Currency);
+			$("#ReceivablesRecord #Amount").numberbox('setValue', row.Money);
+			CreditVal = row.LA_GUID;
+			$("#ReceivablesRecord #RPable").val(row.R_GUID);
+			$("#ReceivablesRecord #IE_GUID").val(row.R_GUID);
+			$("#ReceivablesRecord #Amount").numberbox("options").max = Number(row.Money);
+
+			$("#ReceivablesRecord #InvType").val("经营活动收款");
+			$("#ReceivablesRecord #InvTypeDts").val("销售商品/提供服务的收款");
+		}
+		$('#WinReceivablesRecord').dialog("close");
+}
+function NextPage() {
+    var items = $('#ChooseReceivablesRecord_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            var oldid = item.R_GUID;
+            var ieguids = item.R_GUID;
+            //转换begin
+            var strs = new Array(); //定义一数组
+            strs = oldid.split("-"); //字符分割
+            var len = strs.length;
+            var temp;
+            temp = strs[0];
+            strs[0] = strs[len - 1];
+            strs[len - 1] = temp;
+            var ss = strs[0];
+            for (var i = 1; i < strs.length; i++) {
+                ss = ss + "-" + strs[i];
+            }
+            //转换end
+            var newid = ss;
+            var names = item.RPerName;
+            var dates = item.Dates;
+            var moneys = item.Moneys;
+            var remarks = item.Remarks;
+            var currencys =$("#d1 #cCurrency").combobox('getValue');
+            var banks =  $("#d1 #cBank").combobox('getValue');
+            var bankaccounts = $("#d1 #cBankAccount").combobox('getValue');
+            $.ajax({
+                url: '/ReceivablesRecord/UpdReceivablesRecordDts?id=' + newid + '&name=' + names + '&date=' + dates + '&money=' + moneys + '&remark=' + remarks + '&currency=' + currencys + '&bank=' + banks + '&bankaccount=' + bankaccounts + '&ieguid=' + ieguids,
+                type: "POST",
+                success: function (data) {
+                    //$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    //成功则改变收入存款状态=销账
+                    $.ajax({
+                        url: '/ReceivablesClassify/UpdState?id=' + oldid,
+                        type: "POST"
+                    });
+                    //成功则刷新表
+                    if ($.parseJSON(data).Result) {
+                        $('#ChooseReceivablesRecord_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+    }
+
+	function IESaveI() {
+	    $("#Income_Form").form('submit', {
+	        url: "/IncomeRecord/UpdIncomeRecord",
+	        onSubmit: function () {
+	            //表单验证
+	            return $("#Income_Form").form('validate');
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+	            if ($.parseJSON(data).Result) {
+	                $('#WinIncome').dialog("close");
+	                var v = $("#ReceivablesRecord #RP_GUID").val();
+	                $("#ReceivablesRecord #IE_GUID").val(v);
+	                $("#ReceivablesRecord #InvType").val("经营活动收款");
+	                $("#ReceivablesRecord #InvTypeDts").val("销售商品/提供服务的收款");
+	            }
+	        }
+	    });
+	}
+
+    //提交
+	function SubmitForm() {
+        $("#ReceivablesRecord").form('submit', {
+            url: "/ReceivablesRecord/UpdReceivablesRecord",
+            onSubmit: function () {
+                return $("#ReceivablesRecord").form('validate');
+            },
+            success: function (data) {
+                if ($("#ReceivablesRecord #IE_GUID").val() == "" || $("#ReceivablesRecord #IE_GUID").val() == null) {
+
+                }
+                else {
+                    $.ajax({
+                        url: '/ReceivablesClassify/UpdState?id=' + $("#ReceivablesRecord #IE_GUID").val(),
+                        type: "POST"
+                    });
+                }
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $("#ReceivablesRecord").form('clear');
+                }
+            }
+        });
+    }
+
+	function GenIncome() {
+	    $("#WinIncome").dialog("open");
+		$("#WinIncome").dialog("refresh","/IncomeRecord/Temporary");
+	}
+
+	//显示导入界面
+	function ShowImport() {
+	    $("#ReceivablesRecord_List").after("<div id='ImportRecord'></div>");
+	    $("#ImportRecord").dialog({
+	        title: '收款信息批量导入',
+            padding:100,
+	        width: 250,
+	        height: 100,
+	        onClose: function () {
+	            $("#ImportRecord").dialog("destroy");
+	        },
+	        buttons: [{
+	            text: '导入',
+	            handler: function () { excel(); }
+	        }]
+	    });
+	    $('#ImportRecord').dialog("refresh", "/ReceivablesRecord/ImportRecord/");
+	}
+
+	//利用表单导入EXCEL
+	function excel() {
+	    $("#upexcel").form("submit", {
+	        url: '/ReceivablesRecord/Upexcel/',
+	        onSubmit: function () {
+	            return $(this).form("validate"); //提交前验证
+	        },
+	        success: function (data) {
+	            $.messager.alert('Excel批量用户导入', data, 'info');
+	            $("#ImportRecord").dialog("destroy");
+	        }
+	    }
+            );
+	}
+</script>

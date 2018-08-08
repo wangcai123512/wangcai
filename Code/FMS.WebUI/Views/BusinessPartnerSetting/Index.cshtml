@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+    <table id="Partners"></table>
+    <div id="Partner"></div>
+    <script type="text/javascript">
+        var LinkFormatter = function (value) 
+        {
+            var Para = '"' + value + '"';
+            return "<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> " +
+                    "<a onclick='DelPartner(" + Para + ")' >@General.Resource.Common.Delete</a>";
+        };
+        var ChkFormatter = function (val) {
+            return "<input type='checkbox' disabled='disabled'" + (val ? "checked='checked'" : "") + "'/>";
+        }
+
+
+        $(function () {
+            $('#Partners').datagrid({
+                url: '/BusinessPartnerSetting/GetPartners',
+                singleSelect:true,
+                columns: [[
+                { field: 'Name', title: '@General.Resource.Common.Name' },
+                { field: 'IsSupplier', title: '@FMS.Resource.BusinessPartner.BusinessPartner.Supplier', formatter: ChkFormatter },
+                { field: 'IsCustomer', title: '@FMS.Resource.BusinessPartner.BusinessPartner.Customer', formatter: ChkFormatter },
+                //{ field: 'IsPartner', title: '@FMS.Resource.BusinessPartner.BusinessPartner.Partner', formatter: ChkFormatter },
+                { field: 'BP_GUID', title: '', formatter: LinkFormatter }
+                ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: '@General.Resource.Common.Add',
+                    handler: function () { ShowDetails(); }
+                }]
+            });
+            $("#Partner").dialog({
+                collapsible: false,
+                minimizable: false,
+                maximizable: false,
+                closed: true,
+                title: "@FMS.Resource.BusinessPartner.BusinessPartner.Partner",
+                width: 600,
+                height: 300,
+                buttons: [{
+                    text: '@General.Resource.Common.Save',
+                    handler: function () { SubmitForm(); }
+                }]
+            });
+        });
+    
+    function ShowDetails(id)
+    {
+        $("#Partner").dialog("center");
+        $("#Partner").dialog("open");       
+        if (id != null) {
+            $("#Partner").dialog("refresh", "/BusinessPartnerSetting/BusinessPartner/" + id);
+        }
+        else {
+            $("#Partner").dialog("refresh", "/BusinessPartnerSetting/BusinessPartner");
+        }
+    }
+
+    var successHandle = function (data) {
+        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+        if ($.parseJSON(data).Result) {
+            $("#Partner").dialog("close");
+            $('#Partners').datagrid("reload");
+        }
+    };
+
+    function SubmitForm() {
+        $("#BusinessPartner").form('submit', {
+            url: "/BusinessPartnerSetting/UpdPartner",
+            onSubmit: function () { return $("form").form("validate"); },
+            success: successHandle
+        });
+    }
+
+    function DelPartner(id) {
+        $.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/BusinessPartnerSetting/DelPartner/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#Partners').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+    </script>
+

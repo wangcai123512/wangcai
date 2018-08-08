@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "ChoosePayablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+
+<div style="margin-left: -6px; margin-top: -6px; width: auto; height: 308px;">
+     <table id="ChooseWCRecord_List"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+     $(function () {
+         $("#ChooseWCRecord_List").datagrid({
+             url: '/PaymentRecord/GetChoosePayablesRecord?iegroup=1544d862-b1ab-42b8-9e97-9c2e1704665c',
+            columns: [
+                [
+                    { field: 'ck', checkbox: true },
+                    { field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee', width: 70, align: 'center' },
+                    { field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', width: 100, align: 'center' },
+                    { field: 'InvType', title: '费用类别', width: 100, align: 'center' },
+                    { field: 'IEGroupName', title: '费用详细类别', width: 100, align: 'center' },
+                    { field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate', width: 70, align: 'center', formatter: ChangeDateFormat },
+                    //{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate', align: 'center', formatter: ChangeDateFormat, width: 70 },
+                    {field: 'Money', title: '@FMS.Resource.Finance.Finance.Amount', width: 70, align: 'center', formatter: DecimalFmter },
+                    { field: 'Remark', title: '备注', width: 100, align: 'center'},
+                    { field: 'R_GUID', title: '@FMS.Resource.Finance.Finance.InvNo', width: 100, align: 'center',hidden:true }
+                ]
+            ],
+            fit: true,
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false,
+            selectOnCheck: true,
+            checkOnSelect: true
+        });
+    });
+</script>

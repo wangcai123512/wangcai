@@ -1,0 +1,248 @@
+﻿@{
+    ViewBag.Title = "CashFlowStatement";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px; background-color: #FFF;">
+    @Html.Partial("_ReportLeftMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div style="margin-top: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">现金流量表</span></div>
+        <div class="col-md-1" style="margin: auto"></div>
+        <div class="col-md-10" style="margin: auto;">
+            <div style="width:59%;height:20px;margin-left:76%">
+                @*<a href="#" style="cursor: pointer; color: #08C; padding: 5px 10px 5px 5px; font-weight: bold" onclick="GetPdf('pdf')">PDF</a>
+                <a href="#" style="cursor: pointer; color: #08C; padding: 5px 10px 5px 5px; font-weight: bold; " onclick="GetPdf('excel')">Excel</a>*@
+                <a href="#" style="cursor: pointer; color: #08C; padding: 5px 10px 5px 5px; font-weight: bold" onclick="GetPdfs('@Session["CompanyName"]', '@FMS.Resource.FinanceReport.FinanceReport.RepDate:@ViewBag.RepTitle')">PDF</a>
+                <a href="#" style="cursor: pointer; color: #08C; padding: 5px 10px 5px 5px; font-weight: bold; " onclick="GetPdf('excel','@Session["CompanyName"]','@FMS.Resource.FinanceReport.FinanceReport.RepDate:@ViewBag.RepTitle')">Excel</a>
+            </div>
+            <div style="height:29px;margin-top:1%;">
+                <button onclick="javascript: window.location = '/CashFlowStatements/Index'" class="btn btn-primary pull-right button-radius">
+                    返回上页
+                </button>
+
+                @if (!ViewBag.IsView)
+                {
+                    <input id="hidType" type="hidden" value="@ViewBag.Type" />
+
+                    <input id="hidRepDate" type="hidden" value="@ViewBag.RepDate" />
+
+                    @*<button type="button" class="btn btn-primary pull-left button-radius" onclick="Create('/CashFlowStatements/UpdCashFlowStatement','/CashFlowStatements/Index')">
+                    创建报表
+                </button>*@
+
+                }
+
+                @if (@ViewBag.status == "未结账")
+                {
+
+                    <button type="button" style="margin-right:5px;" class="btn btn-primary pull-right button-radius" onclick="settled('@ViewBag.RepDate','@ViewBag.RepId','已结账','@ViewBag.Type','@ViewBag.Period')">
+                        结账
+                    </button>
+                }
+                else if (@ViewBag.status == "已结账")
+                {
+                    <button type="button" class="btn btn-primary pull-right button-radius" style="margin-right:5px;">
+                        已结账
+                    </button>
+                }
+                else
+                {
+                    @*<button type="button" class="btn btn-primary pull-right button-radius" onclick="Create('/CashFlowStatements/UpdCashFlowStatement','/CashFlowStatements/Index')">
+        创建报表
+    </button>*@
+                    <button type="button" style="margin-right:5px;" class="btn btn-primary pull-right button-radius" onclick="settled('@ViewBag.RepDate','@ViewBag.RepId','已结账','@ViewBag.Type','@ViewBag.Period')">
+                        结账
+                    </button>
+                }
+            </div>
+            
+            
+            
+            <input type="hidden" value="@ViewBag.RepId" id="repId">
+
+            <table style="margin-bottom: 20px; width:100%">
+                <tr style="width:100%">
+                    <td style="width:30%; text-align:left"><span style="font-size: 20px; text-align:left;">公司: @Session["CompanyName"]</span></td>
+                    <td style="width:40%; text-align:center"><span style="font-size: 20px; text-align:left;">@FMS.Resource.FinanceReport.FinanceReport.RepDate: @ViewBag.RepTitle</span></td>
+                    <td style="width:30%; text-align:right"><span style="font-size: 20px; text-align:left;">单位:元</span></td>
+                </tr>
+            </table>
+
+            <table id="CashFlowStatement" class="table table-striped table-bordered table-condensed" style="white-space:pre"></table>
+
+            <div>
+                <div class="col-md-5">企业负责人：测试人</div>
+                <div class="col-md-4">财务负责人：测试财务人</div>
+                <div class="col-md-3">制表人：测试制表人人</div>
+            </div>
+
+        </div>
+
+    </section>
+</div>
+
+<style type="text/css">
+    .SumCell {
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .ItemTitle {
+        font-weight: 600;
+    }
+</style>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        var id = getUrlParms("id");
+        var reportDate = getUrlParms("reportDate");
+        var type = getUrlParms("type");
+        var status = getUrlParms("status");
+
+        $('#CashFlowStatement').bootstrapTable({
+            url: "/CashFlowStatements/GetCashFlowStatement?id=" + id + "&reportDate=" + reportDate + "&type=" + type,
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: false,
+            clickToSelect: false,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            //showExport: false,
+            //exportTypes: ['excel', 'pdf'],
+            //exportName: '现金流量表',
+            //detailView:true,
+            columns: [[
+                { field: 'name', title: '项目', width: "40%", formatter: "ItemCss" },
+                { field: 'row_no', title: '行次', width: "5%" },
+                { field: 'amount', title: '本月金额', width: "10%", formatter: DecimalFmter },
+                /*{ field: 'additional', title: '补充资料', width: "40%", formatter: "ItemCss" },
+                { field: 'row_no_add', title: '行次', width: "5%" },*/
+                { field: 'amount_add', title: '本年累计金额', width: "10%", formatter: DecimalFmter },
+            ]],
+            pagination: false,
+            rownumbers: true,
+            queryParams: queryParams
+        });
+    });
+
+    function GetPdfs(a, b) {
+        //alert(b);exit;
+        var companyname = '公司:' + a;
+        var myTable = $("#CashFlowStatement");
+        // 获取title
+        var tableThs = myTable.find("thead th");
+        //获取每个tr
+        var tableTrs = myTable.find("tbody tr");
+        var columns = [];
+        //处理title数组
+        tableThs.each(function () {
+            columns.push({ title: $(this).text(), key: $(this).text() });
+        });
+        //处理数据数组
+        var data = [];
+        tableTrs.each(function () {
+            var tds = $(this).children();
+            var object = {};
+            //生成数据对象
+            $.each(columns, function (i, r) {
+                var tdTitle = columns[i].key;
+                //'object'跟上文对象名称一致，动态件加属性和值
+                eval('object.' + tdTitle + '="' + $(tds).eq(i).text() + '"');
+            });
+            data.push(object);
+        });
+
+        var doc = new jsPDF('p', 'pt');
+        doc.addFont('simhei.ttf', 'simhei', 'normal');
+        doc.setFont('simhei');
+        //doc.autoTableText('四、现金净增加额', 22, 454.399999, { cellPadding: 0.5, fontSize: 8, font: "msyh" });
+        doc.autoTableText('现金流量表', 260, 5, { styles: { cellPadding: 0.5, fontSize: 4, font: "msyh" } });
+        doc.autoTableText('', 260, 15, { styles: { cellPadding: 0.5, fontSize: 4, font: "msyh" } });
+        doc.autoTableText(companyname, 40, 35, { styles: { cellPadding: 0.5, fontSize: 4, font: "msyh" } });
+        doc.autoTableText(b, 220, 35, { styles: { cellPadding: 0.5, fontSize: 4, font: "msyh" } });
+        doc.autoTableText('单位:元', 500, 35, { styles: { cellPadding: 0.5, fontSize: 4, font: "msyh" } });
+        doc.autoTable(columns, data, { styles: { cellPadding: 0.5, fontSize: 10, font: "msyh" }, bodyStyles: { font: "msyh" },margin: [60,40,40,40]});
+
+        doc.save("现金流量表(" + getUrlParms("reportDate") + ")" + getUrlParms("type") + ".pdf");
+    }
+
+    function GetPdf(obj,a,b) {
+        var fileName = "现金流量表(" + getUrlParms("reportDate") + ")" + getUrlParms("type");
+        var title = "现金流量表";
+        //alert(b); exit;
+        $("#CashFlowStatement").tableExport({
+            type:obj,
+            escape: false,
+            fileName: fileName,
+            title:title,
+            company: a,
+            midtitle:b
+        })
+    }
+
+    function getUrlParms(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return unescape(r[2]);
+        return null;
+    }
+    var ItemCss = function (value, row, index) {
+
+        if (value.indexOf("小计") >= 0) {
+
+            return '<p class="SumCell">' + value + '</p>'
+        } else if (value.indexOf("产生的现金") >= 0 || value.indexOf("将净利润调节为") >= 0
+            || value.indexOf("不涉及现金收支") >= 0 || value.indexOf("现金及现金等价") >= 0
+            || value.indexOf("汇率变动对现金的影响") >= 0 || value.indexOf("现金及现金等价物净") >= 0) {
+            return '<p class="ItemTitle">' + value + '</p>'
+        } else {
+            return value;
+        }
+    };
+
+    function settled(RepDate, id, status, type, period) {
+        $.ajax({
+            url: "/IncomeStatement/isFinish?RepDate=" + RepDate + "&status=" + status + "&type=" + period + "&period=" + type,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data).Result) {
+                    if (confirm('确认修改?')) {
+                        $.ajax({
+                            url: "/IncomeStatement/settledcash?id=" + id + "&status=" + status + "&RepDate=" + RepDate + "&period=" + type,
+                            type: "POST",
+                            success: function (data) {
+                                if ($.parseJSON(data).Result) {
+                                    alert($.parseJSON(data).Msg);
+                                    location.href = '/CashFlowStatements/Index';
+                                }
+                            },
+                            error: function () {
+                                alert("操作失败");
+                            }
+
+                        });
+                    }
+                } else {
+                    if (status == "已结账") {
+                        alert("请先结账之前的月度账单！");
+                        location.href = '/CashFlowStatements/Index';
+                    } else {
+                        alert("请先反结账之前的月度账单！");
+                    }
+                }
+            },
+            error: function () {
+                alert("操作失败");
+            }
+        });
+
+    }
+</script>

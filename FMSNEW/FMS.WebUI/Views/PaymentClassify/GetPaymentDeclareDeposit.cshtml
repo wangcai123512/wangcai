@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "GetPaymentDeclareDeposit";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+
+<div style="margin-left: -6px; margin-top: -6px; width: auto; height: 308px;">
+     <table id="ChoosePaymentDeclareDeposit_List"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var FJHandle = function (value, row, index) {
+        if (value == "" || value == null) {
+            return "";
+        } else {
+            var v = "../Content/EasyUI/themes/icons/hxz.png";
+            //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="' + v + '" />';
+        }
+    };
+
+    $(function () {
+        $("#ChoosePaymentDeclareDeposit_List").datagrid({
+            url: '/PaymentDeclareCostSpending/ChoosePaymentDeclareDepositList?invtype=支付押金和暂支借款',
+            columns: [[
+                    { checkbox: true },
+                    { field: 'Date', title: '申请日期', formatter: ChangeDateFormat },
+                    { field: 'RPerName', title: '收款方' },
+                    { field: 'Amount', title: '申请金额', align: 'right', formatter: DecimalFmter },
+                    { field: 'Currency', title: '货币' },
+                    { field: "InvType", title: '支出类别' },
+                    { field: 'Remark', title: '备注' },
+                    { field: 'RPer', title: '', hidden: true },
+                    { field: 'AGUID', title: '附件', align: 'center', formatter: FJHandle },
+                    { field: 'State', title: '状态', align: 'center' }
+                ]
+            ],
+            fit: true,
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false,
+            selectOnCheck: true,
+            checkOnSelect: true
+        });
+    });
+</script>

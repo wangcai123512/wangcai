@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "UserIndex";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="UserDetails" >   
+</div>
+    <table id="UserList"></table>
+    <script>
+
+        var LinkFormatter = function (value, row, index) 
+        {
+            var Para = '"' + value + '"';
+            var Para2 = '"/LocalUserManagement/GetUserRole/' + value + '"';
+            return "<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> " +
+            "<a onclick='PageChange(" + Para2 + ")'>@Common.Resource.RolePermission.SettingUserRole</a> " +
+        "<a onclick='DelRole(" + Para + ")' >@General.Resource.Common.Delete</a>";
+        };
+
+    $(function(){
+        $('#UserList').datagrid({
+            url: "/LocalUserManagement/GetUsers",
+            rownumbers:true,
+            singleSelect:true,
+            columns: [[
+                        { field: 'Name', title: '@Common.Resource.RolePermission.UserName'},
+                        { field: 'Guid', formatter: LinkFormatter}
+                     ]],
+            toolbar: [{
+		                iconCls: 'icon-add',
+                        text: '@Common.Resource.RolePermission.NewUser',
+		                handler: function(){ShowDetails();}
+	                 }]
+        });
+
+        $("#UserDetails").dialog({
+            href: "/LocalUserManagement/GetUser",
+            collapsible:false,
+            minimizable:false,
+            maximizable:false,
+            closed: true,
+            title:"@Common.Resource.RolePermission.UserInfo",
+            width: 300,
+            height: 180,
+            onLoad: txtVaild,
+            buttons:[{
+                text: '@General.Resource.Common.Save',
+                handler: function () { SubmitForm(); }
+			}]
+        });
+    });
+        
+    function ShowDetails(id) {
+        $("#UserDetails").dialog("center");
+        $("#UserDetails").dialog("open");
+        if (id != null) {
+            $("#UserDetails").dialog("refresh", "/LocalUserManagement/GetUser/" + id);
+        }
+        else {
+            $("#UserDetails").dialog("refresh", "/LocalUserManagement/GetUser");
+        }
+    }
+
+    function DelRole(id) {
+        $.ajax({
+            url: "/LocalUserManagement/DelUser/" + id,
+            type: "POST",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#UserList').datagrid("reload");
+                }
+            },
+            error: function () {
+                $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info'); 
+            }
+        });
+    }
+
+        var successHandle = function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $("#UserDetails").dialog("close");
+                     $('#UserList').datagrid("reload");
+                }
+            };
+
+        var errorHandle = function () {
+                    $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info'); 
+                };
+
+        function SubmitForm() {
+            $("form").form('submit', {
+                url: "/LocalUserManagement/UpdUser",
+                onSubmit: function () { return $("form").form("validate"); },
+                success: successHandle
+            });
+        }
+    </script>
+
+

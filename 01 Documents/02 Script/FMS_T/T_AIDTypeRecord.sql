@@ -1,0 +1,2 @@
+alter table dbo.T_AIDTypeRecord add  Asset_class nvarchar(40)
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'资产类别' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'T_AIDTypeRecord', @level2type=N'COLUMN',@level2name=N'Asset_class'

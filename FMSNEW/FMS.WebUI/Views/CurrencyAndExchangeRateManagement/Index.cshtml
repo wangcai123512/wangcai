@@ -1,0 +1,588 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example1').multiselect({
+            buttonWidth: '100%',
+        });
+        $('#example2').multiselect({
+            buttonWidth: '100%',
+            enableFiltering: true,
+            includeFilterNewBtn: false
+        });
+        InitalDateInput();
+
+    });
+</script>
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px">
+    <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                    <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                    <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                    <li class="active"><a class="accordion-toggle menu-open" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                        <ul id="sideFour" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                            <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                            <li class='active'><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px;color: #08C">货币与汇率设置</span></a></li>
+                            @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                             <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                        </ul>
+                    </li>
+                    <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                    <li>
+                        <a class="accordion-toggle" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                        <ul id="sidecompany" class="nav sub-nav">
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'">@*<span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>*@<span class="sidebar-title" style="font-size: 14px">往来公司登记</span></a></li>
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                        <ul id="sideVoucher" class="nav sub-nav">
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                            @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                        <ul id="sideTwo" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                            <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                        </ul>
+                    </li>
+                    @*<li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>*@
+                
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+                </ul>
+            </div>
+  </aside>
+    <section id="content_wrapper">
+<div id="MAIN" style="background-color: #FFF;">
+<div id="content">
+<div class="row" style="margin-top: 20px;">
+<div class="col-md-12">
+
+@*<div class="panel panel-visible">
+ <div class="panel-heading">
+                    <span class="panel-title"><span class="glyphicon glyphicon-pencil"></span>货币与汇率设置</span>
+                </div>
+    
+             <div class="panel-body pbn">*@
+               <form class="cmxform" id="altForm1" method="get">
+             <div class="col-md-12">
+             <div style="margin-bottom: 0px;margin-left: 40%"><span style="font-size: 25px; font-weight: 700; color: #074592; text-decoration: underline">当前统计货币</span></div>
+                    </br>
+                <div class="col-md-8" style="margin-left: 17%">
+                  
+                    
+                    <div class="form-group">
+                    <div class="input-group" style="margin: 0">
+                        <span class="input-group-addon">当前统计货币</span>
+                        <input type="text" readonly="readonly" id="CurrentMoney" class="form-control money" maxlength="10" autocomplete="off" value=@Session["Currency"]>
+                        <span class="input-group-addon" style="color: #000000"><input type="button" id="sendBtn" name="sendBtn" onclick="EditCurrency()" value="更新统计货币" /></span>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    @*<div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">当前货币汇率</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <table id="CurrentRateTable" class="table table-striped  table-hover">
+                        </table>
+                    </div>*@
+                    <div class="col-md-12">
+               
+                     <div style="margin-bottom: 0px;margin-left: 40%"><span style="font-size: 25px; font-weight: 700; color: #074592; text-decoration: underline">更新货币汇率</span></div>
+                     </br>
+                     </div>
+                      
+                    
+                      <div id="Example" class="col-md-12" style="display: none;margin-bottom: 0px;">
+                        <input type="hidden" class="AddStyle" value="直接新增"/>
+                        <input type="hidden" class="GUID" value=""/>
+                        <div  class="col-md-3">
+                        <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">生效日期</span>
+                            <input type="text" id="Date" name="Date" class="Date form-control datepicker mtn">
+                           
+                        </div>
+                        </div>
+                        </div>
+                         <div  class="col-md-3">
+                        <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                         
+                            <input type="text" id="FAmount" name="FAmount" class="form-control money" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon">@Session["Currency"]</span>
+                        </div>
+                        </div>
+                        </div>
+                        <div  class="col-md-1">
+                            <div class="form-group">
+                        <div class="input-group" style="margin: 4px">
+                            <span>兑&nbsp;换</span>
+                            
+                        </div>
+                        </div>
+                    </div>
+                     <div  class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            
+                            <input type="text" id="TAmount" name="TAmount" class="form-control money" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon" style="width: 80px; padding: 0"><select id="TCurrency" name="TCurrency"></select></span>
+                        </div>
+                    </div>
+                    </div>
+                    @* <div  class="col-md-2">*@
+                   @* <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            
+                            <select id="TCurrency" name="TCurrency">
+                            </select>
+                        </div>
+                    </div>*@
+                        @*</div>*@
+                         <div class="col-md-1">
+                            <div class="form-group" style="margin-top: -1px;">
+                                <a onclick="add()" href="#" style="font-size: 12px;">新增</a>&nbsp;&nbsp;&nbsp;
+                                <a class="delete" style="font-size: 12px;">删除</a>
+                            </div>
+                        </div>
+                      </div>
+                      <div id="Example_1" class="col-md-12" style="margin-bottom: 0px">
+                      <input type="hidden" class="AddStyle" value="直接新增"/>
+                        <input type="hidden" class="GUID" value=""/>
+                      <div  class="col-md-3">
+                        <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">生效日期</span>
+                            <input type="text" id="Date" name="Date" class="Date form-control datepicker mtn">
+                           
+                        </div>
+                        </div>
+                        </div>
+                         <div  class="col-md-3">
+                        <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                         
+                            <input type="text" id="FAmount" name="FAmount" class="form-control money" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon">@Session["Currency"]</span>
+                        </div>
+                        </div>
+                        </div>
+                        <div  class="col-md-1">
+                            <div class="form-group">
+                        <div class="input-group" style="margin: 4px">
+                            <span>兑&nbsp;换</span>
+                            
+                        </div>
+                        </div>
+                    </div>
+                     <div  class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            
+                            <input type="text" id="TAmount" name="TAmount" class="form-control money" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon" style="width: 80px; padding: 0"><select id="TCurrency" name="TCurrency"></select></span>
+                                               
+                                               
+                                            </span>
+                        </div>
+                    </div>
+                    </div>
+                    @* <div  class="col-md-2">
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            
+                            <select id="TCurrency" name="TCurrency">
+                            </select>
+                        </div>
+                    </div>
+                        </div>*@
+                         <div class="col-md-1">
+                            <div class="form-group" style="margin-top: 4px;">
+                                <a onclick="add()" href="#" style="font-size: 12px;">新增</a>&nbsp;&nbsp;&nbsp;
+                              
+                            </div>
+                        </div>
+                    </div>
+                     <div id="AddLayout" style=""></div>
+                 
+                    @*<div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">更新日期</span>
+                            <input type="text" id="Date" name="Date" class="Date form-control datepicker mtn">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;</span>
+                            <input type="text" id="FAmount" name="FAmount" class="form-control money" maxlength="10" autocomplete="off">
+                            <span class="input-group-addon">@Session["Currency"]</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="glyphicon glyphicon-resize-vertical"">&nbsp;&nbsp;&nbsp;转&nbsp;换&nbsp;&nbsp;&nbsp;</span>
+                            
+                        </div>
+                    </div>
+                  
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;</span>
+                            <input type="text" id="TAmount" name="TAmount" class="form-control money" maxlength="10" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;货&nbsp;币&nbsp;&nbsp;&nbsp;</span>
+                            <select id="TCurrency" name="TCurrency">
+                            </select>
+                        </div>
+                    </div>*@
+                <div class="col-md-12">
+                <div class="col-md-8" style="margin-left: 17%">
+                 <div style="margin-bottom: 0px; text-align: center"><span style="font-size: 25px; font-weight: 700; color: #074592; text-decoration: underline">统计货币与汇率信息更新</span></div>
+                    </br>
+                    </br>
+                  
+                    <div class="form-group">
+                        <table id="RateUsedTable" class="table table-striped  table-hover">
+                        </table>
+                  
+                    </div>
+                    </div>
+                 
+                    </div>
+                   <div class="form-group" style="margin: auto; text-align: center">
+                            <button onclick="AddRate()" type="button" style="margin-top: 20px; height: 40px; width: 20%;
+                            border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0; font-weight: bold"
+                                    class="btn btn-primary">
+                                提交
+                            </button>
+                            <button onclick="window.history.go(-1)" type="button" style="margin-top: 20px;
+                            height: 40px; width: 20%; border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0;
+                            font-weight: bold" class="btn btn-primary">
+                                返回上页
+                            </button>
+                        </div>
+                   
+                    </br>
+                    </br>
+                      <div class="col-md-12">
+                      <a style="font-size:25px;font-weight:700; margin-bottom: 0px;color: #074592;margin-left: 31%" type="button" @*onclick="GetRateHistory()"*@ data-toggle="collapse" 
+                        data-target="#demo">
+                        统计货币与汇率信息更改记录
+                    </a>    
+                <div class="col-md-8" style="margin-left: 17%">
+                
+                    
+                    <div id="demo" class="collapse">
+                        <div class="form-group ">
+                        <table id="RateHistoryTable" class="table table-striped  table-hover">
+                        </table>
+                    </div>
+                    </div>
+
+                 @*<div style="margin-bottom: 0px; text-align: center" onclick="GetRateHistory()"><span style="font-size: 25px; font-weight: 700; color: #074592; text-decoration: underline">统计货币与汇率信息更改记录</span></div>*@
+                    
+                   
+                    </div>
+                    
+                 
+                </div>
+                    </form>
+               
+                  </div>
+        </div>
+</div>
+</div>
+</section>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        var TCurrency;
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                TCurrency = d;
+            },
+            error: function (request) {
+                alert("Connection error");
+            }
+        });
+         $('#RateHistoryTable').bootstrapTable({
+            url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateList?current="+"0",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            queryParams:"10",
+            uniqueId : "GUID",
+            sortName: 'DateS', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: true, // 开启搜索功能
+            columns: [[
+                { field: 'DateS', title: '生效日期' },
+                 { field: 'Currency', title: '统计货币更新'},
+				{ field: 'VarString', title: '汇率更新' },
+               
+                { field: "GUID", visible: false }
+              ]], 
+            });
+//        $('#TCurrency').multiselect({
+//            buttonWidth: '100%',
+//            maxHeight: 200,
+//            enableFiltering: true,
+//            includeFilterNewBtn: false
+//        });
+        $("#Example_1 #TCurrency").multiselect('dataprovider', TCurrency);
+        sessionStorage.Currency = JSON.stringify(TCurrency)
+         
+       
+            $('#RateUsedTable').bootstrapTable({
+            url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateList?current="+"1",
+            method: 'get',
+            pageSize: 5,
+            pageList: [5, 10, 15], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            queryParams:"10",
+            uniqueId : "GUID",
+            sortName: 'DateS', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: true, // 开启搜索功能
+            columns: [[
+                { field: 'DateS', title: '生效日期' },
+                { field: 'Currency', title: '统计货币更新'},
+				{ field: 'VarString', title: '汇率更新' },
+               
+                { field: "GUID", visible: false }
+              ]], 
+            });
+
+    });
+
+//    function GetRateHistory(){
+//         $('#RateHistoryTable').bootstrapTable({
+//            url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateList?current="+"0",
+//            method: 'get',
+//            pageSize: 10,
+//            pageList: [10, 25, 50, 100, 200], // 自定义分页列表
+//            pageNumber: 1,
+//            singleSelect: true,
+//            clickToSelect: true,
+//            checkOnSelect: true,
+//            selectOnCheck: true,
+//            pagination: true,
+//            queryParams:"10",
+//            uniqueId : "GUID",
+//            sortName: 'DateS', // 设置默认排序为 name
+//            sortOrder: 'desc', // 设置排序为反序 desc
+//            search: true, // 开启搜索功能
+//            columns: [[
+//                { field: 'DateS', title: '生效日期' },
+//                 { field: 'Currency', title: '统计货币更新'},
+//				{ field: 'VarString', title: '汇率更新' },
+//               
+//                { field: "GUID", visible: false }
+//              ]], 
+//            });
+//    }
+
+
+    function NewGUID()
+    {
+        var GUID;
+        $.ajax({
+            url: "/CurrencyAndExchangeRateManagement/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+       
+    }
+     function changemoney(a) {
+        $(a + " .Amount").blur(function () {
+            var amount = $(a + " .Amount").val();
+            if (amount == null || amount == "") {
+                $(a + " .Amount").val();
+            } else {
+                $(a + " .Amount").val(Money(parseFloat(amount)));
+            }
+        });
+    }
+
+     function de(e) {
+        $('#' + e).remove();
+    }
+
+
+    var a =2;
+    function add()
+    {
+        var o = document.getElementById("Example");
+        var div = document.createElement("div");
+        div.id = "Example_" + a;
+        div .className = "col-md-12";
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, a);
+        document.getElementById("AddLayout").appendChild(div);
+        $("#"+div.id + '.GUID').val(NewGUID());
+        $('#' + div.id + ' .datepicker').datepicker();
+        changemoney('#' + div.id);
+         $("#" + div.id + " .delete").bind("click", function () {
+            de(div.id);
+        });
+        $("#" + div.id +' #TCurrency').multiselect({
+            buttonWidth:'100%',
+            maxHeight: 150,
+            enableFiltring:true,
+            includeFilterNewBtn: false,
+            nonSelectedText:'请选择'
+        });
+        $("#" + div.id +' #TCurrency').multiselect('dataprovider', JSON.parse(sessionStorage.Currency));
+        
+
+        
+            $('#' + div.id + ' .datepicker').datepicker(
+            {
+                language: "zh-CN",
+                format: "yyyy/mm/dd",
+                todayBtn: true,
+                todayHighlight: true,
+                autoclose: true,
+                endDate: NowDate,
+            });
+            a++;
+      
+    }
+   
+    function EditCurrency() {
+    window.location = "/Company/ChangeCompanySetting";
+    }
+
+    function AddRate() {
+      var checkTag = $('[id^=Example_]');
+      var error = false;
+      checkTag.find("[id=Date]").each(function(){
+        if($(this).val() == ""){
+                alert("请输入日期");
+                error = true;
+                return false;
+            }
+           if(error){
+                return false;
+            }
+      })
+
+      checkTag.find("[id=FCurrency]").each(function(){
+        if($(this).val() == ""){
+                alert("请输入日期");
+                error = true;
+                return false;
+            }
+           if(error){
+                return false;
+            }
+      })
+
+      checkTag.find("[id=TCurrency]").each(function(){
+        if($(this).val() == ""){
+                alert("请输入日期");
+                error = true;
+                return false;
+            }
+           if(error){
+                return false;
+            }
+      })
+
+      var rateList = new Array()
+      for(var i = 1;i< 100;i++){
+        if(document.getElementById("Example_"+ i)){
+           
+            var fAmount = $('#Example_' + i + ' #FAmount').val();
+            var tAmount = $('#Example_' + i + ' #TAmount').val();
+            var tCurrency = $('#Example_' + i + ' #TCurrency').val();
+            var date = $('#Example_' + i + ' #Date').val();
+            var addstyle = $('#Example_' + i + '.AddStyle').val();
+            var rate = {
+                
+                FAmount:fAmount,
+                TAmount:tAmount,
+                TCurrency:tCurrency,
+                Date:date,
+
+
+                };
+                rateList.push(rate);
+      
+       
+      }
+        }
+         var param = new Array()
+        param = {rateHistory: rateList};
+            $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/CurrencyAndExchangeRateManagement/UpdCurrencyAndExchangeRate",
+            data: JSON.stringify(param),
+            async: false,
+            contentType: 'application/json',
+               dataType: 'html',
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (data) {
+                if (data=true) {
+                    alert('提交成功！');
+                    //window.location = "/Common/Index" ;
+                } else {
+                    alert('提交失败');
+                }
+            }
+        });
+        $("#RateHistoryTable").bootstrapTable('refresh');
+        $("#CurrentRateTable").bootstrapTable('refresh');
+        location.reload(true);
+      }
+
+    
+
+</script>

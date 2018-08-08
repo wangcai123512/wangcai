@@ -1,0 +1,404 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<h2>Index</h2>
+
+<div id="main" style="margin-top: 65px;">
+   <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                    <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                     <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                    <li class="active"><a class="accordion-toggle menu-open" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                        <ul id="sideFour" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                            <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                            <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                            @*<li class="active"><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                             <li class="active"><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px;color: #08C">业务单元设置</span></a></li>
+                        </ul>
+                    </li>
+                    <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                    <li>
+                        <a class="accordion-toggle" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                        <ul id="sidecompany" class="nav sub-nav">
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'"><span class="sidebar-title" style="font-size: 14px">往来公司登记</span></a></li>
+                            <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                        <ul id="sideVoucher" class="nav sub-nav">
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                            <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                            @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                        <ul id="sideTwo" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                            <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                            <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                        </ul>
+                    </li>
+                   
+                   @*<li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>*@
+                
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+                </ul>
+            </div>
+  </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF" >
+            <div id="content">
+                <div class="row">
+                <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span id="title" style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">业务类别设置</span></div>          
+                    <div class="col-md-12">                        
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                     <button  type="button" onclick="ShowAddCategory()" id="btnCostOut" style="width: 100%;height:28px; border:1px solid  #4F4F4F;border-radius:20px; font-size: 15px; color: #000000;margin-left:10px">业务单元</button>
+                                    </div>
+                                </div> 
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                     <button  type="button" onclick="ShowAddSubCategory()" id="btnCostOut" style="width: 100%;height:28px; border:1px solid  #4F4F4F;border-radius:20px; font-size: 15px; color: #000000;margin-left:10px">业务子单元</button>
+                                    </div>
+                                </div>                           
+                            </div> 
+                    <div class="col-md-12" style="margin: auto">
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <div id="toolbar">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+
+                                        </div>
+                                    </div>
+                                    <table id="dataList" style="font-size: 12px"></table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+ 
+            </div>
+        </div>
+    </section>
+</div>
+<div class="modal fade" id="ShowAddCategory" tabindex="-1" role="dialog" aria-labelledby="ShowAddCategory"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="ShowAddCategory">
+                    新增业务单元
+                </h4>
+            </div>
+            <div class="modal-body"> 
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                             <form id="Add_Form" style="text-align: center;">
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;业务单元&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="CategoryName" name="CategoryName" class="form-control" required=""/>
+                                    </div>
+                                </div>  
+                            </form>
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn1" onclick="Submit()" class="btn btn-primary">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button> 
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<div class="modal fade" id="ShowAddSubCategory" tabindex="-1" role="dialog" aria-labelledby="excelImportModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="excelImportModalLabel">
+                    新增业务子单元
+                </h4>
+            </div>
+            <div class="modal-body"> 
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                          <form id="Add_Form" style="text-align: center;">
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;业&nbsp;务&nbsp;单&nbsp;元&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="ParentType" name="ParentType" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group " style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;业&nbsp;务&nbsp;子&nbsp;单&nbsp;元&nbsp;&nbsp;</span>
+                                        <input type="text" id="SonCategoryName" name="SonCategoryName" class="form-control" required="" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <div class="input-group " style="margin: 0">
+                                      <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                      <input type="text" id="Remark" name="Remark" class="form-control" required="" />
+                                  </div>
+                              </div>
+                          </form>
+                 </div>                           
+              </div>                  
+           </div>
+            <div class="modal-footer">
+                <button type="button" id="btn1" onclick="SubSubmit()" class="btn btn-primary ">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+            </div>
+           
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <script type="text/javascript">
+      jQuery(document).ready(function () {
+         $('#dataList').bootstrapTable({
+            url: "/BusinessUnitSetting/GetBusinessUnionTypeList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            sortName: '', // 设置默认排序为 name
+            sortOrder: '', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns:[ 
+            { field: 'BusinessName', title: '业务单元', formatter: TtileHandle },
+            { field: 'SubBusinessName', title: '业务子单元', formatter: TtileHandle1 },
+            { field: 'Remark', title: '@General.Resource.Common.Remark ', formatter: TtileHandle2 },
+            { field: 'GUID', title: '', formatter: LinkHandle }
+            ],
+            queryParams: queryParams
+        });
+    });
+
+    var TtileHandle = function (value, row, index) {
+                var link2 = value;
+                if (row.Sub_GUID != null) {
+                    link2 = "";
+                }
+                return link2;
+            };
+
+     var TtileHandle1 = function (value, row, index) {
+          var link2 = value;
+          if (row.Parent_GUID == null) {
+              link2 = "";
+          }
+          return link2;
+      };
+      var TtileHandle2 = function (value, row, index) {
+          var link2 = value;
+          if (row.Parent_GUID == null) {
+              link2 = "";
+          }
+          return link2;
+      };
+        var LinkHandle = function (value, row, index) {
+            var link3;
+            link3 = " <a class='linkbtn' onclick='DelClick(\"" + row.GUID + "\",\"" + row.Parent_GUID + "\")'>删除</a> ";
+            return link3;
+        };
+
+        function DelClick(id,pid) {
+            if (confirm('确认删除?')) {
+                $.ajax({
+                    url: "/BusinessUnitSetting/CheckTypeUsed?GUID=" + id + "&Parent_GUID=" + pid,
+                    type: "GET",
+                    success: function (data) {
+                        if (data == "flase") {
+                            alert("抱歉,当前类别或其子类别正在被使用,无法删除！")
+                        }
+                        if (data == 'true') {
+                            
+                                $.ajax({
+                                    url: "/BusinessUnitSetting/DelType?GUID=" + id + "&Parent_GUID=" + pid,
+                                    type: "GET",
+                                    success: function (data) {
+                                        if (data == 'true') {
+                                            alert("删除成功")
+                                            $('#dataList').bootstrapTable('refresh');
+
+                                        } else { 
+                                        alert("删除失败")
+                                        }
+                                    }
+                                });
+                            
+                        }
+                    }
+                });
+            }
+        }
+
+        function queryParams(params) {  //配置参数
+            var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                pageSize: params.limit,   //页面大小
+                pageIndex: params.pageNumber  //页码
+            };
+            return temp;
+        }
+            function query() {
+            $('#dataList').bootstrapTable('refresh');
+        }
+      
+        function ShowAddCategory() {
+            $("#CategoryName").val("");
+            $('#ShowAddCategory').modal({ show: true, backdrop: 'static' });
+        }
+        function ShowAddSubCategory() {
+            $("#SonCategoryName").val("");
+            $("#Remark").val("");
+            $('#ShowAddSubCategory').modal({ show: true, backdrop: 'static' });
+            var pat;
+            $.ajax({
+                url: "/BusinessUnitSetting/GetBusinessTypeList",
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    pat = d;
+                }
+            });
+
+            $('#ParentType').multiselect({
+                buttonWidth: '100%',
+                maxHeight: 200,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                nonSelectedText: "请选择业务单元"
+            });
+            $("#ParentType").multiselect('dataprovider', pat);
+            $("#ParentType").val("").multiselect("refresh");
+
+        }
+        
+        function Submit() {
+            var CategoryName = $("#CategoryName").val();
+            if (CategoryName == "") {
+                alert("请输入业务单元名！");
+            } else {
+                $.ajax({
+                   url: "/BusinessUnitSetting/GetBusinessType?TypeName=" + CategoryName,
+                   type: "GET",
+                   success: function (data) {
+                    if (data == "false") {
+                        alert("抱歉,当前业务单元已存在！");
+                        $("#CategoryName").val("");
+                    } else{
+                            $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "/BusinessUnitSetting/UpdBusinessType?TypeName=" + CategoryName,
+                                async: false,
+                                success: function (data) {
+                                    if (data == "true") {
+                                    alert("新增业务单元成功！");
+                                    $('#dataList').bootstrapTable('refresh');
+                                    $('#ShowAddCategory').modal('hide');
+                                }
+                                else {
+                                    alert("提交失败！");
+                                }
+
+                                }
+                            });
+
+                          }
+                          }
+                 });
+                   }
+        }
+        function SubSubmit(){
+        var SonCategoryName = $("#SonCategoryName").val();
+        var ParentType = $("#ParentType").val();
+        var remark = $("#Remark").val();
+            if (ParentType == "-1") {
+            alert("请先添加业务单元！");
+            return;
+        }
+        if (SonCategoryName == "") {
+            alert("请输入业务子单元名！");
+        } else if (SonCategoryName.length > 20) {
+            alert("业务子单元名不得超过二十位！");
+        }else{
+            $.ajax({
+                 url: "/BusinessUnitSetting/GetBusinessChildTypeRecord?GUID=" + ParentType + "&SubBusinessName=" + SonCategoryName,
+                 type: "GET",
+                 success: function (data) {
+                    if(data == "false"){
+                        alert("抱歉,当前子类别已存在！");
+                        $("#SonCategoryName").val("");
+                    }else{
+                        $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "/BusinessUnitSetting/UpdBusinessChildTypeRecord?SubBusinessName=" + SonCategoryName + "&GUID=" + ParentType + "&Remark=" + remark,
+                                async: false,
+                                success: function (data) {
+                                    if (data == "true") {
+                                    alert("新增业务子单元成功！");
+                                    $('#dataList').bootstrapTable('refresh');
+                                    $('#ShowAddSubCategory').modal('hide');
+                                }
+                                else {
+                                    alert("提交失败！");
+                                }
+
+                                }
+                            });
+                    }
+                    }
+            });
+            
+        }
+
+        }
+    </script>

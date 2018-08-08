@@ -1,0 +1,237 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<div id="toolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+		@*<a class="easyui-linkbutton" onclick="Export()">数据导出</a>*@
+	</div>
+	<div>
+		<form id="conditionForm">
+		<table>
+			<tr>
+				<td>购入日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="dateBegin" data-options="width:100,panelHeight:'auto'" />-<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+			</tr>
+			<tr>
+				<td>供 应 商:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayee',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+			<tr>
+				<td>状&nbsp;&nbsp;&nbsp;&nbsp;态:</td>
+				<td>
+					<select class="easyui-combobox" id="conFlag" name="state" data-options="width:207,panelHeight:'auto'" >
+						<option value=""></option>
+						<option value="折旧中">折旧中</option>
+					    <option value="折旧完">折旧完</option>
+                        <option value="转售">转售</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>收入类别:</td>
+				<td>
+					<select class="easyui-combobox" id="conIncomeGrp" name="grp" data-options="width:207,panelHeight:'auto'">
+						<option value=""></option>
+						<option value="固定资产">固定资产</option>
+						<option value="无形资产">无形资产</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="AssetPurchase_List"></table>
+<script language="javascript" type="text/javascript">
+    var LinkHandle = function (value, row, index) {
+        var link1 = " <a class='linkbtn' onclick='EditClick(\"" + value + "\")'>编辑</a> ";
+        var link3;
+        if (row.State == "折旧中" || row.State == "折旧完") {
+            link3 = " <a class='linkbtn' onclick='ResaleClick(\"" + index + "\")'>转售</a> ";
+        }else {
+            link3 = "已转售";
+        }
+        var link4 = " <a class='linkbtn' onclick='DelClick(\"" + value + "\")'>删除</a> ";
+        return link1 + link3 + link4;
+    };
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+    var FJHandle = function(value, row, index) {
+	    if (value == ""||value==null) {
+	        return "";
+	    } else {
+	        var v = "../Content/EasyUI/themes/icons/hxz.png";
+	        //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="'+v+'" />';
+	    }
+	};
+
+	$(function () {
+	    $("#AssetPurchase_List").datagrid({
+	        onLoadSuccess:compute,
+            checkOnSelect:false,
+            selectOnCheck: false,
+            singleSelect:true,
+	        url: '/AssetPurchaseQuery/GetAssetPurchaseList',
+	        columns: [[
+				{ field: 'Date', title: '购入日期',formatter: DateHandle,remoteSort:true },
+				{ field: 'Amount', title: '金额', align: 'right', formatter: DecimalFmter },
+                { field: 'SurplusValue', title: '剩余价值', align: 'right', formatter: DecimalFmter },
+				{ field: 'Currency', title: '货币' },
+				{ field: 'RPerName', title: '供应商' },
+                { field: 'InvType', title: '资产类别' },
+                { field: 'A_GUID', title: '附件',align: 'center',formatter: FJHandle },
+                { field: "State", title: "@General.Resource.Common.Flag"},
+				{ field: 'Remark', title: '@General.Resource.Common.Remark ' },
+				{ field: 'GUID', title: '', formatter: LinkHandle }
+			]],
+	        pagination: true,
+	        rownumbers: true,
+	        toolbar: "#toolbar"
+	    });
+	});
+
+	function InitDialog() {
+	    $("#AssetPurchase_List").after('<div id="WinIR"></div>');
+	    $("#WinIR").dialog({
+	        title: ' ',
+	        collapsible: false,
+	        minimizable: false,
+	        width: 800,
+	        height: 350,
+	        onClose: function () { $("#WinIR").dialog("destroy"); },
+	        buttons: [{
+	            text: '@General.Resource.Common.Save',
+	            handler: function () { SubmitForm(); }
+	        }]
+	    });
+	}
+
+	function InitDialogI() {
+	    $("#AssetPurchase_List").after('<div id="WinR"></div>');
+	    $("#WinR").dialog({
+	        title: '记录营业外收入',
+	        collapsible: false,
+	        minimizable: false,
+	        width: 800,
+	        height: 350,
+	        onClose: function () { $("#WinR").dialog("destroy"); },
+	        buttons: [{
+	            text: '@General.Resource.Common.Save',
+	            handler: function () { ISubmitForm(); }
+	        }]
+	    });
+	}
+
+	function EditClick(id) {
+	    InitDialog();
+	    $('#WinIR').dialog("refresh", "/AssetPurchaseQuery/AssetPurchaseRecord/" + id);
+	}
+
+	function ResaleClick(index) {
+	    $("#AssetPurchase_List").datagrid('selectRow', index);
+	    var row = $("#AssetPurchase_List").datagrid('getSelected');
+	    InitDialogI();
+	    $('#WinR').dialog("refresh", "/AssetPurchaseQuery/IncomeRecord?id=" + row.GUID + "&date=" + ChangeDateFormat(row.Date) + "&amount=" + row.Amount + "&rper=" + row.RPer + "&currency=" + row.Currency);
+	}
+
+	function DelClick(id) {
+	    $.messager.confirm('确认', '确认删除?', function (r) {
+	        if (r) {
+	            $.ajax({
+	                url: "/AssetPurchaseQuery/DelAssetPurchaseRecord/" + id,
+	                type: "POST",
+	                success: function (data) {
+	                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+	                    if ($.parseJSON(data).Result) {
+	                        $('#AssetPurchase_List').datagrid("reload");
+	                    }
+	                },
+	                error: function () {
+	                    $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+	                }
+	            });
+	        }
+	    });
+	}
+
+	function SubmitForm() {
+	    $("#IMP_Form").form('submit', {
+	        url: "/AssetPurchaseQuery/UpdAssetPurchaseRecord",
+	        onSubmit: function () {
+	            if ($("#IMP_Form").form("validate")) {
+	                $('#file_upload').uploadify('upload', '*');
+	            }
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () {
+	                $("#AssetPurchase_List").datagrid("reload");
+	            });
+	            if ($.parseJSON(data).Result) {
+	                $('#WinIR').dialog("close");
+	            }
+	        }
+	    });
+	}
+
+	function ISubmitForm() {
+	    var row = $("#AssetPurchase_List").datagrid('getSelected');
+	    $("#Income_Form").form('submit', {
+	        url: "/IncomeRecord/UpdIncomeRecord",
+	        onSubmit: function () {
+	            if ($("#Income_Form").form("validate")) {
+	                $('#file_upload').uploadify('upload', '*');
+	            }
+	            return $("#Income_Form").form("validate");
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () {
+	                $.ajax({
+	                    url: "/AssetPurchaseQuery/UpdAssetPurchaseRecordState?id=" + row.GUID + "&state=转售",
+	                    type: "POST",
+	                    success: function (data) {
+	                        if ($.parseJSON(data).Result) {
+	                            $('#AssetPurchase_List').datagrid("reload");
+	                        }
+	                    }
+	                });
+	            });
+	            if ($.parseJSON(data).Result) {
+	                $('#WinR').dialog("close");
+	            }
+	        }
+	    });
+	}
+
+	function Search() {
+		$("#AssetPurchase_List").datagrid("load",$("#conditionForm").serializeObject());
+	}
+
+	function Export() {
+		$("#conditionForm").form("submit",{url:'/IncomeQuery/ExportXls'});
+	}
+	
+    function compute() {
+        var rows = $('#AssetPurchase_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['Amount'];
+        }
+        var p = $('#AssetPurchase_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }'
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

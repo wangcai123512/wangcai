@@ -1,0 +1,292 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/CashFlow/Common.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/chart/Chart.bundle.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/chart/Chart.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/CashFlow/CashInFlowsRecord/index.js")"></script>
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_CashFlowMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+            <div class="row" style="margin-top: 20px;" >
+            <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">流入现金</span></div>
+                <div class="col-md-12" style="margin: auto">
+                    <div class="panel panel-visible">
+                        <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="AccountCashInflows" >
+                                                <div class="col-md-3" style="margin-bottom: 0px">       
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">账号</span>
+                                                            <select id="AccountCash" name="AccountCash" >                                                                                          
+                                                            </select>                                                                                                                                                          
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    从日期
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px"> 
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required="" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">
+                                                    至日期
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px">
+                                                    的流入现金
+                                                </div>
+                                                <div class="col-md-2" style="margin: auto;">
+                                                        <button onclick="AccountCashInflowsQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:15px;margin-bottom:15px"  class="btn btn-primary">
+                                                        查询
+                                                        </button>
+                                                </div>
+                                    </form>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin: auto">
+                    <div class="panel panel-visible">
+                        <div class="panel-body pbn">
+                                <div class="col-md-12"  style="margin-bottom: 0px">
+                                    <form id="CustomerCashInflows">
+                                                <div class="col-md-3" style="margin-bottom: 0px"> 
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">  
+                                                            <span class="input-group-addon" style="color: #000000;">客户</span>
+                                                            <select id="CustomerList" name="Account" >                                                   
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">
+                                                    从日期
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px"> 
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required=""/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">
+                                                    至日期
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px">
+                                                    的流入现金
+                                                </div>
+                                                  <div class="col-md-2" style="margin: auto;">
+                                                        <button onclick="CustomerCashInflowsQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:15px;margin-bottom:15px" class="btn btn-primary">
+                                                        查询</button>
+                                                </div>
+                                    </form>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin: auto">
+                    <div class="panel panel-visible">
+                        <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="CompareCashInflows">
+                                                <div class="col-md-3" style="margin-bottom: 0px"> 
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">账号</span>
+                                                            <select id="AccountCompare" name="Account" >                                                   
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">
+                                                    从
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px;"> 
+                                                    <div class="form-group" style="margin-top: 0px;width:250px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                             <select id="monthsStart" name="dateBegin" class="form-control report-date"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>  
+                                                <div class="col-md-1" style="margin-bottom: 0px">
+                                                    月至
+                                                </div>
+                                                <div class="col-md-2" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                              <select id="monthsEnd"  name="dateEnd" class="form-control report-date"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3" style="margin-bottom: 0px">
+                                                    月的每月流入现金比较
+                                                </div>
+                                                <div class="col-md-2" style="margin: auto;">
+                                                     <button onclick="CompareCashInflowsQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:15px;margin-bottom:15px" class="btn btn-primary">
+                                                        查询
+                                                     </button>
+                                                </div>
+                                    </form>
+                                    
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</div>
+
+<!--账号流入现金 model--->
+<div class="modal fade" id="AccountCashInflowsModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+    aria-hidden="true">  
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    账号流入现金
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                             <div class="form-group">
+                                <div>
+                                    <span  style="font-size: 16px">公司：                                                                       
+                                     <b>@ViewData["ChineseFullName"]</b>        
+                                     <b>  <button onclick="AccountCashInflowsExport()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导出</button></b>
+                                     </span>
+                                </div>
+                                <div style="margin-top:10px;margin-left:45px">
+                                    <span  style="font-size: 14px;">
+                                        <b ><input type="text" id="statisticsCash"  readonly="readonly" style="width:80px;text-align:center"></b>
+                                         账号从<b><input type="text" id="statisticsdateBegin"  readonly="readonly" style="width:110px;text-align:center"></b>
+                                         至<b><input type="text" id="statisticsdateEnd"  readonly="readonly" style="width:110px;text-align:center"></b>的流入现金
+                                    </span>
+                                </div>
+                             </div>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="AccountCashInflowsValue" style="font-size: 12px">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" >
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<!--客户流入现金 model--->
+<div class="modal fade" id="CustomerCashInflowsModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+    aria-hidden="true">  
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >   
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                     客户流入现金
+                </h4>
+            </div>
+                <div class="modal-body">        
+                    <div class="row">
+                              <div class="col-md-12" style="margin-bottom: 0px">
+                                 <div class="form-group">
+                                    <div>
+                                        <span  style="font-size: 16px">公司：                                                                       
+                                         <b>@ViewData["ChineseFullName"]</b>        
+                                         <b>  <button onclick="CustomerCashInflows()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导出</button></b>
+                                         </span>
+                                    </div>
+                                    <div style="margin-top:10px;margin-left:45px">
+                                        <span  style="font-size: 14px;">
+                                            <b ><input type="text" id="statisticsCash"  readonly="readonly" style="width:80px;text-align:center"></b>
+                                             账号从<b><input type="text" id="statisticsdateBegin"  readonly="readonly" style="width:110px;text-align:center"></b>
+                                             至<b><input type="text" id="statisticsdateEnd"  readonly="readonly" style="width:110px;text-align:center"></b>的流入现金
+                                        </span>
+                                    </div>
+                                 </div>
+                             </div>
+                          <div class="col-md-12" style="margin-bottom: 0px">
+                            <table id="CustomerCashInflowsValue" style="font-size: 12px">
+                            </table>
+                          </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" >
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<!--流入现金比较 model--->
+<div class="modal fade" id="CompareCashInflowsModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+    aria-hidden="true">  
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >   
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    流入现金比较
+                </h4>
+            </div>
+            <div class="modal-body">
+                 <div class="canvas-holder" > 
+                      <h5 class="bar-title"><span  style="font-size: 14px">公司：<b>@ViewData["ChineseFullName"]</b></span></h5>  
+                      <h5 class="bar-title" style="margin-top:10px;margin-left:45px"><span  style="font-size: 14px"><b><input type="text" id="statisticsCash"  readonly="readonly" style="width:80px;text-align:center"></b>
+                                     账号从<b><input type="text" id="statisticsdateBegin" readonly="readonly" style="width:110px;text-align:center"></b>至<b><input style="width:110px;text-align:center" type="text" id="statisticsdateEnd" readonly="readonly"></b>的流入现金</span></h5>   
+                         <h5 class="bar-title"><span  style="font-size: 14px;margin-left:650px">统计货币：<b>@ViewData["Code"]</b></span></h5>   
+                     <canvas id="myChart" width="250" height="125"></canvas>
+                 </div> 
+
+            </div>
+        </div>
+    </div>
+</div>

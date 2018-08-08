@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "CancelRecordFour";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%;height: 100%">
+<div id="CERtoolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	</div>
+	<div>
+	    <form id="CERconditionForm">
+	        <input type="hidden" name="incomeGrp" value="税费计提" data-options="width:100,panelHeight:'auto'"/>
+	        <table>
+	            <tr>
+	                <td>日期:</td>
+	                <td><input class="easyui-datebox" name="dateBegin" data-options="width:100,panelHeight:'auto'"/>-<input class="easyui-datebox" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+	            </tr>
+	            <tr>
+	                <td>状态:</td>
+	                <td>
+	                    <select class="easyui-combobox" name="state" data-options="width:207,panelHeight:'auto'">
+	                        <option value="应付">应付</option>
+	                    </select>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>税费类别:</td>
+	                <td>
+	                    <select class="easyui-combobox" name="IncomeGrpDts" data-options="width:207,panelHeight:'auto'">
+	                        <option value="ac23eded-9c74-4781-8d14-797a5bccdc79">营业税及附加</option>
+	                        <option value="234218e9-87c5-4854-814a-7d5671bf1fd9">消费税</option>
+	                        <option value="8e777b91-f3f9-4907-ba1a-2e0842967500">增值税</option>
+	                        <option value="d136bf9c-c3a3-4f33-ab1e-820526dcbc24">企业所得税</option>
+	                    </select>
+	                </td>
+	            </tr>
+	        </table>
+	    </form>
+	</div>
+</div>
+<table id="CancelExpenseRecord_List"></table>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    $("#CancelExpenseRecord_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/ExpenseQuery/GetExpenseList?state=应付'+'&IncomeGrp=税费计提',
+	        columns: [[
+                { field: 'ck', checkbox: true, title: '选择' },
+				{ field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate', formatter: DateHandle },
+	            { field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Supplier' },
+	            { field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+	            { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.SumAmount', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+	            { field: "State", title: "@General.Resource.Common.Flag"},
+	            { field: 'Date', title: '@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.ExpiryDate', formatter: DateHandle },
+	            { field: "InvType", title: "@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Group" },
+	            { field: 'Remark', title: '@General.Resource.Common.Remark ' }
+			]],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CERtoolbar"
+	    });
+	});
+
+	function Search() {
+		$("#CancelExpenseRecord_List").datagrid("load",$("#CERconditionForm").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#CancelExpenseRecord_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#CancelExpenseRecord_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

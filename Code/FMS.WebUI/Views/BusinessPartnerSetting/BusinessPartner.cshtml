@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "BusinessPartner";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_BusinessPartner
+           
+<form id="BusinessPartner"  method="post">
+<table class="Props">
+    <input type="hidden" name="BP_GUID" value="@Model.BP_GUID" />
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td><input name="Name" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+    </tr>
+            <tr>
+            <td>公司中文全称：</td>
+            <td><input class="easyui-validatebox" id="ChineseFullName" name="ChineseFullName" value="@Model.ChineseFullName" data-options="required:true"/></td>
+            <td>公司英文全称：</td>
+            <td><input class="easyui-validatebox" id="EnglishFullName" name="EnglishFullName" value="@Model.EnglishFullName" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>公司网址：</td>
+            <td><input class="easyui-validatebox" id="Website" name="Website" value="@Model.Website" data-options="required:true"/></td>
+            <td>组织机构代码：</td>
+            <td><input class="easyui-validatebox" id="OrganizationCode" name="OrganizationCode" value="@Model.OrganizationCode" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>所属行业：</td>
+            <td><input class="easyui-validatebox" id="IndustryInvolved" name="IndustryInvolved" value="@Model.IndustryInvolved" data-options="required:true"/></td>
+            <td>注册地址：</td>
+            <td><input class="easyui-validatebox" id="RegisteredAddress" name="RegisteredAddress" value="@Model.RegisteredAddress" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>备注：</td>
+            <td><input class="easyui-validatebox" id="Remark" name="Remark" value="@Model.Remark"/></td>
+        </tr>
+    <tr>
+        <td>@FMS.Resource.BusinessPartner.BusinessPartner.BusinessRelations</td>
+        <td>
+            @Html.CheckBoxFor(m => m.IsSupplier)<label for="IsSupplier">@FMS.Resource.BusinessPartner.BusinessPartner.Supplier</label>
+            @Html.CheckBoxFor(m=>m.IsCustomer)<label for="IsCustomer">@FMS.Resource.BusinessPartner.BusinessPartner.Customer</label>
+            @*@Html.CheckBoxFor(m => m.IsPartner)<label for="IsPartner">@FMS.Resource.BusinessPartner.BusinessPartner.Partner</label>*@
+        </td>
+    </tr>
+</table >          
+</form>
+

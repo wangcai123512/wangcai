@@ -1,0 +1,247 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LoginLayout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px;" >
+    <!-- Start: Content -->
+    <div id="MAIN" style="background-color: #FFF;margin-bottom: 0">
+        <div id="content">
+            <div class="row" style="margin-top: 30px">
+                <div class="col-md-12" style="margin: auto">
+                    <div class="col-md-1" style="margin: auto">
+                    </div>
+                    <div class="col-md-4" style="margin: auto">
+                        <div class="form-group" style="height: 100px; ">
+                            <h4 style="font-size: 30px; color: #074592">
+                                智能财务软件</h4>
+                                <h4 style="font-size: 30px; color: #074592; padding-left: 150px;margin-top: 30px">
+                                永久免费</h4>
+                        </div>
+                        <form id="LoginInfo" class="Login-form" method="post">
+                            <span id="ErrorMsg" style="color: Red"></span>
+                            <div class="form-group" style="margin-top: 0px">
+                                <div class="input-group" style="margin: 0;">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;<i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;</span>
+                                    <input type="text" name="LoginName" class="form-control datepicker mtn" placeholder="请输入手机号/已注册邮箱号" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group" style="margin: 0;">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;<i class="fa fa-key" aria-hidden="true"></i>&nbsp;</span>
+                                    <input type="password" name="password" class="form-control datepicker mtn" placeholder="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;<i class="fa fa-check" aria-hidden="true"></i>&nbsp;</span>
+                                    <input type="text" class="form-control" name="ValidateCode" placeholder="" />
+                                    <span class="input-group-addon">
+                                    <img id="imgValidateCode" src="/Common/GetValidateCode" onclick="ChangeValidateCode(this)"
+                                        style="cursor: pointer; height: 20px" /></span>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-12" style="margin: auto;padding:0">
+                            <div class="form-group" style="margin: auto; text-align: center">
+                                <button onclick="Login()" type="button" style="margin-top: 10px; border-radius: 100px; font-size: 14px; background-color: #f5f5f5;border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default btn-lg btn-block">
+                                    登&nbsp;录&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-share" aria-hidden="true"></i>
+                                </button>
+                                @*<button onclick="javascript:window.location = '/Common/Activate'" type="button" style="margin-top: 10px;height: 40px; width: 40%; border-radius: 100px; font-size: 16px; background-color: #f5f5f5;border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                    初次登录</button>*@
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin: auto; padding: 0">
+                            <div class="col-md-7" style="margin: auto;padding:0">
+                                <div class="form-group" style="margin: auto; text-align: center">
+                                    <button onclick="javascript:window.location = '/Common/Register'" type="button" style="margin-top: 20px; border-radius: 100px; font-size: 14px; background-color: #f5f5f5;border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default btn-lg btn-block">
+                                        <i class="fa fa-users" aria-hidden="true"></i>&nbsp;&nbsp;注册，免费使用！
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-5" style="margin:0; padding: 0">
+                                <div class="form-group" style="margin-left:1rem; text-align: center">
+                                    <button onclick="javascript:window.location = '/Common/ForgetPassword'" type="button" style="margin-top: 20px; border-radius: 100px; font-size: 14px; background-color: #f5f5f5; border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default btn-lg btn-block">
+                                        <i class="fa fa-shield" aria-hidden="true"></i>&nbsp;&nbsp;忘记密码
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin: auto; padding: 0">
+                            <div class="form-group" style="margin: auto; text-align: center;">
+                                <button onclick="Undone()" type="button" style="height: 40px; width: 100%; border-radius: 100px; font-size: 14px; background-color: #f5f5f5; border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                    <i class="fa fa-volume-control-phone" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;我是会计，有用得着我的地方！</button>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="col-md-1" style="margin: auto">
+                    </div>
+                    <div class="col-md-5" style="margin-top:-20px">
+                        <div class="form-group" style="height: 20px">
+                            <h4 style="font-size: 20px;font-family: STXingkai">
+                                <img src="@Url.Content("~/img/logos/gou.png")" />操作简单</h4>
+                        </div>
+                        <div class="form-group" style="height: 20px">
+                            <h4 style="font-size: 20px;font-family: STXingkai">
+                                <img src="@Url.Content("~/img/logos/gou.png")" />安全加密</h4>
+                        </div>
+                        <div class="form-group" style="height: 20px">
+                            <h4 style="font-size: 20px;font-family: STXingkai">
+                                <img src="@Url.Content("~/img/logos/gou.png")" />自动生成财务报表</h4>
+                        </div>
+                        <div class="form-group" style="height: 20px">
+                            <h4 style="font-size: 20px;font-family: STXingkai">
+                                <img src="@Url.Content("~/img/logos/gou.png")" />实时获取关键财务数据</h4>
+                        </div>
+                        <div class="panel panel-visible" style="margin-top:30px;height: 250px">
+                            @*<div class="panel-body pbn">*@
+                                <div id="myCarousel" class="carousel slide">
+                                    <!-- 轮播（Carousel）指标 -->
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                        <li data-target="#myCarousel" data-slide-to="1"></li>
+                                        <li data-target="#myCarousel" data-slide-to="2"></li>
+                                        <li data-target="#myCarousel" data-slide-to="3"></li>
+                                    </ol>   
+                                    <!-- 轮播（Carousel）项目 -->
+                                    <div class="carousel-inner">
+                                        <div class="item active">
+                                            <img src="../img/temp/NAPage1.png" alt="h1" />
+                                        </div>
+                                        <div class="item">
+                                            <img src="../img/temp/NAPage2.png" alt="h2" />
+                                        </div>
+                                        <div class="item">
+                                            <img src="../img/temp/NAPage3.png" alt="h3" />
+                                        </div>
+                                        <div class="item">
+                                            <img src="../img/temp/NAPage4.png" alt="h4" />
+                                        </div>
+                                    </div>
+                                    <!-- 轮播（Carousel）导航 -->
+                                    <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                                    <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                                </div> 
+                            @*</div>*@
+                        </div>
+                        <div class="form-group" style="margin-top: 20px; text-align: center">
+                            <button onclick="Undone()" type="button" style="margin-top: 0px;
+                                    border-radius: 100px; font-size: 20px; background-color: #f5f5f5;
+                                    border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default btn-block">
+                                <i class="fa fa-video-camera" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;看视频演示
+                            </button>
+                            </div>
+                    </div>
+                    <div class="col-md-4" style="margin: auto">
+                    </div>
+                </div>
+            </div>
+            <div class="footer" trace-key="footer" style="margin-top:160px">
+            <div align="center" style="margin-top:60px;"><strong>诺丰软件有限公司</strong><br>
+                  <table width="50%" border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr>
+                      <td align="right"><div align="center">Copyright<img src="/img/logos/quanc.gif" align="absmiddle">2011 Novofront Software .All rights reserved</div></td>
+              <td align="left" style="padding-top:1px;"></td>
+            </tr>
+                  </tbody></table>
+		     <a href="http://www.miibeian.gov.cn" target="_blank">苏ICP备11075184号</a>      
+            <p class="icp" style="margin-top:-30px;">
+            	        <div style="width:300px;margin:0 auto; padding:20px 0;">
+		 		           <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32059002001522" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"><img src="@Url.Content("~/img/logos/备案图标.png")" style="float:left;"/><p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">苏公网安备 32059002001522号</p></a>
+		 	            </div>
+                    </p>
+           </div>
+          
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+   // javascript: window.history.forward(1);
+    jQuery(document).ready(function () {
+        document.onkeydown = function(e){ 
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                Login()
+                }	
+        }
+
+        "use strict";
+
+        // Init Theme Core 	  
+        Core.init();
+
+        // Enable Ajax Loading 	  
+        Ajax.init();
+       var cookieName = getCookie("fmsLoginName");
+        $("input[name=LoginName]").val(cookieName);
+        window.setInterval("ChangeValidateCode($('#imgValidateCode')[0])", 300000)
+        // Init Full Page BG(Backstretch) plugin
+        //        $.backstretch("img/stock/splash/2.jpg");
+    });
+
+    function Login() {
+        $("#Login-button").focus();
+        //        $("#LoginInfo").submit();
+        SaveCookie();
+        Submit();
+    }
+
+    var confirmMsg = function (r) {
+        if (r) {
+            $("#UserName").val($("#LoginName").val());
+            $("#ForceForm").submit();
+        }
+    }
+
+    function Submit() {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/Common/Login",
+            data: $('#LoginInfo').serialize(),
+            async: false,
+            error: function (data) {
+                $("#ErrorMsg").text(JSON.parse(data).Msg);
+            },
+            success: function (data) {
+                if (JSON.parse(data).Result) {
+                    window.location.href = "/Company/ChooseCompany";
+                }
+                if (JSON.parse(data).Msg == 'SuperManager') {
+                    window.location.href = "/Common/BackStageManage";
+                }
+                else {
+                    $("#ErrorMsg").text(JSON.parse(data).Msg);
+                    $("#ValidateCode").val("");
+                    $("#Password").val("");
+                    ChangeValidateCode($('#imgValidateCode')[0]);
+                }
+            }
+        });
+    }
+
+    function ChangeValidateCode(obj) {
+        obj.src = "/Common/GetValidateCode?time=" + (new Date()).getTime();
+        
+    }
+
+    function SaveCookie() {
+        var str_username = $("input[name=LoginName]").val();
+        document.cookie = "fmsLoginName=" + str_username;
+    }
+
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+
+        if (arr = document.cookie.match(reg))
+
+            return arr[2];
+        else
+            return "";
+    } 
+</script>

@@ -1,0 +1,337 @@
+﻿@{
+    ViewBag.Title = "DirectMaterialPurchasingRecord";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<form id="DirectMaterialPurchasing_form">
+<table style=" height: auto;">
+    <tr>
+        <td>
+            <a id="a2" class="easyui-linkbutton" onclick="ShowImport()">上传直接物料采购信息</a>
+            <a id="a1" class="easyui-linkbutton" href='/IndirectMaterialPurchasingRecord/DownLoadFile?fileID=387b1148-aa20-4fec-9477-52ea1aac7506'>下载直接物料采购模板</a>
+        </td>
+    </tr>
+</table>
+<table id="DirectMaterialPurchasing_Table" class="easyui-datagrid" title="直接物料采购记录新增" style="width:882px;height:auto"
+       data-options="
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#tb',
+                url: 'datagrid_data1.json',
+                method: 'get',
+                onBeforeLoad: function () {
+                    append();
+                },
+                onClickCell: onClickCell
+            ">
+        <thead>
+            <tr>
+                <th data-options="field:'GUID',width:80,hidden:true">GUID</th>
+                <th data-options="field:'Date',width:90,editor:{type:'datebox',options:{required:true}}">购进日期</th>
+                <th data-options="field:'Amount',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required:true}}">金额</th>
+                <th data-options="field:'Currency',width:80,hidden:false,
+                        formatter:function(value,row){
+                            return row.Currencys;
+                        },
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                url:'/InternalAPI/GetUserCurrency',
+                                textField:'text',
+                                valueField:'value'
+                            }}">货币</th>
+                <th data-options="field:'RPer',width:80,hidden:false,
+                        formatter:function(value,row){
+                            return row.Name;
+                        },
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                url:'/InternalAPI/GetPayee',
+                                textField:'Name',
+                                valueField:'BP_GUID'
+                            }}">供应商</th>
+                <th data-options="field:'InvType',width:80,hidden:false,
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                data:InvTypes,
+                                valueField:'value',
+                                textField:'name'
+                            }}">物品类别</th>
+                <th data-options="field:'Description',width:80,editor:{type:'validatebox',options:{required:true}}">物品描述</th>
+                <th data-options="field:'Remark',width:120,editor:{type:'validatebox'}">备注</th>
+                <th data-options="field:'AddStyle',width:80,align:'center'">新增方式</th>
+                <th data-options="field:'Action',width:100,align:'center',formatter:ActionFormatter">操作</th>
+            </tr>
+        </thead>
+    </table>
+
+<div id="tb" style="height: auto">
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤销</a>
+</div>
+
+    <table id="DMP_Table" style="width: 700px; height: 50px">
+        <tr>
+            <td><a class="easyui-linkbutton" onclick="DMPSubmitForm()">@General.Resource.Common.Save</a></td>
+        </tr>
+    </table>
+</form>
+<script type="text/javascript">
+    var ActionFormatter = function (value, row, index) {
+        var a = " <a class='easyui-linkbutton' onclick='Up(\"" + row.GUID + "\")'>上传凭证</a> ";
+        return a;
+    }
+    function Up(guid) {
+        $("<div id='UpDirectMaterialPurchasingFile'></div>").dialog({
+            title: '上传凭证 ',
+            width: 250,
+            height: 500,
+            onLoad: function () {
+                $("#GUID").val(guid);
+            },
+            onClose: function () {
+                $("#UpDirectMaterialPurchasingFile").dialog("destroy");
+            },
+            buttons: [{ text: '上传', handler: function () { $('#UpDMPFile_form #file_upload').uploadify('upload', '*'); } }]
+        });
+        $('#UpDirectMaterialPurchasingFile').dialog("refresh", "/DirectMaterialPurchasingRecord/UpDMPFile");
+    }
+
+    var InvTypes = [
+        { value: "类别一", name: "类别一" },
+        { value: "类别二", name: "类别二" }
+    ];
+
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function(d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    function set() {
+        var ss;
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                ss = d.StandardCoin;
+            }
+        });
+        return ss;
+    }
+
+    var editIndex = undefined;
+
+    function endEditing() {
+        if (editIndex == undefined) {
+            return true;
+        }
+        if ($('#DirectMaterialPurchasing_Table').datagrid('validateRow', editIndex)) {
+            var ed = $('#DirectMaterialPurchasing_Table').datagrid('getEditor', { index: editIndex, field: 'RPer' });
+            var ed1 = $('#DirectMaterialPurchasing_Table').datagrid('getEditor', { index: editIndex, field: 'Currency' });
+            var name = $(ed.target).combobox('getText');
+            var currency = $(ed1.target).combobox('getText');
+            $('#DirectMaterialPurchasing_Table').datagrid('getRows')[editIndex]['Name'] = name;
+            $('#DirectMaterialPurchasing_Table').datagrid('getRows')[editIndex]['Currencys'] = currency;
+            $('#DirectMaterialPurchasing_Table').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#DirectMaterialPurchasing_Table').datagrid('selectRow', index)
+                    .datagrid('beginEdit', index);
+                var ed = $('#DirectMaterialPurchasing_Table').datagrid('getEditor', { index: index, field: field });
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#DirectMaterialPurchasing_Table').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+
+    function append() {
+        if (endEditing()) {
+            $('#DirectMaterialPurchasing_Table').datagrid('appendRow', { GUID: NewGUID(), InvType: "类别一", AddStyle: "直接新增", Currency: set() });
+            editIndex = $('#DirectMaterialPurchasing_Table').datagrid('getRows').length - 1;
+            $('#DirectMaterialPurchasing_Table').datagrid('selectRow', editIndex)
+                .datagrid('beginEdit', editIndex);
+        }
+    }
+
+    function removeit() {
+        if (editIndex == undefined) {
+            return;
+        }
+        $('#DirectMaterialPurchasing_Table').datagrid('cancelEdit', editIndex)
+            .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+
+    function accept() {
+        if (endEditing()) {
+            $('#DirectMaterialPurchasing_Table').datagrid('acceptChanges');
+        }
+    }
+
+    function reject() {
+        $('#DirectMaterialPurchasing_Table').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+
+    function getChanges() {
+        var rows = $('#DirectMaterialPurchasing_Table').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+    $.extend(
+        $('#DirectMaterialPurchasing_Table').datagrid.defaults.editors, {
+            datebox: {
+                init: function (container, options) {
+                    var input = $('<input type="text">').appendTo(container);
+                    input.datebox(options);
+                    return input;
+                },
+                destroy: function (target) {
+                    $(target).datebox('destroy');
+                },
+                getValue: function (target) {
+                    return $(target).datebox('getValue');
+                },
+                setValue: function (target, value) {
+                    $(target).datebox('setValue', formatDatebox(value));
+                },
+                resize: function (target, width) {
+                    $(target).datebox('resize', width);
+                }
+            }
+        });
+
+    function formatDatebox(value) {
+        if (value == null || value == '') {
+            return '';
+        }
+        var dt = parseToDate(value); //关键代码，将那个长字符串的日期值转换成正常的JS日期格式 
+        return dt.format("yyyy-MM-dd"); //这里用到一个javascript的Date类型的拓展方法，这个是自己添加的拓展方法，在后面的步骤3定义  
+    }
+
+    function parseToDate(value) {
+        if (value == null || value == '') {
+            return undefined;
+        }
+
+        var dt;
+        if (value instanceof Date) {
+            dt = value;
+        }
+        else {
+
+            if (!isNaN(value)) {
+                dt = new Date(value);
+            }
+            else if (value.indexOf('/Date') > -1) {
+                value = value.replace(/\/Date(−?\d+)\//, '$1');
+                dt = new Date();
+                dt.setTime(value);
+            } else if (value.indexOf('/') > -1) {
+                dt = new Date(Date.parse(value.replace(/-/g, '/')));
+            } else {
+                dt = new Date(value);
+            }
+        }
+        return dt;
+    }
+    function DMPSubmitForm() {
+        accept();
+        var rows = $('#DirectMaterialPurchasing_Table').datagrid('getRows');
+        $.each(rows, function(index, item) {
+            var guid = item.GUID;
+            var date = item.Date;
+            var rper = item.RPer;
+            var amount = item.Amount;
+            var currency = item.Currency;
+            var invtype = item.InvType;
+            var description = item.Description;
+            var remark = item.Remark;
+            var addstyle = item.AddStyle;
+            var state = "存货";
+            $.ajax({
+                url: '/DirectMaterialPurchasingRecord/UpdDirectMaterialPurchasingRecord?id=' + guid + '&rper=' + rper + '&amount=' + amount + '&invtype=' + invtype + '&remark=' + remark + '&currency=' + currency + '&addstyle=' + addstyle + '&date=' + date + '&description=' + description + '&state=' + state,
+                beforeSend: function () {
+                    //表单验证
+                    return $("#DirectMaterialPurchasing_form").form('validate');
+                },
+                success: function (data) {
+                    //成功则刷新表
+                    if ($.parseJSON(data).Result) {
+                        $('#DirectMaterialPurchasing_Table').datagrid('loadData', { total: 0, rows: [] });
+                    }
+                },
+                error: errorHandle
+            });
+        });
+    }
+
+    function Money(price) {
+        if (price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for (var i = 1; i <= len; i++) { priceStr += priceString.charAt(i - 1); if (i == (remainder) && len > remainder) priceStr += ','; if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if (priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if (priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return priceStr; } else { return price; }
+    }
+
+    //显示导入界面
+    function ShowImport() {
+        $("#DirectMaterialPurchasing_Table").after("<div id='ImportRecord'></div>");
+        $("#ImportRecord").dialog({
+            title: '工资信息批量导入',
+            padding: 100,
+            width: 300,
+            height: 110,
+            onClose: function() {
+                $("#ImportRecord").dialog("destroy");
+            },
+            buttons: [
+                {
+                    text: '导入',
+                    handler: function() { excel(); }
+                }
+            ]
+        });
+        $('#ImportRecord').dialog("refresh", "/DirectMaterialPurchasingRecord/ImportRecord/");
+    }
+
+    //利用表单导入EXCEL
+    function excel() {
+        $("#upexcel").form("submit", {
+                url: '/DirectMaterialPurchasingRecord/Upexcel',
+                onSubmit: function() {
+                    return $(this).form("validate"); //提交前验证
+                },
+                success: function (data) {
+                    $.messager.alert('直接物料采购导入', data, 'info');
+                    //$('#DirectMaterialPurchasing_Table').datagrid({ url: "/DirectMaterialPurchasingRecord/GetTemporyList", method: "post" });
+                    $("#ImportRecord").dialog("destroy");
+                }
+            }
+        );
+    }
+
+</script>

@@ -1,0 +1,95 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Tax
+
+<div id="TaxAndTaxRateSet_div">
+    <form id="TaxAndTaxRateSet_form">
+       @* 隐藏属性*@
+        <input type="hidden" name="T_GUID" id="T_GUID" value="@ViewData["T_GUID"]"/>
+        <table>
+            <tr>
+                <td>税种名称:</td>
+                <td>
+                    <input class="easyui-validatebox" id="Name" name="Name" data-options="required:true"/>
+                </td>
+                <td>税率:</td>
+                <td>
+                    <input id="Rate" name="Rate" class="easyui-numberbox" data-options="required:true"/>％
+                </td>
+               <td>属性:</td>
+                <td>
+                    <select class="easyui-combobox" id="Type" name="Type" data-options="width:150,panelHeight:'auto',required:true">
+				        <option value="价内税">价内税</option>
+                        <option value="价外税">价外税</option>
+				    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a id="TaxAndTaxRateSet_submit" class="easyui-linkbutton" onclick="TaxAndTaxRateSet_submit()">@General.Resource.Common.Save</a>
+    <table id="TaxAndTaxRateSet_list"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined") {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.")+"%";
+
+    }
+
+    $(function () {
+        $("#TaxAndTaxRateSet_list").datagrid({
+            url: '/TaxAndTaxRateSet/GetTaxAndTaxRateList',
+            checkOnSelect: false,
+            selectOnCheck: false,
+            singleSelect: true,
+            columns: [[
+                    { field: 'Name', title: '税种名称' },
+                    { field: 'Rate', title: '税率', align: 'right', formatter: DecimalFmter },
+                    { field: "Type", title: '属性' }
+                ]
+            ],
+            pagination: true,
+            rownumbers: true
+        });
+    });
+
+
+    function TaxAndTaxRateSet_submit() {
+        $('#TaxAndTaxRateSet_div #file_upload').uploadify('upload', '*');
+        $("#TaxAndTaxRateSet_form").form('submit', {
+            url: "/TaxAndTaxRateSet/UpdTaxAndTaxRate",
+            onSubmit: function () {
+                return $("#TaxAndTaxRateSet_form").form('validate');
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () {
+                    $('#TaxAndTaxRateSet_list').datagrid("reload");
+                });
+                if ($.parseJSON(data).Result) {
+                    $("#TaxAndTaxRateSet_form").form('clear');
+                }
+            }
+        });        
+    }
+</script>
+
+

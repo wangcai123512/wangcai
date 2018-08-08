@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+           
+<form id="AddUserform"  method="post">
+<table>
+    <tr>
+        <td>请输入新用户Email：</td>
+        <td><input id="LoginName" name="LoginName" class="easyui-validatebox" data-options="required:true"/></td>
+    </tr>
+        <tr>
+        <td>请输入新用户昵称：</td>
+        <td><input id="UserName" name="UserName" class="easyui-validatebox" data-options="required:true"/></td>
+    </tr>
+    </table >
+    <a id="submit" class="easyui-linkbutton" onclick="SubmitForm()">@General.Resource.Common.Save</a>
+</form>
+
+<script language="javascript" type="text/javascript">
+    function NewGUID() {
+        var guid;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                guid = d.toString();
+            }
+        });
+        return guid;
+    }
+
+    function SubmitForm() {
+        var userguid = NewGUID();
+        var username = $('#UserName').val();
+        var loginname = $('#LoginName').val();
+        $("#AddUserform").form('submit', {
+            url: "/AddUsers/UpdateUser",
+            onSubmit: function () {
+                return $("#AddUserform").form('validate');
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $("#AddUserform").form('clear');
+                }
+            }
+        });
+    }
+</script>

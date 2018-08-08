@@ -1,0 +1,213 @@
+﻿@using FMS.Model
+@{ ViewBag.Title = "Index"; Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+
+<div id="main" style="margin-top: 100px; background-color: #FFF;">
+    @Html.Partial("_ReportLeftMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">资产负债表</span></div>
+                @Html.Partial("_ReportDateTemplate")
+ 
+        </div>
+
+    </section>
+</div>
+ 
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        $("#content .col-md-4:eq(1)").hide();
+        $("#content .col-md-4:eq(2)").hide();
+        $("#content .col-md-4:eq(3)").show();
+        $("#dateEnd").datepicker({
+            format: 'yyyy/mm/dd',
+            minView: 'month',
+            language: 'zh-CN',
+            autoclose: true,
+            startDate: new Date().getFullYear() + "/01/01",
+            endDate:new Date()
+        });
+        var param = new Object();
+        $('#Reports1').bootstrapTable({
+            url: "/BalanceSheet/GetReportDateList",
+            method: 'get',
+            //pageSize: 5,
+            //pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            //pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "Rep_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [[
+
+                { field: 'rep_date', title: '月度', formatter: LinkDateHandle1 },
+                  { field: 'rep_status'},
+                { field: 'Rep_GUID',formatter: LinkHandle1 }
+            ]],
+            pagination: true,
+            rownumbers: true,
+            queryParams: { reportDate: "", type: "month" }
+        });
+        //$('#Reports2').bootstrapTable({
+        //    url: "/BalanceSheet/GetReportList",
+        //    method: 'get',
+        //    pageSize: 10,
+        //    pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+        //    pageNumber: 1,
+        //    singleSelect: true,
+        //    clickToSelect: true,
+        //    checkOnSelect: true,
+        //    selectOnCheck: true,
+        //    pagination: true,
+        //    search: false, // 开启搜索功能
+        //    showColumns: false,
+        //    showRefresh: false,
+        //    showQuery: false,
+        //    showToggle: false,
+        //    showExport: false,
+        //    uniqueId: "Rep_GUID",
+        //    exportTypes: ['xml', 'txt', 'excel'],
+        //    columns: [[
+        //        { field: 'rep_date', title: '季度', formatter: LinkDateHandle2 },
+        //        // { field: 'rep_status', title: '状态' },
+        //        //{ field: 'Rep_GUID', title: '操作', formatter: LinkHandle1 }
+        //    ]],
+        //    pagination: true,
+        //    rownumbers: true,
+        //    queryParams: { reportDate: "", type: "quarter" }
+        //});
+        //$('#Reports3').bootstrapTable({
+        //    url: "/BalanceSheet/GetReportList",
+        //    method: 'get',
+        //    pageSize: 10,
+        //    pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+        //    pageNumber: 1,
+        //    singleSelect: true,
+        //    clickToSelect: true,
+        //    checkOnSelect: true,
+        //    selectOnCheck: true,
+        //    pagination: true,
+        //    search: false, // 开启搜索功能
+        //    showColumns: false,
+        //    showRefresh: false,
+        //    showQuery: false,
+        //    showToggle: false,
+        //    showExport: false,
+        //    uniqueId: "Rep_GUID",
+        //    exportTypes: ['xml', 'txt', 'excel'],
+        //    columns: [[
+        //        { field: 'rep_date', title: '年度', formatter: LinkDateHandle3 },
+        //        // { field: 'rep_status', title: '状态' },
+        //        //{ field: 'Rep_GUID', title: '操作', formatter: LinkHandle1 }
+        //    ]],
+        //    pagination: true,
+        //    rownumbers: true,
+        //    queryParams: { reportDate: "", type: "year" }
+        //});
+
+        reportViewUrl = "/BalanceSheet/BalanceSheet";
+
+        DateInit('BalanceSheet');
+
+        $('#btnQuery').click(function () {
+            DataBind('BalanceSheet', 'BalanceSheet')
+        })
+
+    });
+
+    var LinkHandle1 = function (value, row, index) {
+        var affDate2 = row.rep_date;
+        var status = row.rep_status;
+        var type = row.period_type;
+        var period = row.Type;
+        var link = "";
+        var link1 = "";
+        if (row.period_type == "month") {
+            if (row.rep_status == '未结账') {
+                //link = " <a class='linkbtn'   onclick='settled(\"" + affDate2 + '","' + value + '","已结账","' + type + '","' + period + "\")'>结账</a> ";
+                //var link1 = "";
+
+            } else {
+                link = " <a class='linkbtn'   onclick='settled(\"" + affDate2 + '","' + value + '","未结账","' + type + '","' + period + "\")'>反结账</a> ";
+                //var link1 = "<a class='linkbtn'   onclick='GetVoucher(\"" + value + '","' + affDate2 + '","' + type + "\")'>凭证</a> ";
+
+            }
+        }
+        //else if (row.period_type == "quarter") {
+        //    var link1 = "<a class='linkbtn'   onclick='GetVoucher(\"" + value + '","' + affDate2 + '","' + type + "\")'>凭证</a> ";
+        //} else if (row.period_type == "year") {
+        //    var link1 = "<a class='linkbtn'   onclick='GetVoucher(\"" + value + '","' + affDate2 + '","' + type + "\")'>凭证</a> ";
+        //}
+
+        return link + link1;
+    };
+    var LinkDateHandle1 = function (value, row) {
+        return "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.Rep_GUID + '","' + row.rep_date + '","month","' + row.rep_status + '","' + row.Type + "\")'>" + row.rep_date + "</a>";
+
+    };
+    var LinkDateHandle2 = function (value, row) {
+        return "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.Rep_GUID + '","' + row.rep_date + '","quarter","' + row.rep_status + '","' + row.Type + "\")'>" + row.rep_date + "</a>";
+
+    };
+    var LinkDateHandle3 = function (value, row) {
+        return "<a class='link' style='cursor:pointer;color:blue' onclick='ShowDetailsThree(\"" + row.Rep_GUID + '","' + row.rep_date + '","year","' + row.rep_status + '","' + row.Type + "\")'>" + row.rep_date + "</a>";
+
+    };
+    function ShowDetailsThree(a, b, c, d, e) {
+        if (a=="null") {
+            window.location.href = reportViewUrl + "?reportDate=" + b + "&type=" + c 
+        } else {
+            window.location.href = reportViewUrl + "?id=" + a + "&reportDate=" + b + "&type=" + c + "&status=" + d + "&period=" + e
+        }
+        
+    }
+    ///结账
+    function settled(RepDate, id, status, type, period) {
+        $.ajax({
+            url: "/IncomeStatement/isFinish?RepDate=" + RepDate + "&status=" + status + "&type=" + period + "&period=" + type,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data).Result) {
+                    if (confirm('确认修改?')) {
+                        $.ajax({
+                            url: "/BalanceSheet/UpdBalance?id=" + id + "&RepDate=" + RepDate + "&status=" + status + "&type=" + type,
+                            type: "POST",
+                            success: function (data) {
+                                if ($.parseJSON(data).success) {
+                                    alert("操作成功！");
+                                    location.href = '/BalanceSheet/Index';
+                                }
+                            },
+                            error: function () {
+                                alert("操作失败");
+                            }
+
+                        });
+                    }
+                } else {
+                    if (status == "已结账") {
+                        alert("请先结账之前的月度账单！");
+                        location.href = '/BalanceSheet/Index';
+                    } else {
+                        alert("请先反结账之前的月度账单！");
+                    }
+                }
+            },
+            error: function () {
+                alert("操作失败");
+            }
+        });
+
+    }
+
+</script> 

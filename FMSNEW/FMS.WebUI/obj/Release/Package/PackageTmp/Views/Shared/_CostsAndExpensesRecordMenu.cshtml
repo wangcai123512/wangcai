@@ -1,0 +1,40 @@
+﻿<style type="text/css">
+    .LinkButton
+    {
+        height: 60px;
+        width: 100%;
+        border-radius: 100px; 
+        font-size: 20px;
+        background-color:#f5f5f5;
+        border: 5px solid #c0c0c0;
+        font-weight: bold;
+        margin-top: 10px; 
+    }
+</style>
+<script type="text/javascript" src="@Url.Content("~/js/chart/Chart.bundle.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/chart/Chart.js")"></script>
+<aside id="sidebar_left" style="font-size: 16px;">
+    <div class="sidebar-menu" style="margin-top: 10px">
+        <ul class="nav" style="">
+              <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+            <li> <a onclick="javascript:window.location = '/ReportManagement/Index'" href="/ReportManagement/Index"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">报告中心</span></a> </li>
+             <li>
+                <a onclick="javascript: window.location = '/CostsAndExpensesTotalRecord/Index'" href="/CostsAndExpensesTotalRecord/Index">
+                    <span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">总成本与费用</span>
+                </a> 
+            </li>          
+            <li>
+                <a onclick="javascript: window.location = '/CostsAndExpensesClassifyRecord/Index'" href="/CostsAndExpensesClassifyRecord/Index">
+                    <span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">分类成本与费用</span>
+                </a>
+            </li>
+            <li>
+                <a onclick="javascript: window.location = '/CostsAndExpensesSupplierRecord/Index'" href="/CostsAndExpensesSupplierRecord/Index">
+                    <span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">供应商成本与费用</span>
+                </a> 
+            </li>
+        </ul>
+    </div>
+</aside>
+
+ 

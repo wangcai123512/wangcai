@@ -1,0 +1,17 @@
+D:\fms\FMSNEW\FMS.Resource\bin\Debug\FMS.Resource.dll
+D:\fms\FMSNEW\FMS.Resource\bin\Debug\FMS.Resource.pdb
+D:\fms\FMSNEW\FMS.Resource\bin\Debug\en-US\FMS.Resource.resources.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.csprojResolveAssemblyReference.cache
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.Account.Account.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.Bank.Bank.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.BusinessPartner.BusinessPartner.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.CompanySetting.CompanySettingInfo.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.Currency.Currency.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.FinanceReport.FinanceReport.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.Finance.Finance.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.FixedAssets.FixedAssets.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.Currency.Currency.en-US.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.csproj.GenerateResource.Cache
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\en-US\FMS.Resource.resources.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Debug\FMS.Resource.pdb

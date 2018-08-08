@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BF9AB8AB-452A-4A3E-940F-B64AEEAD31BB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FMS.BLL</RootNamespace>
+    <AssemblyName>FMS.BLL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aspose.Cells, Version=7.4.1.0, Culture=neutral, PublicKeyToken=00725b1ceb58d0a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Aspose.Cells.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft ADO.NET Entity Framework 4.1\Binaries\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SSOModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\FMS.WebUI\DLL\SSOModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 3\Assemblies\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountManagementController.cs" />
+    <Compile Include="AccountReceiveRecordController.cs" />
+    <Compile Include="AccountSummaryController.cs" />
+    <Compile Include="BalanceSheetController.cs" />
+    <Compile Include="BusinessUnitSettingController.cs" />
+    <Compile Include="CashFlowStatementsController.cs" />
+    <Compile Include="CashInFlowsRecordController.cs" />
+    <Compile Include="CostsAndExpensesClassifyRecordController.cs" />
+    <Compile Include="CostsAndExpensesSupplierRecordController.cs" />
+    <Compile Include="CostsAndExpensesTotalRecordController.cs" />
+    <Compile Include="DeclareCostSpendingRecordController.cs" />
+    <Compile Include="MaterielManageController.cs" />
+    <Compile Include="MyReportController.cs" />
+    <Compile Include="NetCashFlowsRecordController.cs" />
+    <Compile Include="OutFlowCashRecordController.cs" />
+    <Compile Include="PaymentWriteController.cs" />
+    <Compile Include="ProductManageController.cs" />
+    <Compile Include="CompanyController.cs" />
+    <Compile Include="DirectMaterialPurchasingTypeRecordController.cs" />
+    <Compile Include="PurchasingTypeRecordController.cs" />
+    <Compile Include="ExpenseQueryController.cs" />
+    <Compile Include="ExpenseRecordController.cs" />
+    <Compile Include="ExpenditureWriteOffController.cs" />
+    <Compile Include="FixedAssetsGroupController.cs" />
+    <Compile Include="BusinessPartnerSettingController.cs" />
+    <Compile Include="DetailedAccountController.cs" />
+    <Compile Include="FixedAssetsQueryController.cs" />
+    <Compile Include="FixedAssetsRegisterController.cs" />
+    <Compile Include="GeneralLedgerAccountController.cs" />
+    <Compile Include="IncomeQueryController.cs" />
+    <Compile Include="IncomeRecordController.cs" />
+    <Compile Include="IncomeStatementController.cs" />
+    <Compile Include="IncomeWriteOffController.cs" />
+    <Compile Include="InternalAPIController.cs" />
+    <Compile Include="PaymentClassifyController.cs" />
+    <Compile Include="PaymentDeclareCostSpendingQueryController.cs" />
+    <Compile Include="PaymentQueryController.cs" />
+    <Compile Include="PaymentRecordController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FixedAssetsWrittenOffController.cs" />
+    <Compile Include="ReceivablesClassifyController.cs" />
+    <Compile Include="ReceivablesDeclareCustomerQueryController.cs.cs" />
+    <Compile Include="ReceivablesQueryController.cs" />
+    <Compile Include="ReceivablesRecordController.cs" />
+    <Compile Include="BusinessCostController.cs" />
+    <Compile Include="ReceivablesDeclareCustomerController.cs" />
+    <Compile Include="PaymentDeclareCostSpendingController.cs" />
+    <Compile Include="DetailManagementController.cs" />
+    <Compile Include="ReceivablesWriteController.cs" />
+    <Compile Include="ReportManagementController.cs" />
+    <Compile Include="RevenueCollectionRecordController.cs" />
+    <Compile Include="UploadAttachmentController.cs" />
+    <Compile Include="UploadController.cs" />
+    <Compile Include="UserInfoController.cs" />
+    <Compile Include="VoucherQueryController.cs" />
+    <Compile Include="WageCostsRecordController.cs" />
+    <Compile Include="TaxProvisionRecordController.cs" />
+    <Compile Include="InitialBalanceManagementController.cs" />
+    <Compile Include="AssetPurchaseRecordController.cs" />
+    <Compile Include="IndirectMaterialPurchasingRecordController.cs" />
+    <Compile Include="DirectMaterialPurchasingRecordController.cs" />
+    <Compile Include="AssetPurchaseQueryController.cs" />
+    <Compile Include="DirectMaterialPurchasingQueryController.cs" />
+    <Compile Include="IndirectMaterialPurchasingQueryController.cs" />
+    <Compile Include="CompanyInformationSetController.cs" />
+    <Compile Include="TaxAndTaxRateSetController.cs" />
+    <Compile Include="CurrencyAndExchangeRateManagementController.cs" />
+    <Compile Include="AddUsersController.cs" />
+    <Compile Include="UserManagementController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{D19B7876-648E-446F-96A9-4595BC619DD1}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FMS.DAL\FMS.DAL.csproj">
+      <Project>{9BEDCEDD-72EF-4C99-B29F-4650FB2FC411}</Project>
+      <Name>FMS.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FMS.Models\FMS.Models.csproj">
+      <Project>{989E4497-4EF2-4497-8532-B9423CC3E915}</Project>
+      <Name>FMS.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FMS.Model\FMS.Model.csproj">
+      <Project>{AA93FA58-D452-47C0-A237-EAF5D7B51294}</Project>
+      <Name>FMS.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FMS.Resource\FMS.Resource.csproj">
+      <Project>{FCED8FEC-10A6-45F0-816B-B7481E94DFF2}</Project>
+      <Name>FMS.Resource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Resource\Resource.csproj">
+      <Project>{C71676FF-3A98-4833-883F-A3340B1CAD29}</Project>
+      <Name>Resource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilitie\Utilitie.csproj">
+      <Project>{779503B9-CF4D-4DFE-BDB9-D604C59FC9D7}</Project>
+      <Name>Utilitie</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="obj\Debug\build.force" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\FMS.BLL.csprojResolveAssemblyReference.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="obj\Debug\FMS.BLL.csproj.FileListAbsolute.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\en-US\" />
+    <Folder Include="bin\Debug\zh-Hans\" />
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="ADODB">
+      <Guid>{00000205-0000-0010-8000-00AA006D2EA4}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>5</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="MSComctlLib">
+      <Guid>{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="MSDATASRC">
+      <Guid>{7C0FFAB0-CD84-11D0-949A-00A0C91110ED}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="OWC11">
+      <Guid>{0002E558-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

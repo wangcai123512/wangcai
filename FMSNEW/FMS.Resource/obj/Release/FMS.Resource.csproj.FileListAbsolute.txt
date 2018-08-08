@@ -1,0 +1,16 @@
+D:\fms\FMSNEW\FMS.Resource\bin\Release\FMS.Resource.dll
+D:\fms\FMSNEW\FMS.Resource\bin\Release\FMS.Resource.pdb
+D:\fms\FMSNEW\FMS.Resource\bin\Release\en-US\FMS.Resource.resources.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.Account.Account.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.Bank.Bank.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.BusinessPartner.BusinessPartner.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.CompanySetting.CompanySettingInfo.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.Currency.Currency.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.FinanceReport.FinanceReport.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.Finance.Finance.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.FixedAssets.FixedAssets.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.Currency.Currency.en-US.resources
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.csproj.GenerateResource.Cache
+D:\fms\FMSNEW\FMS.Resource\obj\Release\en-US\FMS.Resource.resources.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.dll
+D:\fms\FMSNEW\FMS.Resource\obj\Release\FMS.Resource.pdb

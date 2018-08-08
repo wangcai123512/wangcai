@@ -1,0 +1,124 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/CostsAndExpensesRecord/CostsAndExpensesSupplierRecord/index.js")"></script>
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_CostsAndExpensesRecordMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <input type="hidden" id="code" name="code" value="@ViewData["Code"]">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">供应商成本与费用</span></div>
+                    <div class="col-md-12" style="margin-top:3%">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="SupplierCostsExpensesRecord">
+                                        <div class="col-md-1" style="margin-bottom: 0px;width:40px;padding-top:5px">
+                                            从
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 40px; padding-top: 5px">
+                                            至
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px; width: 60px; padding-top: 5px">
+                                            来自
+                                        </div>
+                                        <div class="col-md-3" style="margin-bottom: 0px;">
+                                            <div class="form-group" style="margin-top: 0px;">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <select id="Supplier" name="Supplier" class="multiselect" multiple="multiple"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px; font-weight: 700; margin-top: 4px;font-size: 10px;">
+                                            供应商的成本费用
+                                        </div>  
+                                        <div class="col-md-1" style="margin-left:30px">
+                                            <button onclick="SupplierCostsExpensesRecordQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!--供应商成本与费用 model--->
+<div class="modal fade" id="SupplierCostsExpensesModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    供应商的成本费用
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <div class="form-group">
+                            <div>
+                                <span style="font-size: 16px">
+                                    公司：
+                                    <b>@ViewData["ChineseFullName"]</b>
+                                    <b>  <button onclick="SupplierExport()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导出</button></b>
+                                </span>
+                            </div>
+                            <div style="margin-top:10px;margin-left:45px">
+                                <span style="font-size: 14px;">
+                                    从<b><input type="text" id="dateBegin" readonly="readonly" style="width:110px;text-align:center"></b>
+                                    至<b><input type="text" id="dateEnd" readonly="readonly" style="width:110px;text-align:center"></b>的
+                                    <b><input type="text" id="Supplier" readonly="readonly" style="width:110px;text-align:center"></b>供应商的成本与费用
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="supplierform">
+                            <tr>
+                                <td style=" width:800px">
+                                    <table id="SupplierTotalCollectList" style="font-size: 12px;background-color:#F5F5F5;" class="asd"></table>
+                                    <table id="SupplierTotalList" style="font-size: 12px; margin-top: -20px"></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>

@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "BankAccount";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_BankAccount
+<form id="AccountForm"  method="post">
+<table class="Props">
+    <input type="hidden" name="C_GUID" value="@Model.C_GUID" />
+   <input type="hidden" name="B_GUID" value="@Model.B_GUID" />
+    <input type="hidden" name="BA_GUID" value="@Model.BA_GUID" />
+    <tr>
+        <td>@FMS.Resource.Bank.Bank.BankAccount</td>
+        <td><input name="Account" class="easyui-numberbox" data-options="required:true" value="@Model.Account"/></td>
+    </tr>
+    <tr>
+        <td>账户名称</td>
+        <td><input name="AccountName" class="easyui-validatebox" data-options="required:true" value="@Model.AccountName"/></td>
+    </tr>
+    <tr>
+        <td>账户简称</td>
+        <td><input name="AccountAbbreviation" class="easyui-validatebox" data-options="required:true" value="@Model.AccountAbbreviation"/></td>
+    </tr>
+    <tr>
+        <td>账户类型</td>
+        <td><input name="AccountType" class="easyui-validatebox" data-options="required:true" value="@Model.AccountType"/></td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.Finance.Finance.Currency:</td>
+        <td><input id="AccountCurrency" name="AccountCurrency" data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true' value="@Model.AccountCurrency"/></td>
+    </tr>
+    <tr>
+        <td>SWIFT码</td>
+        <td><input name="SwiftCode" class="easyui-validatebox" data-options="required:true" value="@Model.SwiftCode"/></td>
+    </tr>
+    <tr> 
+        <td>银行地址</td>
+        <td><input name="BankAddress" class="easyui-validatebox" data-options="required:true" value="@Model.BankAddress"/></td>
+    </tr>
+</table >          
+</form>
+<script language="javascript" type="text/javascript">
+    var CommonCurrency;
+    $(function() {
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+
+        $("#AccountCurrency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency
+        });
+
+    });
+</script>

@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+	<link href="@Url.Content("~/Content/CSS/Site_Style.css")" rel="stylesheet" type="text/css" />
+	<div id="theme">  
+<link href='../../Content/EasyUI/themes/default/easyui.css' type='text/css' rel='Stylesheet' />
+</div>
+<script src="//code.jquery.com/jquery-1.10.0.min.js" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/EasyUI/jquery.easyui.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/Common.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/json2.js")" type="text/javascript"></script>
+	<script src="@Url.Content("~/Scripts/RememberPWD.js")" type="text/javascript"></script>
+	@if (System.Threading.Thread.CurrentThread.CurrentCulture.ToString() == "zh-CN")
+	{ 
+		<script src="@Url.Content("~/Content/EasyUI/locale/easyui-lang-zh_CN.js")" type="text/javascript"></script>
+	}
+	else
+	{ 
+		<script src="@Url.Content("~/Content/EasyUI/locale/easyui-lang-en.js")" type="text/javascript"></script>
+	}  
+	@RenderSection("script", false)
+	<link type="image/x-icon" href="@Url.Content("~/Content/SiteStyle-V3/images/favicon.ico")" rel="shortcut icon"/>
+</head>
+<body style="height:600px;">
+	<div id="Framework" class="page" style="height:600px">
+		<div id="header">
+			<div id="title" style="float: left; padding-bottom:5px">                       
+				<img 
+				@{
+					string logo = string.Empty;
+					if (System.Threading.Thread.CurrentThread.CurrentCulture.ToString() == "zh-CN")
+				{
+					logo = "../../Content/Image/Logo_CN.png";
+				}
+				else
+				{
+					logo = "../../Content/Image/Logo_EN.png";
+					}
+				}
+				src= "@logo" id-"Logo"
+				style=" height:62px; width:230px; margin-top: 10px; float: left; border-width: 0px;
+							border-color: White; padding-left:85px" />
+			</div>
+			<div id="logindisplay" style="float:right; padding-top:12px; padding-right:85px;">
+				@Html.Partial("_LogOnPartial_V3")
+			</div>
+		</div>
+		<div style="clear:left" >
+			<hr style="width:88%; background-color:#99CCCC; height:6px;margin-top:0px;margin-bottom:0px;border-width:0px" align="center" />
+			<hr style="width:88%; background-color:#074592; height:6px;margin-top:0px;margin-bottom:0px;border-width:0px" align="center" />
+		</div>
+		<div id="main" style="clear:left; height:400px">
+			@RenderBody()
+		</div>
+		<div id="footer">
+			<br />
+			<p style="text-align:right;  font-size:11px; width:80%">
+			<a href="www.novofront.com" style="color:#7c7c7c;">Powered by Novofront</a>
+			</p>
+		</div>
+	</div>
+</body>
+</html>
+<script type = "text/javascript" language = "javascript">
+	$(function () {
+		if ($.cookie("theme") == undefined) {
+			$.cookie("theme", "default", { path: "/", expires: 7 })
+		}
+		$("#theme").empty();
+		$("#theme").html("<link href='../../Content/EasyUI/themes/" + $.cookie("theme") + "/easyui.css' type='text/css' rel='Stylesheet' />");
+	}
+);
+</script> 

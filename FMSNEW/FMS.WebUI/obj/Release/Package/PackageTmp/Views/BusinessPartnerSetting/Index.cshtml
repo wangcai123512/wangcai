@@ -1,0 +1,235 @@
+﻿@{ ViewBag.Title = "Index"; Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+<div id="main" style="margin-top: 100px;">
+   
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            @*<ul class="nav" style="">
+                <li> 
+                <a onclick="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'">
+                <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">往来公司登记</span>
+                 <span class="sidebar-title-tray"></span> </a>
+                  </li>
+                <li class="active">
+                 <a onclick="javascript:window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location='/BusinessPartnerSetting/Index'">
+                 <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>
+                 <span class="sidebar-title" style="font-size: 14px; color: #08C">往来公司查询</span>
+                 </a> </li>
+                <li> 
+                <a onclick="javascript:window.location = '#'" href="javascript:window.location = '#'">
+                <span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span>
+                <span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span>
+                </a>
+                </li>
+            </ul>*@
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                       <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                        @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                    </ul>
+                </li>
+                <li>
+                    <a class="accordion-toggle menu-open" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                    <ul id="sidecompany" class="nav sub-nav">
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'"><span class="sidebar-title" style="font-size: 14px;">往来公司登记</span></a></li>
+                        <li class="active"> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px; color: #08C">往来公司查询</span></a></li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <section id="content_wrapper">
+        <div id="content"  style="background-color: #FFF">
+            <div class="row">
+                <div class="col-md-12" style="margin-bottom: 20px; text-align: center">
+                    <span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">往来公司查询</span>
+                </div> 
+                <div class="col-md-12" style="margin-bottom: 20px">
+                 <input type="hidden" name="Customer" id="Customer"/>
+                 <input type="hidden" name="Supplier" id="Supplier"/>
+                <input type="hidden" name="Partner" id="Partner" />
+                            <div class="form-group">
+                                <div class="col-md-9 pt5">
+                                    <div class="cBox cBox-inline">
+                                       <input type="checkbox" id="IsCustomer" name="IsCustomer" class="test" />
+                                       <label for="IsCustomer" style="color: #000000; font-size: 14px">客户</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="IsSupplier" name="IsSupplier" class="test" />
+                                       <label for="IsSupplier" style="color: #000000; font-size: 14px">供应商</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="IsPartner" name="IsPartner" class="test" />
+                                        <label for="IsPartner" style="color: #000000; font-size: 14px">合作伙伴</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                <div class="col-md-12">
+                    <div class="panel panel-visible"> 
+            <div class="panel-body pbn"> 
+                <div class="col-md-12"> 
+                    <div class="panel-body">
+                        <table  id="CompanyTable">
+                        </table>
+                    </div> 
+                </div> 
+            </div>
+        </div>
+                 </div>
+                 <div class="col-md-12" style="margin: auto"> 
+                    <button onclick="javascript:window.location = '/Common/Index'" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" 
+                        class="btn btn-primary pull-right">返回上页</button>
+                </div>
+            </div>
+        </div>
+    </section>
+     
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+
+        $('#CompanyTable').bootstrapTable({
+            url: "/BusinessPartnerSetting/GetPartner",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            sortName: 'Name', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            columns: [
+                    { field: "Name", title: '简称', width: '20%' },
+                    { field: "ChineseFullName", title: '中文名称', width: '20%' },
+                    { field: "EnglishFullName", title: '英文名称', width: '20%' },
+                    { field: 'IsSupplier', title: '供应商', formatter: DisplayDesc, width: "10%" },
+                    { field: 'IsCustomer', title: '客户', formatter: DisplayDesc, width: "10%" },
+                    { field: 'IsPartner', title: '合作伙伴', formatter: DisplayDesc, width: "10%" },
+                    { field: "BP_GUID", formatter: LinkHandle, width: "10%", align: 'center' }
+                    ]
+        });
+    });
+    function DisplayDesc(val, row, index) {
+        if (val) {
+            return "是";
+        }
+        else {
+            return "否";
+        }
+    }
+
+
+    $(function () {
+        $('.test').click(function () {
+            if ($(this).click) {
+                if ($("#IsCustomer").is(':checked') == true) {
+                    $("#Customer").val("1");
+                    $("#Supplier").val("");
+                    $("#Partner").val("");
+                }
+                if ($("#IsSupplier").is(':checked') == true) {
+                    $("#Supplier").val("1");
+                    $("#Customer").val("");
+                    $("#Partner").val("");
+                }
+                if ($("#IsPartner").is(':checked') == true) {
+                    $("#Supplier").val("");
+                    $("#Customer").val("");
+                    $("#Partner").val("1");
+                }
+                if ($("#IsCustomer").is(':checked') == true && $("#IsSupplier").is(':checked') == true) {
+                    $("#Customer").val("1");
+                    $("#Supplier").val("1");
+                    $("#Partner").val("");
+                }
+                if ($("#IsCustomer").is(':checked') == true && $("#IsPartner").is(':checked') == true) {
+                    $("#Customer").val("1");
+                    $("#Supplier").val("");
+                    $("#Partner").val("1");
+                }
+                if ($("#IsPartner").is(':checked') == true && $("#IsSupplier").is(':checked') == true) {
+                    $("#Customer").val("");
+                    $("#Supplier").val("1");
+                    $("#Partner").val("1");
+                }
+                if ($("#IsPartner").is(':checked') == true && $("#IsSupplier").is(':checked') == true && $("#IsCustomer").is(':checked') == true) {
+                    $("#Customer").val("1");
+                    $("#Supplier").val("1");
+                    $("#Partner").val("1");
+                }
+
+                if ($("#IsCustomer").is(':checked') == false && $("#IsPartner").is(':checked') == false && $("#IsSupplier").is(':checked') == false) {
+                    $("#Supplier").val("");
+                    $("#Partner").val("");
+                    $("#Customer").val("");
+                }
+                
+                var customer = $("#Customer").val();
+                var supplier = $("#Supplier").val();
+                var partner = $("#Partner").val();
+                $('#CompanyTable').bootstrapTable('refresh', { url: "/BusinessPartnerSetting/GetPart?Customer=" + customer + "&Supplier=" + supplier + "&Partner=" + partner });
+
+            }
+        });
+    });
+    function DelPartner(id){
+        $.ajax({
+            url: "/BusinessPartnerSetting/DelPartner?id=" + id,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data).Result) {
+
+                    alert("删除成功");
+                    $('#CompanyTable').bootstrapTable('refresh');
+                }
+                else {
+                    alert("删除失败");
+                }
+            },
+            error: function () {
+                alert("删除失败");
+            }
+        });
+    }
+    LinkHandle = function (val, row, index) {
+        return "<a class='linkbtn' href='../BusinessPartnerSetting/BusinessPartner?op=edit&id=" + val + "'>编辑</a> " + "<a class='linkbtn' onclick='DelPartner(\"" + val + "\")'>删除</a> ";
+
+    }
+</script>

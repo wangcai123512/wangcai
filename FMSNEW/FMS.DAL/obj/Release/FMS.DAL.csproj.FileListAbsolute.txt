@@ -1,0 +1,7 @@
+D:\fms\FMSNEW\FMS.DAL\bin\Release\FMS.DAL.dll
+D:\fms\FMSNEW\FMS.DAL\bin\Release\FMS.DAL.pdb
+D:\fms\FMSNEW\FMS.DAL\bin\Release\FMS.Model.dll
+D:\fms\FMSNEW\FMS.DAL\bin\Release\FMS.Model.pdb
+D:\fms\FMSNEW\FMS.DAL\obj\Release\FMS.DAL.csprojResolveAssemblyReference.cache
+D:\fms\FMSNEW\FMS.DAL\obj\Release\FMS.DAL.dll
+D:\fms\FMSNEW\FMS.DAL\obj\Release\FMS.DAL.pdb

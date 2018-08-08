@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+    <table id="DetailTable"></table>
+    <div id="Detail"></div>
+    <script type="text/javascript">
+        var LinkFormatter = function (val,row,index) 
+        {
+            var Para = '"' + val + '"';
+            var Index = '"' + index + '"';
+            return "<a onclick='ChangeDetailsState(" + Index + ")'>更改状态</a> " +
+                   "<a onclick='DelDetails(" + Para + ")' >@General.Resource.Common.Delete</a>";
+        };
+
+        $(function () {
+            $('#DetailTable').datagrid({
+                url: '/DetailManagement/GetDetailList',
+                singleSelect:true,
+                columns: [[
+                { field: 'Name', title: '名称' },
+                { field: 'State', title: '状态'},
+                { field: 'GUID', title: '', formatter: LinkFormatter }
+                ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: '@General.Resource.Common.Add',
+                    handler: function () { ShowDetails(); }
+                }],
+                pagination: true,
+	            rownumbers: true
+            });
+            $("#Detail").dialog({
+                collapsible: false,
+                minimizable: false,
+                maximizable: false,
+                closed: true,
+                title: "新建类别",
+                width: 400,
+                height: 200,
+                buttons: [{
+                    text: '@General.Resource.Common.Save',
+                        handler: function() { SubmitForm(); }
+                    }
+                ]
+            });
+        });
+
+        function ShowDetails(id) {
+            $("#Detail").dialog("center");
+            $("#Detail").dialog("open");
+            $("#Detail").dialog("refresh", "/DetailManagement/DetailRecord");
+
+        }
+
+        var successHandle = function(data) {
+            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+            if ($.parseJSON(data).Result) {
+                $("#Detail").dialog("close");
+                $('#DetailTable').datagrid("reload");
+            }
+        };
+
+        function SubmitForm() {
+            var guid = $('#GUID').val();
+            var name = $('#DRName').val();
+            $("#Detail_form").form('submit', {
+                url: "/DetailManagement/UpdDetail?guid=" + guid + "&name=" + name,
+                onSubmit: function() { return $("Detail_form").form("validate"); },
+                success: successHandle
+            });
+        }
+
+        function ChangeDetailsState(index) {
+            $('#DetailTable').datagrid('selectRow', index); // 关键在这里  
+            var row = $('#DetailTable').datagrid('getSelected');  
+            var guid = row.GUID;
+            var state;
+            if (row.State == "启用") {
+                state = "停用";
+            } else {
+                state = "启用";
+            }
+            $.messager.confirm('Confirm', state, function (r) {
+                if (r) {
+                    $.ajax({
+                        url: "/DetailManagement/UpdDetailstate?guid=" + guid + "&State=" + state,
+                        type: "POST",
+                        success: function(data) {
+                            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                            if ($.parseJSON(data).Result) {
+                                $('#DetailTable').datagrid("reload");
+                            }
+                        },
+                        error: function() {
+                            $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+
+    function DelDetails(id) {
+        $.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/DetailManagement/DelDetails?guid=" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#DetailTable').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+    </script>
+

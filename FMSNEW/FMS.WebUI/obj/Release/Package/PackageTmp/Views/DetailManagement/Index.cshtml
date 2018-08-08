@@ -1,0 +1,410 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px">
+        <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                    <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                    <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                    <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                    <li class="active"><a class="accordion-toggle menu-open" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                        <ul id="sideFour" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                            <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                            <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+
+                        <li class="active">@*<a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px;color: #08C">费用类别设置</span></a>*@</li>
+                         <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                        </ul>
+                    </li>
+                    <li id="UserManage"> <a onclick="javascript:window.location = '/UserManagement/Index'" href="javascript:window.location = '/UserManagement/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a></li>
+                   <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                   <li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>
+                
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+                </ul>
+            </div>
+  </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center">@*<span style="font-size: 25px; font-weight: 900; color: #074592; text-decoration: underline">费用类别设置</span>*@</div>
+                    <div class="col-md-12" style="margin: auto">
+                    <div class="col-md-4" style="margin: auto">
+                       <button onclick="openmodal()" type="button" style="width: 100px;font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">新增费用类别</button>
+                      </div>
+                        <div class="col-md-12" style="margin: auto;margin-top: 10px">
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <table id="IRTable" class="table-condensed" style="font-size: 12px">
+                                    </table>
+                                    <div class="form-group" style="margin: auto; text-align: center">
+                                        <button onclick="submit()" type="button" style="margin-top: 20px; height: 40px; width: 20%;
+                            border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0; font-weight: bold"
+                                                class="btn btn-primary">
+                                            提交
+                                        </button>
+                                        <button onclick="window.history.go(-1)" type="button" style="margin-top: 20px;
+                            height: 40px; width: 20%; border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0;
+                            font-weight: bold" class="btn btn-primary">
+                                            返回上页
+                                        </button>
+                                    </div>
+                                    <br />
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="Two" class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <form id="ExpenseType_Form" method="post">
+                            <input type="hidden" name="ET_GUID" id="ET_GUID"/>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">费用类别</span>
+                                        <input id="ExpenseType" name="ExpenseType" type="text" class="form-control" placeholder=""
+                                               required="true" value="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="margin-bottom: 20px">
+                                <div class="form-group">
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="ExpenseFlag" name="check" value="None">
+                                        <label for="ExpenseFlag" style="color: #000000; font-size: 11px">营业成本</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="SaleFlag" name="check" value="None">
+                                        <label for="SaleFlag" style="color: #000000; font-size: 11px">销售费用</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="ManageFlag" name="check" value="None">
+                                        <label for="ManageFlag" style="color: #000000; font-size: 11px">管理费用</label>
+                                    </div>
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="FinanceFlag" name="check" value="None">
+                                        <label for="FinanceFlag" style="color: #000000; font-size: 11px">财务费用</label>
+                                    </div>
+                                    @*<div class="cBox cBox-inline">
+                                        <input type="checkbox" id="OtherFlag" name="check" value="None">
+                                        <label for="OtherFlag" style="color: #000000; font-size: 11px">其他业务成本</label>
+                                    </div>*@
+                                    <div class="cBox cBox-inline">
+                                        <input type="checkbox" id="TaxFlag" name="check" value="None">
+                                        <label for="TaxFlag" style="color: #000000; font-size: 11px">税费</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="SubmitForm()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+
+//        $("#myModal").on("hidden.bs.modal", function () {
+//            location.reload(true);
+        //        });
+
+        $('#IRTable').bootstrapTable({
+            url: "/DetailManagement/GetExpenseTypeList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 25, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            //singleSelect: true,
+            //clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            search: false,
+            showColumns: false,
+            showRefresh: false,
+            //showQuery: false,
+            showToggle: false,
+            showExport: false,
+            checkboxHeader: false,
+            idField: "ET_GUID",
+            uniqueId: "ET_GUID",
+            columns: [
+				{ field: 'ExpenseType', width: '150', align: 'center', title: '我的费用类别' },
+				{ field: 'ExpenseFlag',  sortable: true, width: '50', align: 'center', title: '营业成本', formatter: expenseFlagFormatter },
+                { field: 'SaleFlag',  sortable: true, width: '50', align: 'center', title: '销售费用', formatter: saleFlagFormatter },
+				{ field: 'ManageFlag',  sortable: true, width: '50', align: 'center', title: '管理费用', formatter: manageFlagFormatter },
+				{ field: 'FinanceFlag',  sortable: true, width: '50', align: 'center', title: '财务费用', formatter: financeFlagFormatter },
+//				{ field: "OtherFlag", sortable: true, width: '50', align: 'center', title: "其他成本", formatter: otherFlagFormatter },
+                { field: "TaxFlag", sortable: true, width: '50', align: 'center', title: "税费", formatter: taxFlagFormatter },
+                { field: 'ET_GUID', width: '150', title: '操作', align: 'center', formatter: LinkHandle },
+                //{checkbox: true},
+            ]
+        });
+
+       
+
+    });
+
+    function expenseFlagFormatter(value, row,index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="ExpenseFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+    function saleFlagFormatter(value, row, index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="SaleFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+    function manageFlagFormatter(value, row, index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="ManageFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+    function financeFlagFormatter(value, row, index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="FinanceFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+    function otherFlagFormatter(value, row, index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="OtherFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+    function taxFlagFormatter(value, row, index) {
+        return '<input onclick="changecheck(this)" name="checkbox" data-index="' + index + '" data-type="TaxFlag" type="checkbox"' + (value > 0 ? " checked " : "") + '>';
+    }
+
+    function changecheck(e) {
+        var a = e.getAttribute('data-index');
+        var b = e.getAttribute('data-type');
+        var c = $(e).is(':checked')
+        if (c === true) {
+            $('#IRTable').bootstrapTable('updateCell', { index: a, field: b, value: '1' });
+        } else if (c === false) {
+            $('#IRTable').bootstrapTable('updateCell', { index: a, field: b, value: '0' });
+        }
+    }
+
+    //提交表信息
+    function submit() {
+        var allTableData = $("#IRTable").bootstrapTable('getData');//获取表格的所有内容行  
+        var jsonData = JSON.stringify(allTableData);
+        $.ajax({
+            type: 'Post',
+            url: '/DetailManagement/UpExpenseTypeRecord/',
+            data: { jsonData: jsonData },
+            async: false,
+            success: function (data) {
+                if (data == "success") {
+                    alert("提交成功");
+                    $('#IRTable').bootstrapTable('refresh', { url: "/DetailManagement/GetExpenseTypeList" });
+                }
+                else {
+                    alert("提交失败");
+                }
+            }
+        });
+    }
+    //添加表信息
+    function addtr() {
+        var newGuid = NewGUID();
+        var type = $('input[name="Type"]:checked ').val();
+        var name = $('#Name').val();
+        var rate = $('#Rate').val();
+        var currentCompanyGuid = '@Session["CurrentCompanyGuid"]';
+        var table = $("#TaxTable");
+        table.bootstrapTable('insertRow', { index: 0, row: { "T_GUID": newGuid, "Name": name, "Rate": rate, "Type": type, "C_GUID": currentCompanyGuid } });
+
+    }
+    var CheckHandle=function(v) {
+        if (v=="1") {
+            return "√";
+        } else {
+            return "×";
+        }
+    }
+
+    var LinkHandle = function (value, row, index) {
+        var link2 = " <a class='linkbtn' style='cursor:pointer;'  onclick='Delt(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+        return link2;
+    };
+    function openmodal() {
+       
+        $('#ExpenseType').val("");
+        $("#ExpenseType_Form :checkbox").attr("checked", false)
+        $('#myModal').modal({ show: true, backdrop: 'static' });
+    }
+
+    function Edit(id) {
+        var row;
+        $.ajax({
+            url: "/DetailManagement/GetExpenseTypeRecord?id=" + id,
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                row = d;
+            }
+        });
+        $('#ET_GUID').val(row.ET_GUID);
+        $('#ExpenseType').val(row.ExpenseType);
+        if (row.ExpenseFlag == "1") {
+            $("#ExpenseFlag").attr("checked", true); //打勾
+        }
+        if (row.SaleFlag == "1") {
+            $("#SaleFlag").attr("checked", true); //打勾
+        }
+        if (row.ManageFlag == "1") {
+            $("#ManageFlag").attr("checked", true); //打勾
+        }
+        if (row.FinanceFlag == "1") {
+            $("#FinanceFlag").attr("checked", true); //打勾
+        }
+        if (row.OtherFlag == "1") {
+            $("#OtherFlag").attr("checked", true); //打勾
+        }
+        if (row.TaxFlag == "1") {
+            $("#TaxFlag").attr("checked", true); //打勾
+        }
+        $('#myModal').modal({ show: true, backdrop: 'static' });
+    }
+
+    function Delt(id) {
+        if (confirm('确认删除？')) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/DetailManagement/DelExpenseTypeRecord?id=" + id,
+                success: function (data) {
+                    if (data == 'success') {
+                        alert("删除成功");
+                        $('#IRTable').bootstrapTable('refresh', { url: "/DetailManagement/GetExpenseTypeList" });
+
+                    }
+                    else {
+                        alert('删除失败');
+                    }
+                }
+            });
+//            $('#IRTable').bootstrapTable('removeByUniqueId', id);
+        }
+    }
+
+    //产生GUID
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    function SubmitForm() {
+
+        if (!$("#ExpenseType_Form").valid()) {
+            return false;
+        }
+
+        var id = '@Session["CurrentCompanyGuid"]';
+        var etguid = NewGUID();
+        var expensetype =escape( $("#ExpenseType").val())
+        var expenseflag;
+        if ($("#ExpenseFlag").is(':checked') == true) {
+            expenseflag = 1;
+        } else {
+            expenseflag = 0;
+        }
+        var saleflag;
+        if ($("#SaleFlag").is(':checked') == true) {
+            saleflag = 1;
+        } else {
+            saleflag = 0;
+        }
+        var manageflag;
+        if ($("#ManageFlag").is(':checked') == true) {
+            manageflag = 1;
+        } else {
+            manageflag = 0;
+        }
+        var financeflag;
+        if ($("#FinanceFlag").is(':checked') == true) {
+            financeflag = 1;
+        } else {
+            financeflag = 0;
+        }
+        var otherFlag;
+        if ($("#OtherFlag").is(':checked') == true) {
+            otherFlag = 1;
+        } else {
+            otherFlag = 0;
+        }
+        var taxflag;
+        if ($("#TaxFlag").is(':checked') == true) {
+            taxflag = 1;
+        } else {
+            taxflag = 0;
+        }
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/DetailManagement/UpdExpenseTypeRecord?id=" + id + "&etguid=" + etguid + "&expensetype=" + expensetype + "&expenseflag=" + expenseflag + "&saleflag=" + saleflag + "&manageflag=" + manageflag + "&financeflag=" + financeflag + "&otherFlag=" + otherFlag + "&taxflag=" + taxflag,
+            async: false,
+            contentType: "application/x-www-form-urlencoded; charset=utf-8", 
+            onSubmit: function () {
+                return $("#ExpenseType_Form").form('validate');
+            },
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (data) {
+                //提交成功
+                if (data == "success") {
+                    alert("提交成功");
+                    $('#IRTable').bootstrapTable('refresh', { url: "/DetailManagement/GetExpenseTypeList" });
+                }
+                else {
+                    alert("提交失败");
+                }
+            }
+        });
+        $('#myModal').modal('hide');
+       
+    }
+</script>

@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "CancelRecordEight";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%;height: 100%">
+<div id="CERtoolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	</div>
+	<div>
+	    <form id="CERconditionForm">
+	        <table>
+	            <tr>
+	                <td>日期:</td>
+	                <td><input class="easyui-datebox" name="dateBegin" data-options="width:100,panelHeight:'auto'"/>-<input class="easyui-datebox" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+	            </tr>
+	            <tr>
+	                <td>类别:</td>
+	                <td>
+	                    <select class="easyui-combobox" name="aidFlag" data-options="width:207,panelHeight:'auto'">
+	                        <option value=""></option>
+	                        <option value="A">资产</option>
+	                        <option value="I">间接物料</option>
+	                        <option value="D">直接物料</option>
+	                    </select>
+	                </td>
+	            </tr>
+	        </table>
+	    </form>
+	</div>
+</div>
+<table id="AID_List"></table>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    $("#AID_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/PaymentClassify/GetAIDList',
+            columns: [[
+                { checkbox: true },
+				{ field: 'Date', title: '购入日期',formatter: DateHandle,remoteSort:true },
+				{ field: 'Amount', title: '金额', align: 'right', formatter: DecimalFmter },
+				{ field: 'Currency', title: '货币' },
+				{ field: 'RPerName', title: '供应商' },
+                { field: 'GUID', title: '',hidden:true}
+                ]
+            ],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CERtoolbar"
+	    });
+
+	});
+
+	function Search() {
+		$("#AID_List").datagrid("load",$("#CERconditionForm").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#AID_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['Amount'];
+        }
+        var p = $('#AID_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

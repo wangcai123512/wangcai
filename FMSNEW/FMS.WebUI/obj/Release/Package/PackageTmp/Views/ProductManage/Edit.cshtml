@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<script type="text/javascript" src="@Url.Content("~/js/views/product/index.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/product/product.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.css")">
+
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- 添加产品 -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">产品明细编辑</span></div>
+                </div>            
+                <div class="row">
+                    <div class="col-md-7" style="margin: auto">
+
+                    </div>                 
+                    <div class="col-md-3" style="margin: auto">
+                        <button onclick="javascript: window.location = '/ProductManage/Index'" class="btn btn-primary pull-right button-radius">
+                            返回上页
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="pid" value='@ViewBag.PID' />
+            @Html.Partial("edit-part");
+        </div>
+
+    </section>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // Some logic to retrieve, or generate tree structure
+        $.ajax({
+            url: "/ProductManage/GetProductDetail",
+            type: "POST",
+            async: false,
+            data: { pId: $("#pid").val() },
+            dataType: "JSON",
+            ContentType: "application/json",
+            success: function (data) {
+                if (data.success == true) {
+                    ShowTree(data.msg);
+                   // $('#detailModal').modal({ show: true, backdrop: 'static' });
+                } else {
+                    alert(data.msg);
+                }
+
+            },
+            error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                alert(event);
+            }
+
+        })
+    })
+</script>
+
+
+
+
+
+
+
+

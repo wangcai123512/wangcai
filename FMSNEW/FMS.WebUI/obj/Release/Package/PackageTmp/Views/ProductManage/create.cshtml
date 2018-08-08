@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<script type="text/javascript" src="@Url.Content("~/js/views/product/index.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/product/product.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.css")">
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- 添加产品 -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">创建产品</span></div> 
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-6" style="margin-bottom: 0px">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">业务单元</span>
+                                        <select id="Business_GUID" name="Business_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="margin-bottom: 0px">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">业务子单元</span>
+                                        <select id="SubBusiness_GUID" name="SubBusiness_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">产品类别</span>
+                                        <select id="productType" name="productType" onchange="GetSubType('#productType', '#productTypeSub')" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">产品子类 </span>
+                                        <select id="productTypeSub" name="productTypeSub" onchange="GetMMTypeNA('#productTypeSub', '#MaterielManage')" required></select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">产品 </span>
+                                        <select id="MaterielManage" name="MaterielManage" required></select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">产品数量 </span>
+                                        <input type="number" id="productCount" name="productCount" class="form-control" required placeholder="请输入产品数量" />
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+               
+
+                <div class="row">
+                    <div class="col-md-7" style="margin: auto">
+
+                    </div>
+                    <div class="col-md-2" style="margin: auto;">
+                        <button onclick="ProductView()" type="button" class="btn  btn-primary button-radius">
+                            产品制成
+                        </button>
+                    </div>
+                    <div class="col-md-3" style="margin: auto">
+                        <button onclick="javascript: window.location = '/ProductManage/Index'" class="btn btn-primary pull-right button-radius">
+                            返回上页
+                        </button>
+                    </div>
+
+                </div>
+                <div class="row" style="margin-top:10px">
+                    
+                        @Html.Partial("edit-part")
+                  
+                </div>
+              
+            </div> 
+
+        </div>
+
+    </section>
+</div>
+<div class="modal fade  bs-example-modal-lg" id="productModal" tabindex="-1" role="dialog" aria-labelledby="useModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="useModalLabel">
+                    产品生成的物料使用
+                </h4>
+            </div>
+            <div id="stock" class="col-md-12" style="display: none">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group" style="margin-top:5px">
+                            <span class="input-group-addon">物料类别</span>
+                            <select id="parentnodes" name="parentnodes" required></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group" style="margin-top:5px">
+                            <span class="input-group-addon">子类别</span>
+                            <select id="nodesas" name="subnodes" required></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group" style="margin-top:5px">
+                            <span class="input-group-addon">名称</span>
+                            <select id="MaterielManage_GUID" name="MaterielManage_GUID" required></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group " style="margin-top:2.5px">
+                            <span class="input-group-addon">&nbsp;&nbsp;数&nbsp;&nbsp;&nbsp;量&nbsp;&nbsp;</span>
+                            <input type="number" class="form-control" data-flag="I" required name="item_counts">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="input-group " style="margin-top:2.5px">
+                            <span class="input-group-addon">&nbsp;库&nbsp;&nbsp;存&nbsp;</span>
+                            <input type="number" id="stocks_num" class="form-control" required name="stocks_num" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="margin-top: 0px;" id="operate">
+                        <a onclick="AddNewRow()" href="#" style="font-size: 12px;color: #074592;" id="addRow">新增</a><br />
+                        <a class="delete" style="font-size: 12px;color: #074592;" id="remove">删除</a>
+                    </div>
+                </div>
+            </div>
+            <form class="cmxform" id="use_form" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="productData" class="col-md-12">
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="addRow" onclick="AddNewRow()" class="btn btn-primary">
+                        新增
+                    </button>
+                    <button type="button" onclick="createProduct()" class="btn btn-primary" data-dismiss="modal">
+                        产品制成
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+
+ 
+
+
+
+
+
+

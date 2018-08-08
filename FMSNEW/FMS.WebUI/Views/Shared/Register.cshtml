@@ -1,0 +1,871 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LoginLayout_New.cshtml";
+}
+<script language="javascript" type="text/javascript">
+  var list = new Array("新加坡");
+  var list1 = new Array("香港");
+    $(document).ready(function () {
+       
+        var country;
+        $.ajax({
+            url: "/InternalAPI/GetAddress",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                country = d;
+            }
+        });
+        $('#country').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择国家',
+        });
+        $("#country").multiselect('dataprovider', country);
+        $("#country").val("").multiselect("refresh");
+        
+         $('#TaxType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择税制国家'
+        });
+        $("#TaxType").multiselect('dataprovider', country);
+        $("#TaxType").val("").multiselect("refresh");
+
+//        var province;
+//        $.ajax({
+//            url: "/InternalAPI/GetPAddress",
+//            async: false,
+//            dataType: "json",
+//            success: function (d) {
+//                province = d;
+//            }
+//        });
+        $('#province').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择省或直辖市'
+
+        });
+//        $("#province").multiselect('dataprovider', province);
+        $("#province").val("").multiselect("refresh");
+
+
+//        var city;
+//        $.ajax({
+//            url: "/InternalAPI/GetCAddress",
+//            async: false,
+//            dataType: "json",
+//            success: function (d) {
+//                city = d;
+//            }
+//        });
+
+         $('#TaxO').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择征税类别'
+        });
+        $("#TaxO").val("").multiselect("refresh");
+
+        $('#city').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择市或区'
+        });
+//        $("#city").multiselect('dataprovider', city);
+        $("#city").val("").multiselect("refresh");
+       
+
+    
+        var currency;
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+
+        $('#Currency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false
+        });
+        $("#Currency").multiselect('dataprovider', currency);
+        $("#Currency").multiselect('select', 'CNY');
+
+
+        var language = [{ label: "中文", value: "中文" },
+                    { label: "English", value: "English" }
+                    ];
+        $('#Language').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false
+        });
+        $('#Language').multiselect('dataprovider', language);
+    });
+</script>
+<div id="main" style="margin-top: 50px; background-color: #FFF">
+    <div id="content">
+        <div class="row" style="margin-top: 80px">
+            <div class="col-md-12" style="margin: auto">
+                <div class="col-md-3" style="margin: auto">
+                        <div class="form-group">
+                        <div class="input-group " style="margin: 0;">
+                         <p style="font-weight:bold;font-size: 20px;color: #074592"">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;公司信息：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        </div>
+                    </div>
+                        <div class="form-group" style="margin-top:393px">
+                        <div class="input-group " style="margin: 0;">
+                            <p style="font-weight:bold;font-size: 20px;color: #074592"">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户信息：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="margin: auto">
+                    <form id="Company_Form">
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0;">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;新公司ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <input type="text" id="CompanyID" name="CompanyID" value="" class="form-control"  placeholder="请创建公司ID" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0;">
+                            <span class="input-group-addon" style="color: #000000">新公司注册名称</span>
+                            <input type="text" id="Name" name="Name" value="" class="form-control"  placeholder="请输入公司注册名称" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <!--<div style="margin: 0; min-height: 1px; position: relative; padding-left: 0; padding-right: 0;">-->
+                            <div class="input-group " style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;册&nbsp;国&nbsp;家&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <select id="country" name="country" style="margin: 0" class="form-control" require="true">
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-group" id="card2">
+                            <div class="input-group " style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;省\直辖市&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <select id="province" name="province" style="margin: 0" class="form-control" require="true">
+                                </select>
+                            </div>
+                    </div>
+                    <div class="form-group" id="card">
+                            <div class="input-group " style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市\区&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <select id="city" name="city" style="margin: 0" class="form-control" require="true">
+                                </select>
+                            </div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;税制归属国家&nbsp;&nbsp;</span>
+                            <select id="TaxType" name="TaxType" class="form-control" require="true">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="card3">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税制类别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <select id="TaxO" name="TaxO" class="form-control" require="true">
+                                <option value="一般纳税人">一般纳税人</option>
+                                <option value="小规模纳税人">小规模纳税人</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="form-group" style="border-bottom: 1px solid #074592; padding-bottom: 33px;">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;财务统计货币&nbsp;&nbsp;</span>
+                            <select id="Currency" name="Currency" class="form-control" require="true">
+                            </select>
+                        </div>
+                    </div>
+                     <br />
+                    
+                   
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;手&nbsp;机/Email&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <input type="text" id="LoginName" name="LoginName" class="form-control" placeholder="注册验证码将发到这个手机/邮箱！" />
+                            <span class="input-group-addon" style="color: #000000">
+                                <input type="button" id="sendBtn" name="sendBtn" onclick="SendValidCode()" value="发送验证码" /></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;注&nbsp;册&nbsp;验&nbsp;证&nbsp;码&nbsp;&nbsp;</span>
+                            <input type="text" id="ValidateCode" name="ValidateCode" class="form-control" placeholder="请输入验证码" />
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的昵称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <input type="text" id="NickName" name="NickName" class="form-control" placeholder="请输入昵称"" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group" style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;我的默认语言&nbsp;&nbsp;</span>
+                            <select id="Language" name="Language" require="true">
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密&nbsp;码&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            <input type="password" id="Password" name="Password" class="form-control" placeholder="8-16位,必须有字母、数字！" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;确&nbsp;&nbsp;认&nbsp;密&nbsp;&nbsp;码&nbsp;&nbsp;&nbsp;</span>
+                            <input type="password" id="Password2" name="Password2" class="form-control" placeholder="请再次输入密码！" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @*<div class="input-group">
+                          <div class="checkbox">
+                            <label>
+                              <input type="checkbox">我已经阅读《旺财财税用户使用协议》
+                            </label>
+                          </div>
+                        </div>*@
+                        <div class="checkbox" style="font-size: 14px;">
+                            <label class="login-tip">
+                                 <input type="checkbox" id="cbxReaded" checked="checked"  style="margin-top: 4px;" />
+                                &nbsp; 我已经阅读并接受《 <a onclick="OpenTerms()"  target="_blank" > 旺财财税用户使用协议</a>》
+                            </label>
+                         </div>
+
+                    </div>
+                    <div class="form-group" style="margin: auto; text-align: center">
+                        <button onclick="Register()" type="button" style="margin-top: 5px; height: 40px;
+                            width: 100%; border-radius: 100px; font-size: 20px; background-color: #f5f5f5;
+                            border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                            立即注册！</button>
+                    </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="TermsOfUse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    “旺财”系统用户使用协议
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <p style="font-size: 12pt; font-weight: bold;">
+                                        欢迎您使用“旺财”智能云财务系统！
+                                    </p>
+                                    <p>
+                                        为使用“旺财”智能云财务系统及服务，您应当阅读并遵守《“旺财”系统用户使用协议》（以下简称为本协议）中的各条款。
+                                    </p>
+                                    <p>
+                                        请您务必审慎阅读、充分理解各条款内容，特别是限制或免除责任的条款，以及开通或使用某项服务时的单独协议或规则。
+                                    </p>
+                                    <p>
+                                        本协议是用户与旺财网络科技（横琴）有限公司（以下简称“旺财科技”）之间关于使用“旺财”智能云财务系统及相关服务所订立的协议。除非您已阅读并接受本协议所有条款，否则您无权使用本系统软件及服务。您的注册、登陆、使用本系统及服务的任何行为，均视为您已阅读并同意接受本协议各项条款的约束。
+                                    </p>
+                                    <p>
+                                        本协议内容同时包括旺财科技可能不断发布的关于“旺财”智能云财务系统的相关规范、规则、指引等补充或修改内容。上述内容一经正式发布，即为本协议不可分割的组成部分，您同样应当遵守。
+                                    </p>
+                                    <p>
+                                        如果您未满18周岁，请在法定监护人的陪同下阅读本协议。
+                                    </p>
+                                    <h4>
+                                        一、相关术语
+                                    </h4>
+                                    <p>
+                                        1．1 “旺财”智能云财务系统和服务
+                                    </p>
+                                    <p>
+                                        是指在网页net-accounting.cn、net-accounting.com，以及其他旺财科技拥有或者实际控制的网页（以下简称网页）中提供的“旺财”智能云财务系统软件及相关服务，其服务内容包含会计服务、财税服务、智能数据处理等云端服务内容。系统的功能和服务以网页上发布的具体信息为准。
+                                    </p>
+                                    <p>
+                                        1．2 “旺财”智能云财务系统用户
+                                    </p>
+                                    <p>
+                                        是指使用”旺财”智能云财务系统软件和服务的个人、法人或其他组织，在本协议中以下简称为“您”。
+                                    </p>
+                                    <p>
+                                        1．3 “旺财”智能云财务系统和服务提供者
+                                    </p>
+                                    <p>
+                                        是指旺财网络科技（横琴）有限公司（以下简称旺财科技）。“旺财”智能云财务系统的所有权、服务运营权及业务规则和活动的修改权均归该公司所有。
+                                    </p>
+                                    <h4>
+                                        二、知识产权声明
+                                    </h4>
+                                    <p>
+                                        2．1 旺财科技是“旺财”智能云财务系统相关知识产权的权利人。“旺财”智能云财务系统的著作权、商标权、专利权、商业秘密等知识产权，以及与本服务相关的所有信息内容（包括但不限于文字、图片、音频、视频、图表、界面设计、版面框架、有关数据或电子文档等）均受中华人民共和国法律法规和相应国际条约保护。非经旺财科技或其他权利人书面同意，任何人不得擅自使用、修改、复制、公开传播、改变、散布、发行或公开发表相应内容。
+                                    </p>
+                                    <p>
+                                        2．2 您仅拥有依照本协议约定，合法使用本系统软件及服务的权利。未经旺财科技书面许可，您不得使用“旺财”智能云财务系统的任何知识产权，也不得模仿使用“旺财”智能云财务系统的任何标识，不得使用与”旺财”智能云财务系统产品标识近似的标识，以免造成用户混淆。
+                                    </p>
+                                    <h4>
+                                        三、个人资料与隐私
+                                    </h4>
+                                    <p>
+                                        3．1 个人资料
+                                    </p>
+                                    <p>
+                                        您应当保证注册时提交的用户信息的正确性与完整性。当资料发生变化时，您应当及时通过网页上发布的联系方式进行更改。如您提供的用户信息不准确、不完整或您未及时更改用户信息而引起的一切后果由您本人承担。
+                                    </p>
+                                    <p>
+                                        3．2 数据归属权
+                                    </p>
+                                    <p>
+                                        您在”旺财”智能云财务系统创建的独创性数据归属您所有，您有权进行任何形式的处置，包括从系统中复制、导出和删除。
+                                    </p>
+                                    <p>
+                                        3．3 用户隐私权
+                                    </p>
+                                    <p>
+                                        （1）“旺财”智能云财务系统将从组织结构和技术角度尽最大努力保护您的数据安全，并只根据您在软件中的指示来分发您的信息。除非经司法或行政机关的要求，旺财科技不会将您的数据提供任何无关的第三方。
+                                    </p>
+                                    <p>
+                                        （2）“旺财”智能云财务系统保留使用汇总统计信息的权利，这些信息应是匿名，且不针对特定用户。
+                                    </p>
+                                    <p>
+                                        （3）“旺财”智能云财务系统保留面向免费模式用户刊载广告的权利。在告刊载过程中将可能使用必要的定向技术提高广告相关度，但旺财科技仅在匿名的基础上通过自动化匹配技术实现广告优化刊载，而不会将您的信息透露给广告商。
+                                    </p>
+                                    <p>
+                                        （4）您如果需要全面删除“旺财”智能云财务系统上用户数据，需要专门书面向”旺财”智能云财务系统提出申请。“旺财”智能云财务系统有权先行核实您申请的真实性。
+                                    </p>
+                                    <p>
+                                        （5）旺财科技在提供本软件服务过程中，您同意旺财科技通过电子邮件、手机短信、网页公告等其他方式向您发送相关信息。
+                                    </p>
+                                    <h4>
+                                        四、使用规则
+                                    </h4>
+                                    <p>
+                                        4．1 您在申请使用“旺财”智能云财务系统时，须注册登记提供个人资料，如个人资料有任务变动，必须及时更新。
+                                    </p>
+                                    <p>
+                                        4．2 在您遵守本协议条款的前提下，旺财科技将授予您对本系统的非专有使用权，同一时间内您可以且仅可以在一台终端设备上使用本软件。在您成为本网站及系统的用户后，您要以通过您注册的用户名、密码与”旺财”智能云财务系统的服务器链接，接受相关的服务。
+                                    </p>
+                                    <p>
+                                        4．3 您应当妥善保管自己的用户名、密码，旺财科技无核查用户名真实性与合法性的义务，任何以您用户名所做出的行为将被视为您的行为，您需要对此承担全部法律责任。
+                                    </p>
+                                    <p>
+                                        4．4本服务中可能会使用第三方软件或技术，若有使用，“旺财”智能云财务系统保证已经获得合法授权。
+                                    </p>
+                                    <p>
+                                        4．5您应自行对因使用本服务而存储在“旺财”智能云财务系统服务器的各类数据等信息，采取合理、安全的技术措施，确保其安全性，并对自己的行为（包括但不限于采取加密措施或其他安全措施等）所引起的结果承担全部责任。
+                                    </p>
+                                    <p>
+                                        4．6 您在使用本系统的过程中，必须遵守以下原则：
+                                    </p>
+                                    <p>
+                                        （1）遵守中国有关的法律和法规；
+                                    </p>
+                                    <p>
+                                        （2）不得为任何非法目的而使用本系统；
+                                    </p>
+                                    <p>
+                                        （3）遵守所有与本系统有关的协议、规定和程序；
+                                    </p>
+                                    <p>
+                                        （4）不得利用本系统进行任何可能对互联网的正常运转造成不利影响的行为；
+                                    </p>
+                                    <p>
+                                        （5）不得利用本系统进行任何不利于旺财科技的行为；
+                                    </p>
+                                    <p>
+                                        （6）如发现任何非法使用您的用户名或出现安全漏洞的情况，应立即通告给旺财科技。
+                                    </p>
+                                    <p>
+                                        4．7 “旺财”智能云财务系统仅限于给您提供用作正常和合法的财务工具服务，您如果违反了上述原则或使用”旺财”智能云财务系统从事以下行为，将导致根本性违约，旺财科技有权随时停止服务、解除本合约，并追讨您因此带来的损失：
+                                    </p>
+                                    <p>
+                                        （1）有明确证据表明您使用”旺财”智能云财务系统用于违反法律的业务。
+                                    </p>
+                                    <p>
+                                        （2）侵犯旺财科技的知识产权。
+                                    </p>
+                                    <p>
+                                        （3）为设计开发竞争产品对”旺财”智能云财务系统进行任何形式的反向工程，或在竞争产品抄袭模仿”旺财”智能云财务系统的设计。
+                                    </p>
+                                    <p>
+                                        （4）滥用”旺财”智能云财务系统的通信功能发送垃圾邮件和短信。
+                                    </p>
+                                    <p>
+                                        （5）对”旺财”智能云财务系统的连续服务和商誉构成损害的其他行为。
+                                    </p>
+                                    <h4>
+                                        五、使用方式
+                                    </h4>
+                                    <p>
+                                        5．1 “旺财”智能云财务系统的基本功能永久免费使用，如因客户需求定制相关特定服务功能或者提供额外附加高端服务的，届时的使用收费标准具体以网页上公布的情况为准。
+                                    </p>
+                                    <p>
+                                        5．2 您可选择按时间直接付费购买或者定制服务。旺财科技在收到您网上支付的费用后，立即开通相应的功能。
+                                    </p>
+                                    <p>
+                                        5．3 旺财科技有调整本系统除基本功能永久免费外其余高端服务、定制服务、附加服务等的收费标准、办法的权利，您购买收费功能的价格及实际支付的费用，以您购买时旺财科技公布的相关规定为准。
+                                    </p>
+                                    <p>
+                                        5．4 您付费后，未经旺财科技同意，您不得以任何理由要求旺财科技退还部分或全部已交款项。
+                                    </p>
+                                    <p>
+                                        5．5 您购买的服务时间到期之日的24点，收费部分的功能将停止，您只能使用其他免费的功能。
+                                    </p>
+                                    <h4>
+                                        六、服务
+                                    </h4>
+                                    <p>
+                                        6．1 旺财科技将根据您的选择提供相应服务，具体服务内容以网页上发布的信息为准，旺财科技保留随时变更、中断或终止”旺财”智能云财务系统软件部分或全部服务的权利。
+                                    </p>
+                                    <p>
+                                        6．2 旺财科技将向您提供”旺财”智能云财务系统软件的维护和支持，许可您使用该软件系统的升级版。
+                                    </p>
+                                    <p>
+                                        6．3 旺财科技提供给您的”旺财”智能云财务系统的升级版是该软件系统的一部分，将受本协议的制约。
+                                    </p>
+                                    <p>
+                                        6．4 使用该系统时，与信息终端有关的设备及所需的费用（如上网费）均由您自行承担。
+                                    </p>
+                                    <p>
+                                        6．5 旺财科技若自行或根据相关部门的信息、权利人的投诉等，发现您违反相关法律法规或本协议，旺财科技有权根据自己的独立判断并随时单方采取以下措施中的一种或多种：
+                                    </p>
+                                    <p>
+                                        （1）删除、屏蔽相关内容或断开链接等；
+                                    </p>
+                                    <p>
+                                        （2）要求您立即更换、修改内容；
+                                    </p>
+                                    <p>
+                                        （3）限制、中止您使用本服务；
+                                    </p>
+                                    <p>
+                                        （4）终止您使用本服务，解除协议关系，不退还已交费用；
+                                    </p>
+                                    <p>
+                                        （5）追究您的法律责任；
+                                    </p>
+                                    <p>
+                                        （6）其他旺财科技认为适合的处理措施。
+                                    </p>
+                                    <p>
+                                        6．6 您因违反本协议约定所引起的纠纷、责任等一概由您负责，旺财科技有权解除本协议，无需向您退还任何费用，而由此给您带来的损失（包括但不限于通信中断、相关数据清空、未使用的服务费用作为违约金而归旺财科技所有），由您自行承担，造成旺财科技或他人损失的，您应一并予以赔偿。
+                                    </p>
+                                    <p>
+                                        6．7 未经您同意，旺财科技不会向”旺财”智能云财务系统以外的任何公司、组织和个人披露、提供您的注册信息，但下列情形除外：
+                                    </p>
+                                    <p>
+                                        （1）依据本协议或其他相关协议、规则等规定可以提供的；
+                                    </p>
+                                    <p>
+                                        （2）依据法律法规的规定可以提供的；
+                                    </p>
+                                    <p>
+                                        （3）行政、司法等政府部门要求提供的；
+                                    </p>
+                                    <p>
+                                        （4）您同意“旺财”智能云财务系统向第三方提供；
+                                    </p>
+                                    <p>
+                                        （5）为解决举报事件、提起诉讼而需要提供的；
+                                    </p>
+                                    <p>
+                                        （6）为防止严重违法行为或涉嫌犯罪行为发生而采取必要、合理行动所必须提供的。
+                                    </p>
+                                    <h4>
+                                        七、免责声明
+                                    </h4>
+                                    <p>
+                                        7．1 您应充分认识互联网系统软件的风险，您同意使用”旺财”智能云财务系统所存在的风险完全由您承担。
+                                    </p>
+                                    <p>
+                                        7．2 鉴于网络服务的特殊性，您同意旺财科技在有正当理由的情况下可以随时变更、中断或终止部分或全部的服务，而无需向您承担任何责任。但旺财科技会尽可能提前通知您，以便您做好相关数据的转移备份以及业务调整等，保护您的合法权益。
+                                    </p>
+                                    <p>
+                                        7．3 尽管旺财科技对您的信息保护做了极大努力，但仍不能在现有安全技术措施下完全保证您信息的绝对安全。您的信息可能会因为不可抗力或非”旺财”智能云财务系统的因素而造成泄漏、被窃取等，由此给您造成损失时，您同意旺财科技可以免责。
+                                    </p>
+                                    <p>
+                                        7．4 旺财科技将尽最大努力保障您数据的安全备份，对收费模式用户，旺财科技承诺在服务器存储设备损坏时，将以最快速度从最近的备份中恢复数据，但数据恢复可能无法做到100%。对因数据丢失带来的其他连带或间接损失，旺财科技不承担任何责任。
+                                    </p>
+                                    <p>
+                                        7．5 旺财科技不担保该系统软件一定能满足您的要求，对软件系统的及时性、安全性、准确性也都不作担保。
+                                    </p>
+                                    <p>
+                                        7．6 旺财科技对以下情形导致的服务中断或受阻不承担赔偿责任：
+                                    </p>
+                                    <p>
+                                        （1）由于政府禁令、政府管制、现行生效的适用法律或法规的变更、火灾、地震、动乱、战争、停电、通讯线路中断、他人蓄意破坏、黑客攻击、计算机病毒侵入或发作、电信部门技术调整之影响等不可预见、不可避免、不可克服和不可控制的事件，均属于不可抗力事件，由此造成您或任何第三人出现或蒙受任何损失或损害，旺财科技不承担责任。但旺财科技应可能降低或消除已经发生的损失或损害。
+                                    </p>
+                                    <p>
+                                        （2）因可归责于旺财科技的原因造成”旺财”智能云财务系统异常，旺财科技将尽力予以弥补，但您确认，旺财科技不对因任何原因造成的异常所致后果承担责任。
+                                    </p>
+                                    <p>
+                                        （3）您或旺财科技的电脑软件、系统、硬件和通信线路 出现故障；
+                                    </p>
+                                    <p>
+                                        （4）您自身原因（包括但不限于电脑病毒、错误操作、网络连接错误等）；
+                                    </p>
+                                    <p>
+                                        （5）其他非旺财科技过错或旺财科技无法控制与合理预见的情形。
+                                    </p>
+                                    <h4>
+                                        八、服务变更、中断和中止
+                                    </h4>
+                                    <p>
+                                        8．1 如因系统维护或升级需要而需暂停“旺财”智能云财务系统服务，旺财科技将尽可能事先进行通告。
+                                    </p>
+                                    <p>
+                                        8．2 如您违反本协议中规定的使用规则或约定，旺财科技有权随时中断或终止向您提供本协议项下的服务而无需通知您。
+                                    </p>
+                                    <p>
+                                        8．3 除前款之外，旺财科技同时保留在不事先通知您的情况下随时中断或终止部分或全部服务的权利，对于所有服务中断或终止而造成的任何损失，旺财科技无需向您或任何第三方承担任何责任。
+                                    </p>
+                                    <p>
+                                        8．4 您同意，旺财科技有权将本协议全部或部分权利义务转让给第三方，但转让方有责任保证该等转让不会对您使用本软件或享受的本服务产生不利影响。
+                                    </p>
+                                    <h4>
+                                        九、关于通知
+                                    </h4>
+                                    <p>
+                                        9．1 旺财科技可能会以网页公告、网页提示、电子邮箱、手机短信、常规信件传送、您注册的本服务账户的管理系统内发送站内信等方式中的一种或多种，向您送达关于本服务的各种规则、通知、提示等信息，这些信息一经公布或发送，即视为送达，对您产生约束力。
+                                    </p>
+                                    <p>
+                                        9．2 如果您未及时查看相关信息内容，或您提供的电子邮箱、手机号码、通讯地址等信息错误，导致您未收到相关规则、通知、提示等信息的，一切后果及责任由您自行承担。
+                                    </p>
+                                    <p>
+                                        9．3 您同意旺财科技或其合作伙伴可以向您的电子邮件、手机号码等发送可能与本服务不相关的其他各类信息，包括但不限于商业广告等。
+                                    </p>
+                                    <p>
+                                        9．4 旺财科技为您提供在线客户服务，帮助您解决使用过程所遇到的问题。若您有事项需要通知旺财科技，应当通过网页中公布的对外沟通方式，通知和联系客服。
+                                    </p>
+                                    <h4>
+                                        十、违约责任
+                                    </h4>
+                                    <p>
+                                        10．1 您同意保障和维护旺财科技及其他用户的利益，如因您违反法律法规或本协议项下的任何条款而给旺财科技或任何其他第三人造成损失，您同意承担由此造成的损害赔偿责任。
+                                    </p>
+                                    <p>
+                                        10．2 如您违反本协议所述任何条款，则旺财科技有权随时取消您使用”旺财”智能云财务系统的许可，且旺财科技无须向您承担任何补偿或赔偿。
+                                    </p>
+                                    <h4>
+                                        十一、协议的修改和终止
+                                    </h4>
+                                    <p>
+                                        11．1 旺财科技将有权随时修改本协议的有关条款，一旦本协议的内容发生变更，旺财科技将通过本协议约定的通知条款以适当的方式向您提示修改内容。
+                                    </p>
+                                    <p>
+                                        11．2 如果您不同意旺财科技对本协议相关条款的修改，您有权停止使用”旺财”智能云财务系统，但如果您已交纳了相关费用，将不退还。如您继续使用，则视为您接受旺财科技对相应条款的修改。
+                                    </p>
+                                    <h4>
+                                        十二、其他
+                                    </h4>
+                                    <p>
+                                        12．1 维护密码及用户名的机密安全，是您的责任。利用该密码及用户名所进行的一切行为，您都应负完全的责任。所衍生的任何损失或损害，旺财科技无法也不承担任何责任。您同意以下事项：
+                                    </p>
+                                    <p>
+                                        （1）您的密码或用户名遭到未获授权的使用，或者其他任何安全问题发生时，您应立即通知旺财科技客服。
+                                    </p>
+                                    <p>
+                                        （2）每次连线使用完毕，均应结束您的用户名使用。若您未能依前述要求行事，则有可能得不到旺财科技在信息安全方面的保护。
+                                    </p>
+                                    <p>
+                                        12．2 您使用本服务即视为您已阅读并同意受本协议的约束。旺财科技有权在必要时修改本协议条款。您可以在相关页面中查阅最新的协议条款。本协议条款变更后，如果您继续使用本服务，即视为您已接受修改后的协议。如果您不接受修改后的协议，应当停止使用本服务。
+                                    </p>
+                                    <p>
+                                        12．3 本协议的成立、生效、履行、解释及纠纷解决，适用中华人民共和国大陆地区法律（不包括冲突法）。
+                                    </p>
+                                    <p>
+                                        12．4 若您和旺财科技之间发生任何纠纷或争议，首先应友好协商解决；协商不成功的，双方均同意将纠纷或争议提交旺财科技注册地有管辖权的人民法院管辖。
+                                    </p>
+                                    <p>
+                                        12．5 旺财科技对本协议保留解释的权利，本协议所有条款的标题仅为阅读方便，本身并无实际涵义，不能作为本协议涵义解释的依据。
+                                    </p>
+                                    <p>
+                                        12．6 本协议条款无论因何种原因部分无效或不可执行，其余条款仍有效，对双方具有约束力。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+    var InterValObj; //timer变量，控制时间
+    var count = 60; //间隔函数，1秒执行
+    var curCount;//当前剩余秒数
+    var code = ""; //验证码
+    var codeLength = 6;//验证码长度
+    $(function () {
+        $("#country").change(function () {
+            var country = $("#country").find("option:selected").text();
+            //alert(country); exit;
+            //选择注册国家，税制国家一样
+            //思路是通过存储过程查询出来所有的国家，但是要把选择的注册国家放在第一个
+            $.ajax({
+                url: "/InternalAPI/GetAddressNew?country=" + country,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    countrynew = d;
+                }
+            });
+            $('#TaxType').multiselect({
+                buttonWidth: '100%',
+               maxHeight: 200,
+               enableFiltering: false,
+               includeFilterNewBtn: false,
+            });
+            $("#TaxType").multiselect('dataprovider', countrynew);
+
+
+            $(" #card .multiselect-selected-text.pull-left").text('请选择市或区');
+            $("#city").empty();
+            $("#city").multiselect("rebuild");
+            
+            var province;
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/InternalAPI/GetCityAddress?country=" + country,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    province = d;
+
+                }
+            });
+            $('#province').multiselect({
+
+                buttonWidth: '100%',
+                maxHeight: 200,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                nonSelectedText: '请选择省或直辖市'
+
+            });
+            if (list.indexOf(country) == 0) {
+                $("#province").empty();
+                $("#city").empty();
+                $("#province").multiselect("rebuild");
+                $("#city").multiselect("rebuild");
+                $(" #card .multiselect-selected-text.pull-left").text('无');
+                $(" #card2 .multiselect-selected-text.pull-left").text('无');
+            }
+            else if (province == undefined) {
+                alert("此国家暂未设置");
+
+                $("#province").empty();
+                $("#city").empty();
+                $("#province").multiselect("rebuild");
+                $("#city").multiselect("rebuild");
+                $("#country").val("").multiselect("refresh");
+
+            } else {
+                $("#province").multiselect('dataprovider', province);
+                $("#province").val("").multiselect('refresh');
+            }
+        });
+    });
+    $(function () {
+        $("#province").change(function () {
+            var province = $("#province").find("option:selected").text();
+            var city;
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/InternalAPI/GetCityAddress1?province=" + province,
+                data: $('#Add_Form').serialize(),
+                async: false,
+                dataType: "json",
+                onSubmit: function () {
+                    return $("#Add_Form").form('validate')
+                },
+                success: function (d) {
+                    city = d;
+                }
+            });
+            $('#city').multiselect({
+                buttonWidth: '100%',
+                maxHeight: 200,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                nonSelectedText: '请选择市或区'
+            });
+            if (city == undefined) {
+               
+                $("#city").empty();
+                $("#city").multiselect("rebuild");
+                $(" #card .multiselect-selected-text.pull-left").text('无');
+            } else {
+                $("#city").multiselect('dataprovider', city);
+                $("#city").val("").multiselect("refresh");
+            }
+        });
+    });
+
+    $(" #TaxType").change(function () {
+        var taxcountry
+        taxcountry = $("#TaxType").val();
+        if (list1.indexOf(taxcountry) == 0) {
+            document.getElementById("card3").style.display = "none";
+        }
+        else {
+            document.getElementById("card3").style.display = "block";
+        }
+    });
+     function Register() {
+        if (!CheckInput()) {
+            alert('请输入完整信息!');
+        }else if(!CheckPwdLen()){
+            alert('新密码8-16位且为数字加字母');
+        }
+         else if (!CheckPwdMatch()) {
+            alert('密码不一致');
+         }
+         else if (!CheckTermsOfUse()) {
+             alert('请确认您已经阅读并接受《旺财财税用户使用协议》！');
+         }
+         else {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/Common/Register",
+                data: $('#Company_Form').serialize(),
+                async: false,
+                onSubmit: function () {
+                    return $("#Company_Form").form('validate');
+                },
+                error: function (data) {
+                    alert(data);
+                },
+                success: function (data) {
+                    if (data.length > 30) {
+                        //window.location.href = "/Company/ChooseCompany";
+                        alert('您已经注册成功，欢迎进入旺财！');
+                        window.location = "/Common/Index?cGuid=" + data;
+                    } else {
+                        alert(data);
+                    }
+                }
+            });
+        }
+    }
+    function OpenTerms(){
+         $('#TermsOfUse').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+    }
+
+    function SendValidCode() {
+        var loginName = $('#LoginName').val();
+        if (CheckEmail(loginName) || CheckPhone(loginName)) {
+            $.ajax({
+                url: "/Common/AddValidCodeThenSend?loginName=" + loginName,
+                cache: true,
+                type: "POST",
+                success: function (data) {
+                    curCount = count;
+                    $("#sendBtn").attr("disabled", "true");
+                    $("#sendBtn").val(+curCount + "秒再获取");
+                    InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+                    $('#sendBtn').val(data);
+                }
+            });
+        } else {
+            alert('请输入正确的手机号码或邮箱');
+        }
+    }
+    //timer处理函数
+    function SetRemainTime() {
+        if (curCount == 0) {
+            window.clearInterval(InterValObj);//停止计时器
+            $("#sendBtn").removeAttr("disabled");//启用按钮
+            $("#sendBtn").val("重新发送验证码");
+            code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效    
+        }
+        else {
+            curCount--;
+            $("#sendBtn").val(+curCount + "秒再获取");
+        }
+    }
+    function CheckEmail(input) {
+        var re = /^\w+([-+.]\w+)*@@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        return re.exec(input);
+    }
+    function CheckPhone(input) {
+        var re = /^1[\d]{10}$/;
+        return re.exec(input);
+    }
+    function CheckInput() {
+        if ($('#CompanyID').val() == ''||$('#Name').val() == '' || $('#LoginName').val() == '' || $('#ValidateCode').val() == '' || $('#Password').val() == '' || $('#Password2').val() == '' || $('#NickName').val() == '' || $('#TaxType').val() == null) {
+            return false;
+        }
+        return true;
+    }
+    function CheckPwdMatch() {
+        if ($('#Password').val() == $('#Password2').val()) {
+            return true;
+        } else {
+            return false;
+        }
+         }
+    function CheckPwdLen()
+    {
+        var re =/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/;
+        if($('#Password').val().length >= 8 && re.exec($('#Password').val()) !== null){
+             return true;
+        }else{
+                return false;
+        }
+    }
+    //检查是否已经选中协议
+    function CheckTermsOfUse() {
+        if (document.getElementById("cbxReaded").checked) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+   
+</script>

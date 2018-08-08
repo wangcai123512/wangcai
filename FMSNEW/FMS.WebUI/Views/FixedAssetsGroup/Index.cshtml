@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="AssetsGroupDetails" >   
+</div>
+    <table id="AssetsGroupList"></table>
+    <script>
+        $(function () {
+            var LinkFormatter = function (value, row, index) {
+            var Para = '"' + value + '"';
+            var Para2 = '"/FixedAssetsGroup/GetRolePermission/' + value + '"';
+            return "<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> ";  
+            //"<a onclick='DelAssets(" + Para + ")' >@General.Resource.Common.Delete</a>"                
+        };
+
+        var methods ;
+        $.get("/Json/DepreciationMethod.json", function (data) { methods = $.parseJSON(data);});
+
+        var DepreciationMethodFormatter = function (value, row, index) {
+            var result;
+            $(methods).each(function (i, n) {
+                if (n.value == value) {               
+                    result = n.text;
+                }
+            })
+            return result;
+        };
+            $('#AssetsGroupList').datagrid({
+                url: "/FixedAssetsGroup/GetAssetsGroups",
+                rownumbers: true,
+                singleSelect: true,
+                columns: [[
+                        { field: 'Name', title: '@General.Resource.Common.Name' },
+                        { field: 'DepreciationMethod', title: '@FMS.Resource.FixedAssets.FixedAssets.DepreciationMethod', formatter: DepreciationMethodFormatter },
+                        { field: "SalvageRate", title: '@FMS.Resource.FixedAssets.FixedAssets.SalvageRate' },
+                        { field: 'Life', title: '@FMS.Resource.FixedAssets.FixedAssets.Life' },
+                        { field: 'AG_GUID', formatter: LinkFormatter }
+                     ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: '@General.Resource.Common.Add',
+                    handler: function () { ShowDetails(); }
+                }]
+            });
+
+            $("#AssetsGroupDetails").dialog({
+                collapsible: false,
+                minimizable: false,
+                maximizable: false,
+                closed: true,
+                title: " ",
+                width: 400,
+                height: 180,
+                onLoad: txtVaild,
+                buttons: [{
+                    text: '@General.Resource.Common.Save',
+                    handler: function () { UpdAssetsGroup(); }
+                }]
+            });
+        });
+
+        function ShowDetails(id) {
+            $("#AssetsGroupDetails").dialog("center");
+            $("#AssetsGroupDetails").dialog("open");
+            if (id != null) {
+                $("#AssetsGroupDetails").dialog("refresh", "/FixedAssetsGroup/GetAssetsGroup/" + id);
+            }
+            else {
+                $("#AssetsGroupDetails").dialog("refresh", "/FixedAssetsGroup/GetAssetsGroup");
+            }
+        }
+
+        function DelAssets(id) {
+            $.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+                if (r) {
+                    $.ajax({
+                            url: "/FixedAssetsGroup/DelAssetsGroup/" + id,
+                            type: "POST",
+                            success: function (data) {
+                                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                                if ($.parseJSON(data).Result) {
+                                    $('#AssetsGroupList').datagrid("reload");
+                                }
+                            },
+                            error: errorHandle
+                        });
+                }
+            });
+        }
+
+        var successHandle = function (data) {
+            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+            if ($.parseJSON(data).Result) {
+                $("#AssetsGroupDetails").dialog("close");
+                $('#AssetsGroupList').datagrid("reload");
+            }
+        };
+
+        function UpdAssetsGroup() {
+            $("#AssetsGroup").form('submit', {
+                url: "/FixedAssetsGroup/UpdAssetsGroup",
+                onSubmit: function () { return $("#AssetsGroup").form("validate"); },
+                success: successHandle
+            });
+        }
+    </script>
+
+

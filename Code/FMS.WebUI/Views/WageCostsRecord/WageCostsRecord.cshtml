@@ -1,0 +1,359 @@
+﻿@{
+    ViewBag.Title = "WageCostsRecord";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<form id="WageCost_form">
+<table style=" height: auto;">
+    <tr>
+        <td>
+            <a id="a1" class="easyui-linkbutton" href='/WageCostsRecord/DownLoadFile?fileID=5fae7e17-e2de-44ad-9940-7e286b66b846'>下载工资表模板</a>
+            <a id="a2" class="easyui-linkbutton" onclick="ShowImport()">上传工资表</a>
+        </td>
+    </tr>
+</table>
+<table id="WageCostTable" class="easyui-datagrid" title="工资记录新增" style="width:700px;height:auto"
+       data-options="
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#tb',
+                url: 'datagrid_data1.json',
+                method: 'get',
+                showFooter: true,
+                onBeforeLoad: function () {
+                    append();
+                },
+                onClickCell: onClickCell
+            ">
+        <thead>
+            <tr>
+                <th data-options="field:'IE_GUID',width:80,hidden:true">IE_GUID</th>
+                <th data-options="field:'Remark',width:80,editor:{type:'validatebox',options:{required:true}}">姓名</th>
+                <th data-options="field:'Money1',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required:true}}">应付现金</th>
+                <th data-options="field:'Money2',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required:true}}">应缴个税</th>
+                <th data-options="field:'Money3',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required:true}}">社保福利</th>
+                <th data-options="field:'Money',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required:true}}">个人总数</th>
+                <th data-options="field:'InvType',width:80,hidden:false,
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                data:InvTypes,
+                                valueField:'value',
+                                textField:'name'
+                            }}">类别</th>
+                <th data-options="field:'AddStyle',width:80">新增方式</th>
+                <th data-options="field:'Add',width:80">操作</th>
+            </tr>
+        </thead>
+    </table>
+
+<div id="tb" style="height: auto">
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+@*    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤销</a>*@
+</div>
+
+    <table id="WCTable" style="width: 700px; height: 50px">
+        <tr>
+            <td>应付现金总数：<input id="Money1" style="width: 80px;"/></td>
+            <td>应缴个税总数：<input id="Money2" style="width: 80px;"/></td>
+            <td>社保福利总数：<input id="Money3" style="width: 80px;"/></td>
+            <td>工资总额：<input id="WageCostSumAmount" style="width: 80px;"/></td>
+        <tr>
+            <td>认定日期：<input class="easyui-datebox" id="Date" style="width: 100px;" data-options="required:true"/></td>
+            <td>@FMS.Resource.Finance.Finance.Currency:<input id="RRCurrency" name="Currency" style="width: 100px;" data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true'/></td>
+            <td><a class="easyui-linkbutton" onclick="WCSubmitForm()">@General.Resource.Common.Save</a></td>
+        </tr>
+        </tr>
+    </table>
+</form>
+<script type="text/javascript">
+    var InvTypes = [
+            { value: "营业成本", name: "营业成本" },
+            { value: "销售费用", name: "销售费用" },
+            { value: "管理费用", name: "管理费用" }
+        ];
+    var CommonCurrency;
+    var BankAccount;
+    var StandardCoin;
+    $(function () {
+        $('#WageCostSumAmount').attr('readonly', true);
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function(d) { CommonCurrency = d; }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetBankAccounts",
+            async: false,
+            dataType: "json",
+            success: function(d) {
+                var obj = new Object();
+                obj.ID = "0";
+                obj.Name = "现金";
+                obj.children = new Array();
+                d.push(obj);
+                BankAccount = d;
+            }
+        });
+
+        $("#WCTable #RRCurrency").combobox({
+            editable: false,
+            required: true,
+            width:80,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#WCTable #RRCurrency").combobox("setValue", StandardCoin);
+			}
+        });
+
+        $("#WCTable #RRBank").combobox({
+            editable: false,
+            required: true,
+            width:100,
+            data: BankAccount,
+            textField: "Name",
+            valueField: "ID",
+            onSelect: function(rec) {
+                $("#WCTable #RRBankAccount").combobox("loadData", rec.children);
+            },
+            onChange: function(newV, oldV) {
+                if (newV != oldV) {
+                    $("#WCTable #RRBankAccount").combobox("clear");
+                }
+            }
+        });
+
+        $("#WCTable #RRBankAccount").combobox({
+            editable: false,
+            required: true,
+            textField: "Name",
+            valueField: "ID"
+        });
+
+    });
+
+    function NewIE_GUID() {
+        var IEGUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function(d) {
+                IEGUID = d.toString();
+            }
+        });
+        return IEGUID;
+    }
+
+    var editIndex = undefined;
+
+    function editrow(index) {
+        $('#WageCostTable').datagrid('beginEdit', index);
+        var m1 = $('#WageCostTable').datagrid('getEditor', { index: index, field: 'Money1' }).target.val();
+        var m2 = $('#WageCostTable').datagrid('getEditor', { index: index, field: 'Money2' }).target.val();
+        var m3 = $('#WageCostTable').datagrid('getEditor', { index: index, field: 'Money3' }).target.val();
+
+        var money1 = m1.replace(",", "");
+        var money2 = m2.replace(",", "");
+        var money3 = m3.replace(",", "");
+        $('#WageCostTable').datagrid('getEditor', { index: index, field: 'Money' }).target.val(Money(parseFloat(money1) + parseFloat(money2) + parseFloat(money3)));
+    }
+
+    function endEditing() {
+        if (editIndex == undefined) {
+            return true;
+        }
+        if ($('#WageCostTable').datagrid('validateRow', editIndex)) {
+            $('#WageCostTable').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#WageCostTable').datagrid('selectRow', index)
+                    .datagrid('beginEdit', index);
+                var ed = $('#WageCostTable').datagrid('getEditor', { index: index, field: field });
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#WageCostTable').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+
+
+   function Link () {
+       var link1 = '<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="append()">新增</a>';
+       return link1;
+	};
+	function append() {
+        if (endEditing()) {
+            $('#WageCostTable').datagrid('appendRow', { IE_GUID: NewIE_GUID(),InvType:"营业成本", AddStyle: "直接新增",Add:Link()});
+            editIndex = $('#WageCostTable').datagrid('getRows').length - 1;
+            $('#WageCostTable').datagrid('selectRow', editIndex)
+                .datagrid('beginEdit', editIndex);
+        }
+        add();
+    }
+
+    function removeit() {
+        if (editIndex == undefined) {
+            return;
+        }
+        $('#WageCostTable').datagrid('cancelEdit', editIndex)
+            .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+
+    function accept() {
+        if (endEditing()) {
+            $('#WageCostTable').datagrid('acceptChanges');
+        }
+    }
+
+    function reject() {
+        $('#WageCostTable').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+
+    function getChanges() {
+        var rows = $('#WageCostTable').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+
+    function WCSubmitForm() {
+        accept();
+        var rows = $('#WageCostTable').datagrid('getRows');
+        $.each(rows, function(index, item) {
+            var ieguid = item.IE_GUID;
+            var rper = "e5e38321-4549-4c24-9f3a-3cd70ee1d591";
+            var money = item.Money;
+            var money1 = item.Money1;
+            var money2 = item.Money2;
+            var money3 = item.Money3;
+            var invtype = item.InvType;
+            var remark = item.Remark;
+
+            var date = $('#Date').datebox('getValue');
+            var currencys = $("#RRCurrency").combobox('getValue');
+            var addstyle = item.AddStyle;
+            $.ajax({
+                url: '/WageCostsRecord/UpdWageCostsRecord?id=' + ieguid + '&rper=' + rper + '&money=' + money + '&money1=' + money1 + '&money2=' + money2 + '&money3=' + money3 + '&invtype=' + invtype + '&remark=' + remark + '&currency=' + currencys + '&addstyle=' + addstyle + '&date=' + date,
+                    beforeSend: function () {
+                        //表单验证
+                        return $("#WageCost_form").form('validate');
+                    },
+                    success: function (data) {
+                        //成功则刷新表
+                        if ($.parseJSON(data).Result) {
+                            $('#WageCostTable').datagrid('loadData', { total: 0, rows: [] });
+                        }
+                    },
+                    error: errorHandle
+                });
+        });
+    }
+
+    function add() {
+        var sum = 0;
+        var sum1 = 0;
+        var sum2 = 0;
+        var sum3 = 0;
+        var rows = $('#WageCostTable').datagrid('getRows');
+        $.each(rows, function (index, item) {
+            if (item.Money != "") {
+                var a = (item.Money).replace(",", "");
+                sum = sum + parseFloat(a);
+                $('#WageCostSumAmount').val(Money(sum));
+
+                var b = (item.Money1).replace(",", "");
+                sum1 = sum1 + parseFloat(b);
+                $('#Money1').val(Money(sum1));
+
+                var c = (item.Money2).replace(",", "");
+                sum2 = sum2 + parseFloat(c);
+                $('#Money2').val(Money(sum2));
+
+                var d = (item.Money3).replace(",", "");
+                sum3 = sum3 + parseFloat(d);
+                $('#Money3').val(Money(sum3));
+            }
+        });
+    }
+
+    function Money(price) {
+        if (price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for (var i = 1; i <= len; i++) { priceStr += priceString.charAt(i - 1); if (i == (remainder) && len > remainder) priceStr += ','; if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if (priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if (priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return priceStr; } else { return price; }
+    }
+
+    //显示导入界面
+    function ShowImport() {
+        $("#WageCostTable").after("<div id='ImportRecord'></div>");
+        $("#ImportRecord").dialog({
+            title: '工资信息批量导入',
+            padding: 100,
+            width: 300,
+            height: 110,
+            onClose: function() {
+                $("#ImportRecord").dialog("destroy");
+            },
+            buttons: [
+                {
+                    text: '导入',
+                    handler: function() { excel(); }
+                }
+            ]
+        });
+            $('#ImportRecord').dialog("refresh", "/WageCostsRecord/ImportRecord/");
+    }
+
+    //利用表单导入EXCEL
+    function excel() {
+        $("#upexcel").form("submit", {
+            url: '/WageCostsRecord/Upexcel',
+                onSubmit: function() {
+                    return $(this).form("validate"); //提交前验证
+                },
+                success: function(data) {
+                    $.messager.alert('工资批量导入', data, 'info');
+                    $("#ImportRecord").dialog("destroy");
+                }
+            }
+        );
+        }
+
+        function CheckAmount() {
+            alert(1);
+            var money1 = document.getElementById('Money1').value == '' ? 0 : document.getElementById('Money1').value;
+            var money2 = document.getElementById('Money2').value == '' ? 0 : document.getElementById('Money2').value;
+            var money3 = document.getElementById('Money3').value == '' ? 0 : document.getElementById('Money3').value;
+
+            money1 = money1.replace(",", "");
+            money2 = money2.replace(",", "");
+            money3 = money3.replace(",", "");
+            document.getElementById('Money').value = Money(parseFloat(money1) + parseFloat(money2) + parseFloat(money3));
+        }
+
+        function Money(price) {
+            if (price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for (var i = 1; i <= len; i++) { priceStr += priceString.charAt(i - 1); if (i == (remainder) && len > remainder) priceStr += ','; if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if (priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if (priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return priceStr; } else { return price; }
+        }
+
+
+</script>

@@ -1,0 +1,90 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+
+<table id="Payables_List"></table>
+<br/>
+<br/>
+<table id="IEWriteOff_List"></table>
+<script language="javascript" type="text/javascript">
+    var LinkHandle = function (value) {
+        var link = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.WriteOff</a> ";
+        return link;
+    };
+
+    $(function () {
+        $("#Payables_List").datagrid({
+            title: "@FMS.Resource.Finance.Finance.PayablesRecordList",
+            url: '/ExpenditureWriteOff/GetPayablesList',
+            columns: [[
+				{ field: 'PayerName', title: '@FMS.Resource.Finance.Finance.Payer', width: 100 },
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: ChangeDateFormat, width: 100 },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', width: 100 },
+				{ field: 'Money', title: '@FMS.Resource.Finance.Finance.Amount', width: 100, align: 'right', formatter: DecimalFmter },
+				{ field: 'R_GUID', title: '', formatter: LinkHandle }
+			]],
+            pagination: true,
+            rownumbers: true,
+            singleSelect: true
+        });
+
+        $("#IEWriteOff_List").datagrid({
+            title: "@FMS.Resource.Finance.Finance.WriteOffList",
+            url: '/ExpenditureWriteOff/GetIEWriteOffList',
+            columns: [[
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: ChangeDateFormat, width: 100 },
+                { field: 'DebitLedgerAccountName', title: '@FMS.Resource.Finance.Finance.DebitLedgerAccount', width: 100 },
+                { field: 'DebitDetailsAccountName', title: '@FMS.Resource.Finance.Finance.DebitDetailsAccount', width: 100 },
+                { field: 'CreditLedgerAccountName', title: '@FMS.Resource.Finance.Finance.CreditLedgerAccount', width: 100 },
+                { field: 'CreditDetailsAccountName', title: '@FMS.Resource.Finance.Finance.CreditDetailsAccount', width: 100 },
+				{ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Amount', width: 100, align: 'right', formatter: DecimalFmter }
+//				{ field: 'R_GUID', title: '', formatter: LinkHandle }
+			]],
+            pagination: true,
+            rownumbers: true,
+            singleSelect: true
+        });
+    });
+
+    function AddClick(id)
+    {
+        $("#Payables_List").after("<div id='WinRR'></div>");
+	    $("#WinRR").dialog({
+	        title: ' ',
+	        width: 600,
+	        height: 300,
+	        onClose: function () {
+	            $("#WinRR").dialog("destroy");
+	        },
+	        buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { Save(); }
+			}]
+	    });
+    $('#WinRR').dialog("center");
+    $('#WinRR').dialog("refresh", "/ExpenditureWriteOff/PayablesRecord/" + id);
+    }
+
+    function Save() {
+        $("#PayablesRecord").form('submit', {
+            url: "/ExpenditureWriteOff/UpdPayablesRecord",
+	        onSubmit: function () {
+	            return $("#PayablesRecord").form("validate");
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+	            if ($.parseJSON(data).Result) {
+	                $('#WinRR').dialog("close");
+	                $('#Payables_List').datagrid("reload");
+	                $('#IEWriteOff_List').datagrid("reload");
+	            }
+	        }
+	    });
+	}
+</script>
+
+
+
+

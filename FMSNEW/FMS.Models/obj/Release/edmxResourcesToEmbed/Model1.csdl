@@ -1,0 +1,878 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FMS_DevelopModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+  <EntityContainer Name="FMS_DevelopEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="R_CompanyAccount" EntityType="FMS_DevelopModel.R_CompanyAccount" />
+    <EntitySet Name="R_CompanyCurrceny" EntityType="FMS_DevelopModel.R_CompanyCurrceny" />
+    <EntitySet Name="sysdiagrams" EntityType="FMS_DevelopModel.sysdiagrams" />
+    <EntitySet Name="T_Assets" EntityType="FMS_DevelopModel.T_Assets" />
+    <EntitySet Name="T_AssetsGroup" EntityType="FMS_DevelopModel.T_AssetsGroup" />
+    <EntitySet Name="T_Bank" EntityType="FMS_DevelopModel.T_Bank" />
+    <EntitySet Name="T_BeginningBalance" EntityType="FMS_DevelopModel.T_BeginningBalance" />
+    <EntitySet Name="T_BusinessCost" EntityType="FMS_DevelopModel.T_BusinessCost" />
+    <EntitySet Name="T_BusinessPartner" EntityType="FMS_DevelopModel.T_BusinessPartner" />
+    <EntitySet Name="T_CashFlowItem" EntityType="FMS_DevelopModel.T_CashFlowItem" />
+    <EntitySet Name="T_Company" EntityType="FMS_DevelopModel.T_Company" />
+    <EntitySet Name="T_CompanySetting" EntityType="FMS_DevelopModel.T_CompanySetting" />
+    <EntitySet Name="T_CurrencyCode" EntityType="FMS_DevelopModel.T_CurrencyCode" />
+    <EntitySet Name="T_DeclareCostSpending" EntityType="FMS_DevelopModel.T_DeclareCostSpending" />
+    <EntitySet Name="T_DeclareCustomer" EntityType="FMS_DevelopModel.T_DeclareCustomer" />
+    <EntitySet Name="T_DetailedAccount" EntityType="FMS_DevelopModel.T_DetailedAccount" />
+    <EntitySet Name="T_DetailedCategories" EntityType="FMS_DevelopModel.T_DetailedCategories" />
+    <EntitySet Name="T_ExpenseType" EntityType="FMS_DevelopModel.T_ExpenseType" />
+    <EntitySet Name="T_GeneralLedgerAccount" EntityType="FMS_DevelopModel.T_GeneralLedgerAccount" />
+    <EntitySet Name="T_IEDetails" EntityType="FMS_DevelopModel.T_IEDetails" />
+    <EntitySet Name="T_IEHistoryDetails" EntityType="FMS_DevelopModel.T_IEHistoryDetails" />
+    <EntitySet Name="T_IEHistoryRecord" EntityType="FMS_DevelopModel.T_IEHistoryRecord" />
+    <EntitySet Name="T_IEWriteOff" EntityType="FMS_DevelopModel.T_IEWriteOff" />
+    <EntitySet Name="T_InvType" EntityType="FMS_DevelopModel.T_InvType" />
+    <EntitySet Name="T_ModuleList" EntityType="FMS_DevelopModel.T_ModuleList" />
+    <EntitySet Name="T_Payable" EntityType="FMS_DevelopModel.T_Payable" />
+    <EntitySet Name="T_RateHistory" EntityType="FMS_DevelopModel.T_RateHistory" />
+    <EntitySet Name="T_Receivables" EntityType="FMS_DevelopModel.T_Receivables" />
+    <EntitySet Name="T_RecPayHistoryRecord" EntityType="FMS_DevelopModel.T_RecPayHistoryRecord" />
+    <EntitySet Name="T_RecPayRecord" EntityType="FMS_DevelopModel.T_RecPayRecord" />
+    <EntitySet Name="T_Report" EntityType="FMS_DevelopModel.T_Report" />
+    <EntitySet Name="T_Tax" EntityType="FMS_DevelopModel.T_Tax" />
+    <EntitySet Name="T_User" EntityType="FMS_DevelopModel.T_User" />
+    <EntitySet Name="T_WageCost" EntityType="FMS_DevelopModel.T_WageCost" />
+    <EntitySet Name="V_CompanyAccounts" EntityType="FMS_DevelopModel.V_CompanyAccounts" />
+    <EntitySet Name="V_IEDetails" EntityType="FMS_DevelopModel.V_IEDetails" />
+    <EntitySet Name="V_IERecord" EntityType="FMS_DevelopModel.V_IERecord" />
+    <EntitySet Name="V_IERecords" EntityType="FMS_DevelopModel.V_IERecords" />
+    <EntitySet Name="V_Payable" EntityType="FMS_DevelopModel.V_Payable" />
+    <EntitySet Name="V_Receivable" EntityType="FMS_DevelopModel.V_Receivable" />
+    <EntitySet Name="V_RerPayRecord" EntityType="FMS_DevelopModel.V_RerPayRecord" />
+    <EntitySet Name="T_AssetCostType" EntityType="FMS_DevelopModel.T_AssetCostType" />
+    <EntitySet Name="T_Product_Saled" EntityType="FMS_DevelopModel.T_Product_Saled" />
+    <EntitySet Name="T_AID_Product" EntityType="FMS_DevelopModel.T_AID_Product" />
+    <FunctionImport Name="SP_QueryIEListForProductSales" ReturnType="Collection(FMS_DevelopModel.SP_QueryIEListForProductSales_Result)">
+      <Parameter Name="c_guid" Mode="In" Type="String" />
+    </FunctionImport>
+    <EntitySet Name="V_Product_Saled_Detail" EntityType="FMS_DevelopModel.V_Product_Saled_Detail" />
+    <EntitySet Name="T_ReportDetails" EntityType="FMS_DevelopModel.T_ReportDetails" />
+    <EntitySet Name="V_Prodcut_List" EntityType="FMS_DevelopModel.V_Prodcut_List" />
+    <EntitySet Name="T_AIDSubTypeRecord" EntityType="FMS_DevelopModel.T_AIDSubTypeRecord" />
+    <EntitySet Name="T_AIDTypeRecord" EntityType="FMS_DevelopModel.T_AIDTypeRecord" />
+    <EntitySet Name="T_Product" EntityType="FMS_DevelopModel.T_Product" />
+    <EntitySet Name="T_AIDRecord" EntityType="FMS_DevelopModel.T_AIDRecord" />
+    <EntitySet Name="T_IERecord" EntityType="FMS_DevelopModel.T_IERecord" />
+  </EntityContainer>
+  <EntityType Name="R_CompanyAccount">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="LA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="R_CompanyCurrceny">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Code" Type="String" MaxLength="3" Unicode="true" FixedLength="false" />
+    <Property Name="I_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" Unicode="true" FixedLength="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_Assets">
+    <Key>
+      <PropertyRef Name="A_GUID" />
+    </Key>
+    <Property Name="A_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="No" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="RegisterDate" Type="DateTime" Precision="0" />
+    <Property Name="PurchaseDate" Type="DateTime" Precision="0" />
+    <Property Name="ScrapType" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+    <Property Name="ScrapDate" Type="DateTime" Precision="0" />
+    <Property Name="AG_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AssetsCost" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_AssetsGroup">
+    <Key>
+      <PropertyRef Name="AG_GUID" />
+    </Key>
+    <Property Name="AG_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="DepreciationMethod" Type="Int32" />
+    <Property Name="Life" Type="Int32" />
+    <Property Name="SalvageRate" Type="Decimal" Precision="5" Scale="2" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_Bank">
+    <Key>
+      <PropertyRef Name="B_GUID" />
+    </Key>
+    <Property Name="B_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_BeginningBalance">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Acc_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="InitialDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="T_BusinessCost">
+    <Key>
+      <PropertyRef Name="BC_GUID" />
+    </Key>
+    <Property Name="BC_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BC_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TaxationAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TaxationType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_BusinessPartner">
+    <Key>
+      <PropertyRef Name="BP_GUID" />
+    </Key>
+    <Property Name="BP_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="IsSupplier" Type="Boolean" />
+    <Property Name="IsCustomer" Type="Boolean" />
+    <Property Name="IsPartner" Type="Boolean" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="ChineseFullName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="EnglishFullName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="Website" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="OrganizationCode" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IndustryInvolved" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RegisteredAddress" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_CashFlowItem">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="No" Type="Int32" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="PID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RP_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_Company">
+    <Key>
+      <PropertyRef Name="C_GUID" />
+    </Key>
+    <Property Name="C_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="MasterCompanyGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Address" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="Contacter" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="ContactWay" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="Type" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="AuditDate" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="ChineseFullName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="EnglishFullName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="Website" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="OrganizationCode" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IndustryInvolved" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RegisteredAddress" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="LOGO" Type="String" MaxLength="400" Unicode="true" FixedLength="false" />
+    <Property Name="BusinessLicense" Type="String" MaxLength="400" Unicode="true" FixedLength="false" />
+    <Property Name="CompanyID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Taxpayer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Country" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Province" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_CompanySetting">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="StandardCoin" Type="String" MaxLength="3" Unicode="true" FixedLength="false" />
+    <Property Name="ReportPeriod" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+    <Property Name="ReportStartDate" Type="DateTime" Precision="3" />
+    <Property Name="AuditDate" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="T_CurrencyCode">
+    <Key>
+      <PropertyRef Name="Code" />
+    </Key>
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="3" Unicode="true" FixedLength="false" />
+    <Property Name="IsCommon" Type="Boolean" />
+    <Property Name="Seq" Type="Int16" />
+  </EntityType>
+  <EntityType Name="T_DeclareCostSpending">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="VoucherNo" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Record" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Profit_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CostSum" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="CreatDate" Type="DateTime" Precision="3" />
+    <Property Name="Business_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_DeclareCustomer">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="VoucherNo" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Record" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Profit_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="Business_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_DetailedAccount">
+    <Key>
+      <PropertyRef Name="DA_GUID" />
+    </Key>
+    <Property Name="DA_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AccCode" Type="Int32" />
+    <Property Name="Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="ParentAccGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="D_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_DetailedCategories">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_ExpenseType">
+    <Key>
+      <PropertyRef Name="ET_GUID" />
+    </Key>
+    <Property Name="ET_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="ExpenseType" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="ExpenseFlag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="SaleFlag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="ManageFlag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="FinanceFlag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="TaxFlag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="OtherFlag" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_GeneralLedgerAccount">
+    <Key>
+      <PropertyRef Name="LA_GUID" />
+    </Key>
+    <Property Name="LA_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AccGroup" Type="Int32" />
+    <Property Name="AccCode" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_IEDetails">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_IEHistoryDetails">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_IEHistoryRecord">
+    <Key>
+      <PropertyRef Name="IE_GUID" />
+    </Key>
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Tax" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_IEWriteOff">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" Nullable="false" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="100" Unicode="false" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+    <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+    <Property Name="Creator" Type="String" Nullable="false" MaxLength="40" Unicode="false" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_InvType">
+    <Key>
+      <PropertyRef Name="Key" />
+    </Key>
+    <Property Name="Key" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_ModuleList">
+    <Key>
+      <PropertyRef Name="Guid" />
+    </Key>
+    <Property Name="Guid" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="ChineseName" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="EnglishName" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="OrderNumber" Type="Int32" />
+    <Property Name="ModuleID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IsShowTree" Type="Boolean" />
+    <Property Name="IsLastChild" Type="Boolean" />
+    <Property Name="URL" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="SubfunctionCode" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="ModuleState" Type="Int32" />
+    <Property Name="Level" Type="Int32" />
+    <Property Name="Block" Type="Int32" />
+  </EntityType>
+  <EntityType Name="T_Payable">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Payee" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="T_RateHistory">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="FAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="FCurrency" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="TAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TCurrency" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="CurrentRecord" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Rate" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TRate" Type="Decimal" Precision="18" Scale="4" />
+  </EntityType>
+  <EntityType Name="T_Receivables">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Payer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_RecPayHistoryRecord">
+    <Key>
+      <PropertyRef Name="RP_GUID" />
+    </Key>
+    <Property Name="RP_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RP_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="R_Per" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+    <Property Name="CFItem" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CFPItem" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Bank" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="BankAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_RecPayRecord">
+    <Key>
+      <PropertyRef Name="RP_GUID" />
+    </Key>
+    <Property Name="RP_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RP_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPable" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+    <Property Name="CFItemGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CFPItemGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvTypeDts" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="IE_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Record" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_Report">
+    <Key>
+      <PropertyRef Name="Rep_GUID" />
+    </Key>
+    <Property Name="Rep_GUID" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="RepNo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="Type" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+    <Property Name="Year" Type="Int32" />
+    <Property Name="Month" Type="Int32" />
+    <Property Name="C_GUID" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+    <Property Name="period_type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="rep_date" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="rep_status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="T_Tax">
+    <Key>
+      <PropertyRef Name="T_GUID" />
+    </Key>
+    <Property Name="T_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="Rate" Type="Decimal" Precision="10" Scale="4" />
+    <Property Name="Type" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_User">
+    <Key>
+      <PropertyRef Name="U_GUID" />
+    </Key>
+    <Property Name="U_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Password" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="LoginName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="Int32" />
+    <Property Name="EnterC_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="NickName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="GroupCode" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Language" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="TelName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SuperUser" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_WageCost">
+    <Key>
+      <PropertyRef Name="W_GUID" />
+    </Key>
+    <Property Name="W_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Employee" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Cash" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="PersonalTaxes" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="SocialSecurity" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Total" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="V_CompanyAccounts">
+    <Key>
+      <PropertyRef Name="Acc_GUID" />
+    </Key>
+    <Property Name="Acc_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_parentId" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Acc_Name" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Acc_Code" Type="Int32" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_IEDetails">
+    <Key>
+      <PropertyRef Name="IE_GUID" />
+    </Key>
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Money" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_IERecord">
+    <Key>
+      <PropertyRef Name="IE_GUID" />
+    </Key>
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="TypeName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="TaxationAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="RPerName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="IE_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_IERecords">
+    <Key>
+      <PropertyRef Name="IE_GUID" />
+    </Key>
+    <Property Name="RPer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IE_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TaxationAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="TaxationType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IEGroup" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="IEDescription" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
+    <Property Name="BPName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="TypeName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RP_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_Payable">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Payer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPerName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="IEGroup" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_Receivable">
+    <Key>
+      <PropertyRef Name="R_GUID" />
+    </Key>
+    <Property Name="R_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Payer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Currency" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RPerName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="State" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="V_RerPayRecord">
+    <Key>
+      <PropertyRef Name="RP_GUID" />
+    </Key>
+    <Property Name="RP_GUID" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="RP_Flag" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+    <Property Name="InvType" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="TypeName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="InvNo" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Remark" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Creator" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="DebitLedgerAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="DebitDetailsAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CreditLedgerAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CreditDetailsAccount" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="R_PerName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="Currency" Type="String" MaxLength="5" Unicode="true" FixedLength="false" />
+    <Property Name="CFItemGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CFPItemGuid" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+    <Property Name="CFItemName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+    <Property Name="CFPItemName" Type="String" MaxLength="100" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="T_AssetCostType">
+    <Key>
+      <PropertyRef Name="code" />
+    </Key>
+    <Property Type="String" Name="code" Nullable="false" MaxLength="2" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="T_Product_Saled">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="sale_batch_id" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="product_guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="ie_guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="saled_date" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="saled_amount" Type="Decimal" Precision="18" Scale="4" />
+  </EntityType>
+  <EntityType Name="T_AID_Product">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="AID_Guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="Use_AID_Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Product_Guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <ComplexType Name="SP_QueryIEListForProductSales_Result">
+    <Property Type="String" Name="IE_GUID" Nullable="false" MaxLength="40" />
+    <Property Type="String" Name="CreateDate" Nullable="true" MaxLength="10" />
+    <Property Type="Decimal" Name="Amount" Nullable="true" Precision="18" Scale="4" />
+    <Property Type="String" Name="Currency" Nullable="true" MaxLength="20" />
+    <Property Type="String" Name="RPerName" Nullable="true" MaxLength="100" />
+  </ComplexType>
+  <EntityType Name="V_Product_Saled_Detail">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="sale_batch_id" />
+    </Key>
+    <Property Name="id" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="sale_batch_id" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="product_guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="ie_guid" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="saled_date" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="customer_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Currency" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="saled_amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+  </EntityType>
+  <EntityType Name="T_ReportDetails">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="rep_guid" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="row_no" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="beginning_amount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="ending_amount" Type="Decimal" Precision="18" Scale="2" />
+  </EntityType>
+  <EntityType Name="V_Prodcut_List">
+    <Key>
+      <PropertyRef Name="GUID" />
+      <PropertyRef Name="TypeId" />
+      <PropertyRef Name="SubTypeId" />
+      <PropertyRef Name="MM_GUID" />
+    </Key>
+    <Property Name="type_name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Create_Date" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Currency" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="TypeId" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="SubTypeId" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="sub_type_name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="stock_count" Type="Int32" />
+    <Property Name="used_count" Type="Int32" />
+    <Property Name="saled_count" Type="Int32" Nullable="false" />
+    <Property Name="MM_GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="MM_Name" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="MaterielManage_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Business_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_AIDSubTypeRecord">
+    <Key>
+      <PropertyRef Name="AST_GUID" />
+    </Key>
+    <Property Name="AST_GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="ASTTypeName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="AST_ParentAidType" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Remark" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Depreciation_year" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_AIDTypeRecord">
+    <Key>
+      <PropertyRef Name="AT_GUID" />
+    </Key>
+    <Property Name="AT_GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="AidTypeName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="AID_FLAG" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Asset_class" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_Product">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Create_Date" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Currency" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="stock_count" Type="Int32" />
+    <Property Name="used_count" Type="Int32" />
+    <Property Name="saled_count" Type="Int32" />
+    <Property Name="TypeId" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="SubTypeId" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="MaterielManage_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Business_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_AIDRecord">
+    <Key>
+      <PropertyRef Name="GUID" />
+    </Key>
+    <Property Name="GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="Currency" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="RPer" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="InvType" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="DepreciationPeriod" Type="Int32" />
+    <Property Name="SurplusValue" Type="Decimal" Precision="18" Scale="4" />
+    <Property Name="State" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Remark" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="CostType" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+    <Property Name="GUID_Parent" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
+    <Property Name="SubType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Number" Type="Int32" />
+    <Property Name="Inventory_Number" Type="Int32" />
+    <Property Name="Business_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="MaterielManage_GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_IERecord">
+    <Key>
+      <PropertyRef Name="IE_GUID" />
+    </Key>
+    <Property Name="IE_GUID" Type="String" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="IE_Flag" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+    <Property Name="InvType" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="InvNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="RPer" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Creator" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="CreateDate" Type="DateTime" Precision="3" />
+    <Property Name="C_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="AffirmDate" Type="DateTime" Precision="3" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="Amount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TaxationAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TaxationType" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SumAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="Currency" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="B_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="BA_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="IEGroup" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="IEDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="RP_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Profit_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Material_type" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="GUID_Parent" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Resale_Amount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="Business_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SubBusiness_GUID" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="TaxdomesticAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="DomesticAmount" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="DomesticSumAmount" Type="Decimal" Precision="18" Scale="2" />
+  </EntityType>
+</Schema>

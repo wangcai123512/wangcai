@@ -1,0 +1,952 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript">
+    var exapleInfo;
+    var List = new Array("银行存款", "库存现金", "其他货币资金");
+    $(document).ready(function () {
+        var RPList = new Array();
+        var SelectConfigSetting = { 
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择'
+        };
+        var BankLA_GUID;
+        for (var i = 0; i < List.length; i++) {
+            var temp = new Object;
+            $.ajax({
+                url: "/GeneralLedgerAccount/GetLAByName?Name=" + List[i],
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    LA_GUID = d.LA_GUID;
+                    var temp = new Object;
+                    if (List[i] == '银行存款') {
+                        BankLA_GUID = d.LA_GUID;
+                    }
+                    temp.label = List[i];
+                    temp.value = LA_GUID;
+                    RPList.push(temp);
+                }
+            });
+
+
+        }
+        $("#PayType").multiselect(SelectConfigSetting);
+        $("#PayType").multiselect('dataprovider', RPList);
+        $("#PayType").val(BankLA_GUID).multiselect("refresh");
+
+        $.ajax(
+             {
+                 url: "/WageCostsRecord/GetWageRecordDetail?name=" + "工会经费",
+                 async: false,
+                 type: "post",
+                 dataType: "json",
+                 success: function (d) {
+                     if (d == '') {
+                         $(".TradeUnionnew").hide();
+                         $(".TradeUnion").hide();
+
+                     } else {
+
+                         $(".TradeUnionnew").show();
+                         $(".TradeUnion").show();
+
+                     }
+                 }
+             });
+
+        $.ajax(
+             {
+                 url: "/WageCostsRecord/GetWageRecordDetail?name=" + "职工教育经费",
+                 async: false,
+                 type: "post",
+                 dataType: "json",
+                 success: function (d) {
+                     if (d == '') {
+                         $(".StaffEducationnew").hide();
+                         $(".StaffEducation").hide();
+
+                     } else {
+
+                         $(".StaffEducationnew").show();
+                         $(".StaffEducation").show();
+                     }
+                 }
+
+             });
+
+        $.ajax(
+             {
+                 url: "/WageCostsRecord/GetWageRecordDetail?name=" + "辞退福利",
+                 async: false,
+                 type: "post",
+                 dataType: "json",
+                 success: function (d) {
+                    
+                     if (d == '') {
+                         $(".DismissWelfarenew").hide();
+                         $(".DismissWelfare").hide();
+                         
+                         
+                     } else {
+
+                         $(".DismissWelfarenew").show();
+                         $(".DismissWelfare").show();
+                        
+                         
+                     }
+                 }
+
+             });
+        exapleInfo = $("#Example_1").clone();
+        InitalDateInput();
+        var currency
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+        $('#PRCurrency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+
+        });
+        $("#PRCurrency").multiselect('dataprovider', currency);
+        $("#PRCurrency").val("").multiselect('refresh');
+        $("#PRCurrency").multiselect('select', standardCoin);
+
+        $("#excelImportModal").on("hidden.bs.modal", function () {
+            $('#upexcel')[0].reset();
+        });
+        FileInputBaseSetting("#Import");
+        $("#Import").fileinput('refresh', {
+            showUpload: true,
+            uploadUrl: '/WageCostsRecord/Upexcel/',
+            allowedFileExtensions: ['xls', 'xlsx'],
+
+            initialCaption: "请上传Excel格式文件",
+            previewClass: 'bg-warning',
+            elErrorContainer: "#errorBlock",
+            dropZoneEnabled: true,
+            dropZoneTitleClass: 'file-drop-zone-title',
+            msgInvalidFileExtension: "请上传Excel格式文件（{extensions}）"
+
+        });
+
+        $("#Import").on("fileuploaded", function (event, data, previewId, index) {
+            $('#excelImportModal').modal('hide');
+            alert(data.response);
+        });
+
+        $("#Example_1 #InvType").multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $("#Example_1 #InvType").val("").multiselect("refresh");
+
+        $("#Example_1 #Cash").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident","#Example_1 #DismissWelfare",
+                "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #PersonalTaxes").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+        
+        $("#Example_1 #SocialSecurity").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #EmployeeWelfare").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #HousingProvident").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #TradeUnion").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #StaffEducation").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #NonCurrency").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #DismissWelfare").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+
+        $("#Example_1 #BonusAllowance").blur(function () {
+            SumAmt("#Example_1 #Cash", "#Example_1 #SocialSecurity", "#Example_1 #EmployeeWelfare", "#Example_1 #HousingProvident", "#Example_1 #DismissWelfare", "#Example_1 #PersonalTaxes"
+                , "#Example_1 #TradeUnion", "#Example_1 #StaffEducation", "#Example_1 #NonCurrency", "#Example_1 #BonusAllowance", "#Example_1 #Total")
+        });
+        var guid;
+        var guid = NewGUID();
+        $("#Example_1 #IE_GUID").val(guid);
+        $("#Example_1 #W_GUID").val(guid);
+        
+       
+    });
+    function SumAmt(selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9, selector10, selector11) {
+    var p1 = $(selector1).val();
+    var p2 = $(selector2).val();
+    var p3 = $(selector3).val();
+    var p4 = $(selector4).val();
+    var p5 = $(selector5).val();
+    var p6 = $(selector6).val();
+    var p7 = $(selector7).val();
+    var p8 = $(selector8).val();
+    var p9 = $(selector9).val();
+    var p10 = $(selector10).val();
+    var p11 = $(selector11).val();
+    
+    if (p1 == "") {
+        p1 = 0;
+    }
+    if (p2 == "") {
+        p2 = 0;
+    }
+    if (p3 == "") {
+        p3 = 0;
+    }
+    if (p4 == "") {
+        p4 = 0;
+    }
+    if (p5 == "") {
+        p5 = 0;
+    }
+    if (p6 == "") {
+        p6 = 0;
+    }
+    if (p7 == "") {
+        p7 = 0;
+    }
+    if (p8 == "") {
+        p8 = 0;
+    }
+    if (p9 == "") {
+        p9 = 0;
+    }
+    if (p10 == "") {
+        p10 = 0;
+    }
+    if (p11 == "") {
+        p11 = 0;
+    }
+    
+    p1 = parseFloat(p1);
+    p2 = parseFloat(p2);
+    p3 = parseFloat(p3);
+    p4 = parseFloat(p4);
+    p5 = parseFloat(p5);
+    p6 = parseFloat(p6);
+    p7 = parseFloat(p7);
+    p8 = parseFloat(p8);
+    p9 = parseFloat(p9);
+    p10 = parseFloat(p10);
+    p11 = parseFloat(p11);
+   
+    $(selector11).val(Money(p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10));
+    };
+
+    
+</script>
+<style type="text/css">
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+</style>
+<div id="main" style="margin-top: 100px;">
+<aside id="sidebar_left" style="font-size: 16px;">
+    <div class="sidebar-menu" style="margin-top: 10px">
+        <ul class="nav" style="">
+            <li class="active"> <a onclick="javascript:window.location = '/ExpenseRecord/Temporary'" href="javascript:window.location = '/ExpenseRecord/Temporary'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px; color: #08C">记录成本与费用</span> <span class="sidebar-title-tray"></span> </a> </li>
+            <li> <a onclick="javascript:window.location = '/ExpenseQuery/Index'" href="javascript:window.location = '/ExpenseQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询与编辑成本与费用记录</span></a> </li>
+            <li> <a @*onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"*@><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+        </ul>
+    </div>
+</aside>
+<!-- Start: Content -->
+<section id="content_wrapper">
+<div id="MAIN" style="background-color: #FFF">
+<div id="content" style="padding-bottom: 150px;" onclick="removeClass()">
+ <div class="row" style="margin-top: 20px;">
+ <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592;">记录职工薪酬</span></div>
+ <div class="col-md-12" style="margin-bottom: 20px;">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <a id="Download"
+                                   style="color: #08C; font-size: 14px;">下载职工薪酬模板</a>
+                                <!--<a  href='/WageCostsRecord/DownLoadFile?fileID=5fae7e17-e2de-44ad-9940-7e286b66b846'
+                                  style="color: #08C; font-size: 14px;">下载工资表模板</a>-->
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <a onclick="ShowImport()" style="color: #08C; font-size: 14px;">上传职工薪酬模板</a>
+                            </div>
+                        </div>
+  </div>
+  
+  <form id="payForm"  action="#">
+   <div>
+                        <div class="col-md-12">
+                            <div class="col-md-4" style="">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">货币</span>
+                                        <select id="PRCurrency" name="PRCurrency">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+   <div id="title" class="col-md-12">   
+                        <div class="col-md-1" style=""> 
+                            <label style="font-size: 12px;">姓名</label> 
+                        </div>
+                         <div class="col-md-2" style="margin-left:0px;"> 
+                             <label style="font-size: 12px;">认定日期</label> 
+                        </div>
+                         <div class="col-md-1" style="margin-left:-53px;"> 
+                                <label style="font-size: 12px;">类别</label> 
+                        </div>
+       <div class="col-md-1" style="margin-left:20px;">
+           <label style="font-size: 12px;">付款方式</label>
+       </div>
+
+       <div class="col-md-2" style="margin-left:15px;width:110px">
+           <label style="font-size: 12px;">当期基本工资（税前）</label>
+
+       </div>
+
+       <!--<div class="col-md-1" id="hidden" style="margin-left:42px;">
+           <button id="XinChou_one" style="font-size: 12px;width:68px;" type="button">显示细节</button>
+          
+       </div>
+       <div class="col-md-1" id="hidden">
+           
+           <button id="XinChou_two" style="font-size: 12px;width:68px;" type="button">隐藏细节</button>
+       </div>-->
+
+       <!--<div class="col-md-1" id="hidden" style="margin-left:35px;">
+           <label style="font-size: 12px;">应付现金</label>
+       </div>
+       <div class="col-md-2" id="hidden" style="margin-left:15px;">
+           <label style="font-size: 12px;">应缴个税</label>
+       </div>
+       <div class="col-md-2" id="hidden" style="margin-left:-60px;">
+           <label style="font-size: 12px;">社保福利</label>
+       </div>-->
+
+       <div class="col-md-2" style="margin-left:-10px;">
+           <label style="font-size: 12px;">职工薪酬总额</label>
+       </div>
+       <div class="col-md-2" style="margin-left:-46px;">
+           <label style="font-size: 12px;">个人所得税</label>
+       </div>
+       <div class="col-md-2" style="margin-left:-48px;">
+           <label style="font-size: 12px;">薪酬细节</label>
+       </div>
+                         <div class="col-md-1" style="margin-left:7px;"> 
+                            <label style="font-size: 12px;">操作</label> 
+                        </div>
+                       
+      </div>
+                <div id="AddLayout" style="">
+
+                    <div id="Example_1" class="col-md-12">
+                        <input type="hidden" name="IE_GUID" value="" id="IE_GUID" />
+                        <input type="hidden" name="W_GUID" value="" id="W_GUID" />
+                         <input type="hidden" name="Profit_Name" value="" id="Profit_Name" />
+                         <input type="hidden" name="State" value="未付" id="State" />
+                        <div class="col-md-1" style="width:80px">        
+                         <div class="form-group">                           
+                            <div class="input-group input-group-sm" style="margin: 0;width:100%">                                     
+                                  <input type="text" class="form-control"  id="Employee" name="Employee" value="">
+                            </div>
+                             </div>
+                        </div>
+                        <div class="col-md-2" style="margin-left:-20px;width:105px"> 
+                        <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                  <input type="text" id="AffirmDate" name="AffirmDate" class="form-control datepicker mtn">
+                                </div>
+                            </div>
+                            </div>
+                         <div class="col-md-1" style="margin-left:-20px;width:138px">                            
+                            <div class="input-group input-group-sm" style="width:106px">
+                            <select id="InvType" name="InvType">
+                                        <option value="营业成本">营业成本</option>
+                                        <option value="销售费用">销售费用</option>
+                                        <option value="管理费用">管理费用</option>
+                             </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="margin-left:-30px;width:138px">
+                            <div class="input-group input-group-sm" style="width:110px">
+                                <select id="PayType" name="PayType" required="true">
+
+                                </select>
+                            </div>
+                        </div>
+
+                       
+                        
+                        <div class="col-md-2" style="width:110px;">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                
+                                <input type="number" id="Cash" name="Cash" class="form-control" maxlength="10" min="0.1" value="" style="margin-left:-35px;">
+                            </div>
+                        </div>
+                        
+                        
+                        
+
+                         <div class="col-md-2" style="">
+                         <!--<fieldset disabled>
+                                <div class="input-group input-group-sm" style="width:130px">
+                                   <input type="text" id="Total" name="Total" class="form-control" value="">
+                                </div>
+                          </fieldset>-->
+                             <div class="input-group input-group-sm" style="width:100px;margin-left:-54px;">
+                                 <input type="text" id="Total" name="Total" class="form-control" value="">
+                             </div>
+                        </div>
+
+                        <div class="col-md-2" style="width:110px;margin-left:-102px;">
+                            <div class="input-group input-group-sm" style="margin: 0">
+
+                                <input type="number" id="PersonalTaxes" name="PersonalTaxes" class="form-control" maxlength="10" min="0.1" value="">
+                            </div>
+                        </div>
+                        
+
+                        <div class="col-md-1" style="margin-top:5px;margin-left:6px;">
+                            
+                                <a onclick="XinChou_one(this)" href="#" style="font-size: 12px;" id="XinChou_one">显示细节</a>
+                            
+                        </div>
+                        <div style="display:none">
+                            <div class="col-md-1" id="hidden" style="width:142px;margin-top:44px;margin-left:-130px;">
+                                <div class="input-group input-group-sm" style="margin: 0">
+
+                                    <label style="font-size: 14px; margin-bottom: 14px; ">奖金、津贴和补贴</label><br />
+                                    <label style="font-size: 14px; margin-bottom: 14px; ">职工福利费</label><br />
+                                    <label style="font-size: 14px; margin-bottom: 14px; ">社会保险费</label><br />
+                                    <label style="font-size: 14px; margin-bottom: 14px; ">住房公积金</label><br />
+                                    <label class="NonCurrencynew" id="NonCurrencynew" style="font-size: 14px; margin-bottom: 14px; ">非货币性福利</label><br />
+
+                                    <label class="StaffEducationnew" style="font-size: 14px; margin-bottom: 14px; ">职工教育经费</label><br />
+                                    <label class="TradeUnionnew" id="TradeUnionnew" style="font-size: 14px; margin-bottom: 14px; ">工会经费</label><br />
+
+                                    <label class="DismissWelfarenew" id="DismissWelfarenew" style="font-size: 14px; ">辞退福利</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-20px;margin-top:40px;">
+                                <div class="input-group input-group-sm" style="margin: 0">
+
+                                    <input type="number" id="BonusAllowance" name="BonusAllowance" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:55px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="EmployeeWelfare" name="EmployeeWelfare" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:70px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="SocialSecurity" name="SocialSecurity" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:85px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="HousingProvident" name="HousingProvident" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:100px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="NonCurrency" name="NonCurrency" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2 StaffEducation" id="hidden" style="width: 100px;margin-left:-100px;margin-top:115px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="StaffEducation" name="StaffEducation" class="form-control" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:130px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="TradeUnion" name="TradeUnion" class="form-control TradeUnion" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-2" id="hidden" style="width: 100px;margin-left:-100px;margin-top:145px;">
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="DismissWelfare" name="DismissWelfare" class="form-control DismissWelfare" maxlength="10" min="0.1" value="">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-1" style="margin-top: -21px;margin-left:165px;">
+                            <div id="operate"  >
+                                <a onclick="AddNewRow()" href="#" style="font-size: 12px;" id="addRow">新增</a><br />
+                                <a class="delete" style="font-size: 12px;display:none" id="remove">删除</a>
+                            </div>
+                        </div>
+                    </div>
+
+                   </div>
+                   <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-4" style="margin: auto">
+                        </div>
+                        <div class="col-md-4" style="margin: auto">
+                            <button  type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" 
+                            class="btn btn-primary pull-right" onclick='ISubmit()'>提交</button>
+                        </div>
+                        <div class="col-md-4" style="margin: auto">
+                            <button onclick="javascript:window.location = '/ExpenseRecord/Temporary'" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>
+                        </div>
+                    </div>
+      </form>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="modal fade" id="excelImportModal" tabindex="-1" role="dialog" aria-labelledby="excelImportModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="excelImportModalLabel">
+                    Excel数据导入
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <form id="upexcel" method="post" enctype="multipart/form-data">
+                        <div class="col-md-10" style="margin-bottom: 0px">
+                            <div class="form-group">
+                                <input id="Import" name="upload" class="file_upload" type="file" />
+                                <div id="errorBlock" class="help-block">
+                                </div>
+                            </div>
+                        </div>
+                        @*  <div class="col-md-2" style="margin-bottom: 0px">
+                            <div class="form-group">
+                                <button onclick="ExcelImport()" type="button" style="width: 80px; border-radius: 2px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导入</button>
+                            </div>
+                        </div>*@
+                        </form>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        @*<table id="cTable" style="font-size: 12px">
+                        </table>*@
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                @*  <button type="button" class="btn btn-primary" onclick="ImportExcel()" >
+                    提交
+                </button>*@
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+    
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    var a = 2;
+    function AddNewRow() {
+        var o = exapleInfo;
+        var div = document.createElement("div");
+        var rows = $("[id^=Example_]");
+        var newIndex = rows.length + 1;
+        var newRowId = NewGUID();
+        div.id = "Example_" + newRowId;
+        div.className = "col-md-12";
+        div.innerHTML = o.html().replace(/\{0\}/ig, newIndex)
+        document.getElementById("AddLayout").appendChild(div);
+        $('#' + div.id + ' #IE_GUID').val(newRowId);
+        $('#' + div.id + ' #W_GUID').val(newRowId);
+        $('#' + div.id + ' #InvType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $('#' + div.id + ' #remove').css("display","block");
+        InitalDateInput();
+        $('#' + div.id + ' #InvType').val("").multiselect("refresh");
+
+        /*$('#' + div.id + ' #Cash').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', "#Example_1 #PersonalTaxes", '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #PersonalTaxes').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #SocialSecurity').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #Total')
+        });*/
+
+        $('#' + div.id + ' #Cash').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+                '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+                '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #SocialSecurity').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+                '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+                '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #EmployeeWelfare').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #HousingProvident').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+       
+
+        $('#' + div.id + ' #DismissWelfare').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #BonusAllowance').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #PersonalTaxes').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #TradeUnion').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+
+
+        $('#' + div.id + ' #StaffEducation').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $('#' + div.id + ' #NonCurrency').blur(function () {
+            SumAmt('#' + div.id + ' #Cash', '#' + div.id + ' #PersonalTaxes', '#' + div.id + ' #SocialSecurity', '#' + div.id + ' #EmployeeWelfare', '#' + div.id + ' #HousingProvident',
+               '#' + div.id + 'TradeUnion', '#' + div.id + 'StaffEducation', '#' + div.id + 'NonCurrency', '#' + div.id + ' #DismissWelfare', '#' + div.id + ' #BonusAllowance',
+               '#' + div.id + ' #Total')
+        });
+
+        $("#" + div.id + " .delete").bind("click", function () {
+            RemoveRow(div.id);
+        });
+        if (newIndex > 1) {
+            var preRow = $("#" + div.id).prev();
+            var opCol = preRow.find("#operate");
+
+            opCol.css("margin-top", "0px");
+            opCol.html($("#Example #remove")[0].outerHTML);
+
+            preRow.find("#remove").bind("click", function () {
+                RemoveRow(preRow[0].id);
+            });
+        }
+
+        a++;
+    }
+
+    function removeClass() {
+        $(".filter").hide();
+
+    }
+
+    function RemoveRow(id) {
+        if ($("[id^=Example_]").length == 1) {
+            alert("最后一行不可删除");
+            return false
+        }
+        else {
+            $('#' + id).remove();
+            if ($("[id^=Example_]").length == 1) {
+
+                $("[id^=Example_]").find("#operate").html('<a onclick="AddNewRow()" href="#" style="font-size: 12px;" id="addRow">新增</a><br/>');
+            } else {
+                var lastRow = $("[id^=Example_]").last();
+
+                lastRow.find("#operate").html($("#Example #operate")[0].outerHTML);
+                lastRow.find("#remove").bind("click", function () {
+                    RemoveRow(lastRow[0].id);
+                });
+            }
+        }
+    }
+    function Money(price) {
+        if (price > 0) {
+            var priceString = price.toString();
+            var priceInt = parseInt(price);
+            var len = priceInt.toString().length;
+            var num = len / 3;
+            var remainder = len % 3;
+            var priceStr = '';
+            for (var i = 1; i <= len; i++) {
+                priceStr += priceString.charAt(i - 1);
+                if (i == (remainder) && len > remainder) priceStr += ',';
+                if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ',';
+            }
+            if (priceString.indexOf('.') < 0) {
+                priceStr = priceStr + '.00';
+            } else {
+                priceStr += priceString.substr(priceString.indexOf('.'));
+                if (priceString.length - priceString.indexOf('.') - 1 < 2) {
+                    priceStr = priceStr + '0';
+                }
+            }
+            return priceStr;
+        } else {
+            return price;
+        }
+    }
+
+    function ShowImport() {
+
+        $('#excelImportModal').modal({ show: true, backdrop: 'static' });
+    }
+
+    function ISubmit() {
+        var checkTag = $('[id^=Example_]');
+        var error = false;
+        checkTag.find("[id=Employee]").each(function () {
+            if ($(this).val() == "") {
+                alert("请输入姓名");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+
+        checkTag.find("[id=AffirmDate]").each(function () {
+            if ($(this).val() == "") {
+                alert("请输入日期");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("[id=InvType]").each(function () {
+            if ($(this).val() == null) {
+                alert("请选择类别");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+
+        checkTag.find("[id=Cash]").each(function () {
+            if ($(this).val() == "") {
+                alert("请输入职工工资");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        var rows = $("[id^=Example_]");
+        var list = new Array();
+        var row;
+        for (var i = 0; i < rows.length; i++) {
+            row = $('#' + rows[i].id);
+            if (row.find('#InvType').val() == '营业成本') {
+                row.find('#Profit_Name').val('主营业务成本')
+            }
+            if (row.find('#InvType').val() == '销售费用') {
+                row.find('#Profit_Name').val('销售费用')
+            } 
+            if (row.find('#InvType').val() == '管理费用') {
+                row.find('#Profit_Name').val('管理费用')
+            } 
+            var pay = new Object;
+            var total = row.find('#Total').val();
+            total = total.replace(",", "");
+            pay.IE_GUID = row.find('#IE_GUID').val();
+            pay.W_GUID = row.find('#W_GUID').val();
+            pay.Currency = $('#PRCurrency').val();
+            pay.Profit_Name = row.find('#Profit_Name').val();
+            pay.Date = row.find('#AffirmDate').val();
+            pay.InvType = row.find('#InvType').val();
+            pay.Cash = row.find('#Cash').val();
+            pay.PersonalTaxes = row.find('#PersonalTaxes').val();
+            pay.SocialSecurity = row.find('#SocialSecurity').val();
+
+            pay.PayType = row.find('#PayType').val();
+            pay.BonusAllowance = row.find('#BonusAllowance').val();
+            pay.EmployeeWelfare = row.find('#EmployeeWelfare').val();
+            pay.HousingProvident = row.find('#HousingProvident').val();
+            pay.TradeUnion = row.find('#TradeUnion').val();
+            pay.StaffEducation = row.find('#StaffEducation').val();
+            pay.NonCurrency = row.find('#NonCurrency').val();
+            pay.DismissWelfare = row.find('#DismissWelfare').val();
+           
+            pay.Total = total;
+            pay.State = row.find('#State').val();
+            pay.Employee = row.find('#Employee').val();
+            list.push(pay);
+        }
+        var param = new Array()
+        param = { payList: list };
+        
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: '/WageCostsRecord/UpdWageCostsRecord',
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            data: JSON.stringify(param),
+            success: function (data) {
+                var rs = JSON.parse(data);
+                if (rs.Result == true) {
+                    alert("提交成功");
+                    location.reload(true);
+                } else {
+                    alert("提交失败");
+                }
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$("div [id='hidden']").parent().each(function ()
+        //{
+        //    var txtobj = $(this).next()
+        //    txtobj.css("margin-top", "5px");
+        //    txtobj.css("margin-left", "92px");
+        //    $(this).hide();
+        //});
+    });
+    /* function XinChou_one() {
+        $("#hidden input").show();
+        $("#hidden label").show();
+        
+    }
+
+    function XinChou_two() {
+        $("#hidden input").hide();
+        $("#hidden label").hide();
+    }*/
+    function XinChou_one(obj) {
+        var txtobj = $(obj).parent().next().next();
+        if ($(obj).text() == "显示细节") {
+            $(obj).text("隐藏细节")
+            txtobj.css("margin-top", "-130px");
+            txtobj.css("margin-left", "-9px");
+        } else {
+            $(obj).text("显示细节")
+            txtobj.css("margin-top", "-21px");
+            txtobj.css("margin-left", "165px");
+        }
+       
+        $(obj).parent().next().toggle();
+    }
+
+    //下载模板
+    var $eleDownload = $("#Download");
+    $eleDownload.click(function () {
+        var $eleForm = $("<form method='get'></form>");
+
+        $eleForm.attr("action", "/uploads/excel/职工薪酬模板.xlsx");
+
+        $(document.body).append($eleForm);
+
+        //提交表单，实现下载
+        $eleForm.submit();
+    });
+</script>

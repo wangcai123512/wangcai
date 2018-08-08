@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="AssetsInfo" ></div>
+<table id="AssetsList"></table>
+    <script>
+        $(function () {
+            var LinkFormatter = function (value) {
+                var Para = '"' + value + '"';
+                return "<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> ";
+            };
+
+            $('#AssetsList').datagrid({
+                url: "/FixedAssetsRegister/GetAssetses",
+                rownumbers: true,
+                singleSelect: true,
+                pagination: true,
+                queryParams: { pageSize: 10, pageIndex: 1 },
+                columns: [[
+                        { field: 'No', title: '@FMS.Resource.FixedAssets.FixedAssets.No' },
+                        { field: 'Name', title: '@General.Resource.Common.Name' },
+                        { field: 'AssetsCost', title: '@FMS.Resource.FixedAssets.FixedAssets.AssetsCost', align: 'right', formatter: DecimalFmter },
+                        { field: 'PurchaseDate', title: '@FMS.Resource.FixedAssets.FixedAssets.PurchaseDate', formatter: function (value, row, index) { return ChangeDateFormat(value); } },
+                        { field: 'RegisterDate', title: '@FMS.Resource.FixedAssets.FixedAssets.RegisterDate', formatter: function (value, row, index) { return ChangeDateFormat(value); } },
+                        { field: 'A_GUID', formatter: LinkFormatter }
+                     ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: '@FMS.Resource.FixedAssets.FixedAssets.Register',
+                    handler: function () { ShowDetails(); }
+                }]
+            });
+            $("#AssetsInfo").dialog({
+                collapsible: false,
+                minimizable: false,
+                maximizable: false,
+                closed: true,
+                title: " ",
+                width: 450,
+                height: 250,
+                onLoad: txtVaild,
+                buttons: [{
+                    text: '@General.Resource.Common.Save',
+                    handler: function () { SubmitForm(); }
+                }]
+            });
+        });
+
+        function ShowDetails(id) {
+            $("#AssetsInfo").dialog("center");
+            $("#AssetsInfo").dialog("open");
+            if (id != null) {
+                $("#AssetsInfo").dialog("refresh", "/FixedAssetsRegister/GetAssetsInfo/" + id);
+            }
+            else {
+                $("#AssetsInfo").dialog("refresh", "/FixedAssetsRegister/GetAssetsInfo");
+            }
+        }
+
+        var successHandle = function (data) {
+            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+            if ($.parseJSON(data).Result) {
+                $("#AssetsInfo").dialog("close");
+                $('#AssetsList').datagrid("reload");
+            }
+        };
+
+        function SubmitForm() {
+            $("form").form('submit', {
+                url: "/FixedAssetsRegister/UpdAssets",
+                onSubmit: function () { return $("form").form("validate"); },
+                success: successHandle
+            });
+        }
+    </script>
+
+
+
+

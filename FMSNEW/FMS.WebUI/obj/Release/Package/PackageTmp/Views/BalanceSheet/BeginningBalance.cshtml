@@ -1,0 +1,92 @@
+﻿@{
+	ViewBag.Title = "BeginningBalance";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="BeginningBalance"></div>
+
+<script type="text/javascript">
+	var accGrp = null;
+	$(function () {
+		$.ajax({
+			url: "/Json/GeneralLedgerAccountGroup.json",
+			async: false,
+			success: function (data) { accGrp = $.parseJSON(data); },
+			error: errorHandle
+		});
+
+		$("#BeginningBalance").treegrid({
+			url: '/BalanceSheet/GetBeginningBalance',
+			treeField: 'Acc_Name',
+			idField: 'Acc_GUID',
+			showFooter: true,
+			 columns:[[
+						{ field: 'Acc_Name', title: 'Name' },
+						{ field: 'Money', title: 'Price', width: 100, formatter: DecimalFmter, align: "right", editor: { type: 'numberbox', options: { precision: 2, groupSeparator: ','}} }
+					 ]],
+			 onClickRow: onClickRow,
+			 onDblClickRow: onDblClickRow
+		});
+	 });
+
+	function onClickRow(row) {
+		endEditing();
+	}
+
+	function onDblClickRow(row) {
+	    if (editID != row.Acc_GUID) {
+			if (endEditing()) {
+			    if ($('#BeginningBalance').treegrid("getChildren", row.Acc_GUID).length > 0) { }
+				else {
+				    editID = row.Acc_GUID;
+					$('#BeginningBalance').treegrid('select', editID).treegrid('beginEdit', editID);
+				}
+			} else {
+				$('#BeginningBalance').treegrid('select', editID);
+			}
+		}
+	}
+
+	var editID = 0;
+	function endEditing() {
+		if (editID == 0) { return true }
+		if ($('#BeginningBalance').treegrid('validateRow', editID)) {
+			var ed = $('#BeginningBalance').treegrid('getEditor', { id: editID, field: 'Money' });
+			var accValue = $(ed.target).numberbox('getValue');
+			$('#BeginningBalance').treegrid('find',editID).Money = accValue;
+			$('#BeginningBalance').treegrid('endEdit', editID);
+			$('#BeginningBalance').treegrid('acceptChanges');
+			RefreshParent(editID);
+			RefreshFooter();
+			editID = 0;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function RefreshParent(id) {
+		var pNode = $('#BeginningBalance').treegrid("getParent", id);
+		if (pNode == null) {}
+		else {
+			var result = 0;
+			$($('#BeginningBalance').treegrid("getChildren", pNode.Acc_GUID)).each(function (i, n) {
+			    if (n._parentId == pNode.Acc_GUID) {
+					result = Number(Number(result) + Number(n.Money)).toFixed(2);
+				}
+			});
+			pNode.Money = result;
+			$('#BeginningBalance').treegrid("refresh", pNode.Acc_GUID);
+			RefreshParent(pNode.Acc_GUID);
+		}
+	}
+
+	function RefreshFooter() {
+		var roots = $('#BeginningBalance').treegrid("getRoots");
+		var rows = $('#BeginningBalance').treegrid('getFooterRows');
+		rows[0]['Money'] = roots[0].Money;
+		rows[1]['Money'] = Number(Number(roots[1].Money) + Number(roots[2].Money)).toFixed(2);
+		$('#BeginningBalance').treegrid('reloadFooter');
+	}
+</script>
+

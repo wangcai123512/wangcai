@@ -1,0 +1,196 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_DeclareCustomer
+
+<div id="ReceivablesDeclareCustomer_div">
+    <form id="ReceivablesDeclareCustomer_Form">
+       @* 隐藏属性*@
+        <input type="hidden" name="GUID" id="GUID" value="@ViewData["GUID"]"/>
+        <input type="hidden" name="State" id="State" value="未收"/>
+        <table>
+            <tr>
+                <td>申报日期:</td>
+                <td><input class="easyui-datebox" id="Date" name="Date" value="@ViewData["Date"]" data-options="required:true"/></td>
+                <td>付款单位:</td>
+                <td>
+                    <input class="easyui-combobox" id="RPer" name="RPer"data-options='editable:false,url:"/InternalAPI/GetPayer",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200,required:true'/>
+                </td>
+            </tr>
+            <tr>
+                <td>申报金额:</td>
+                <td>
+                    <input id="Amount" name="Amount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+                </td>
+                <td>货币:</td>
+                <td>
+                    <input id="Currency" name="Currency" data-options='editable:false,url:"/InternalAPI/GetUserCurrency",panelHeight:"auto",panelMaxHeight:200,required:true'/>
+                </td>
+            </tr>
+            <tr>
+                <td>收款类别:</td>
+                <td>
+                    <select class="easyui-combobox" id="InvType" name="InvType" data-options="width:150,panelHeight:'auto',required:true">
+				        <option value=""></option>
+				        <option value="预收客户款">预收客户款</option>
+                        <option value="押金与暂支付款">押金与暂支付款</option>
+                        <option value="吸取投资">吸取投资</option>
+                        <option value="借款">借款</option>
+                        <option value="其他与筹资活动有关的收款">其他与筹资活动有关的收款</option>
+				    </select>
+                </td>
+                <td>备注:</td>
+                <td>
+                    <input class="easyui-validatebox" id="Remark" name="Remark"/>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <div id="div_files"></div>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a id="ReceivablesDeclareCustomer_Submit" class="easyui-linkbutton" onclick="ReceivablesDeclareCustomer_Submit()">@General.Resource.Common.Save</a>
+    <table id="ReceivablesDeclareCustomer_List"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var CommonCurrency;
+    var StandardCoin;
+    var FJHandle = function (value, row, index) {
+        if (value == "" || value == null) {
+            return "";
+        } else {
+            var v = "../Content/EasyUI/themes/icons/hxz.png";
+            //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="' + v + '" />';
+        }
+    };
+      
+    $(function () {
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#Currency").combobox("setValue", StandardCoin);
+            }
+        });
+
+        $("#ReceivablesDeclareCustomer_List").datagrid({
+            url: '/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList',
+            checkOnSelect: false,
+            selectOnCheck: false,
+            singleSelect: true,
+            columns: [[
+                    { field: 'Date', title: '申报日期', formatter: ChangeDateFormat },
+                    { field: 'RPerName', title: '付款方' },
+                    { field: 'Amount', title: '申报金额', align: 'right', formatter: DecimalFmter },
+                    { field: 'Currency', title: '货币' },
+                    { field: "InvType", title: '收款类别' },
+                    { field: 'Remark', title: '备注' },
+                    { field: 'RPer', title: '', hidden: true },
+                    { field: 'AGUID', title: '附件', align: 'center', formatter: FJHandle },
+                    { field: 'State', title: '状态', align: 'center'}
+                ]
+            ],
+            pagination: true,
+            rownumbers: true
+        });
+
+
+        //添加界面的附件管理
+        var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+        var ASPSESSID = "@Session.SessionID";
+        $('#ReceivablesDeclareCustomer_div #file_upload').uploadify({
+            width: 105,
+            height: 20,
+            swf: '/Content/uploadify/uploadify.swf',    //FLash文件路径
+            buttonText: '上传合同/凭证',               //按钮文本
+            uploader: '/ReceivablesDeclareCustomer/Upload',       //处理文件上传Action
+            queueID: 'fileQueue',                        //队列的ID
+            queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+            auto: false,                                 //选择文件后是否自动上传，默认为true
+            multi: true,                                 //是否为多选，默认为true
+            removeCompleted: true,                       //是否完成后移除序列，默认为true
+            fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+            fileTypeDesc: 'Image Files',                 //文件描述
+            fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+            onQueueComplete: function (event, data) {                 //所有队列完成后事件
+                //ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+                FileFlag = true;
+            },
+            onUploadStart: function (file) {
+                $("#ReceivablesDeclareCustomer_div #file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+            },
+            onUploadError: function (event, queueId, fileObj, errorObj) {
+                console.log(errorObj);
+                FileFlag = false;
+            }
+        }); 
+    });
+
+
+    function ReceivablesDeclareCustomer_Submit() {
+        $('#ReceivablesDeclareCustomer_div #file_upload').uploadify('upload', '*');
+        $("#ReceivablesDeclareCustomer_Form").form('submit', {
+            url: "/ReceivablesDeclareCustomer/UpdReceivablesDeclareCustomer",
+            onSubmit: function () {
+                return $("#ReceivablesDeclareCustomer_Form").form('validate');
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () {
+                    $('#ReceivablesDeclareCustomer_List').datagrid("reload");
+                });
+                if ($.parseJSON(data).Result) {
+                    $("#ReceivablesDeclareCustomer_Form").form('clear');
+                    $('#GUID').val(NewRP_GUID());
+                    $('#State').val("未收");
+                }
+            }
+        });        
+    }
+
+    function NewRP_GUID() {
+        var RPGUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                RPGUID = d.toString();
+            }
+        });
+        return RPGUID;
+    }
+
+</script>
+
+

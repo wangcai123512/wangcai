@@ -1,0 +1,430 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<script type="text/javascript" src="@Url.Content("~/js/views/product/index.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/product/product.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/taxrate.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.js")"></script>
+
+<script type="text/javascript" src="@Url.Content("~/js/views/autocomplete.js")"></script>
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/vendor/bootstrap-treeview/bootstrap-treeview.min.css")">
+
+<style type="text/css" >
+    .input-group-addon{
+        min-width:100px;
+        max-width:100px;
+    }
+</style> 
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content"> 
+
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">产品库存与核销</span></div>
+                    <div class="col-md-12">
+                        <div class="col-md-6" style="margin-bottom: 0px">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">业务单元</span>
+                                        <select id="Business_GUID" name="Business_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="margin-bottom: 0px">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">业务子单元</span>
+                                        <select id="SubBusiness_GUID" name="SubBusiness_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">产品类别</span>
+                                  
+                                    <select id="productType" name="productType" onchange="GetSubType('#productType', '#productTypeSub')" required  ></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">产品子类 </span>
+                                    <select id="productTypeSub" name="productTypeSub" onchange="GetMMTypeNA('#productTypeSub', '#MaterielManage')" required></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">产品 </span>
+                                    <select id="MaterielManage" name="MaterielManage" required></select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-5" style="margin: auto">
+
+                        </div>
+                        <div class="col-md-2" style="margin: auto;">
+                            <button onclick="query()" type="button" class="btn  btn-primary button-radius">
+                                查询
+                            </button>
+                        </div><div class="col-md-2" style="margin: auto;">
+
+                            <a href="/ProductManage/create" class="btn  btn-primary button-radius">产品制成</a>
+                        </div>
+                        <div class="col-md-3" style="margin: auto">
+                            <button onclick="javascript: window.location = '/DirectMaterialPurchasingRecord/Index'" type="button" class="btn btn-primary pull-right button-radius">
+                                返回上页
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <table id="dataList" style="font-size: 12px"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+ 
+    </section>
+</div>
+
+
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="useModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="useModalLabel">
+                    产品明细一览
+                </h4>
+            </div>
+            <form class="cmxform" id="use_form" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="tree" class="col-md-12"></div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+ 
+
+<!--已核销明细model-->
+<div class="modal fade" id="saledDetail" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    已使用明细
+                </h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="usedDetail" style="font-size: 12px"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+
+<!--核销model-->
+<div class="modal fade" id="sales" tabindex="-1" role="dialog" aria-labelledby="salesModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="salesModalLabel">
+                    产品核销
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="editRow">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <input type="hidden" id="hidSalesPID" name="salesPID" />
+                            <div class="form-group">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">库存数量 </span>
+                                    <input type="number" id="stockAmount" class="form-control" required name="stockAmount" min="0" readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <form id="salesFrm">
+                                <input type="hidden" id="hidSalesPID" name="salesPID" />
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-addon">核销数量 </span>
+                                        <input type="number" id="salesAmount" class="form-control" required name="salesAmount" placeholder="核销数量" min="1">
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="IEList">
+                    <div class="col-md-12" id="IETitle">
+                        <h4>收入列表</h4>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="productSalesList" style="font-size: 12px"></table>
+                    </div>
+                </div>  
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" id="btnSalesSubmit" class="btn btn-primary" onclick="SalesSubmit(false)">
+                    确认核销
+                </button>   
+                <button type="button" id="btnSalesAndIncome" class="btn btn-primary" onclick="SalesSubmit(true)">
+                    核销并创建收入
+                </button>   
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+
+
+            </div>
+        </div>
+        
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal --> 
+
+
+<!--产品核销并计入收入 --> 
+<div class="modal fade" id="IncomeModal" tabindex="-1" role="dialog" aria-labelledby="IncomeModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content"> 
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="IncomeModalLabel">
+                    产品核销并计入收入
+                </h4>
+            </div>
+            
+                <div class="modal-body">
+                    <div class="row" id="editRow">
+                        
+                    </div> 
+                    <div id="income" class="row">
+                        <form class="cmxform" id="Income_Form" method="post">
+                            <div class="col-md-12">
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon"> 客户 </span>
+                                            <input type="text" id="autocomplete" name="Log" class="form-control" required>
+                                            <input id="Log" name="RPer" hidden>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon"> 收入确认日期 </span>
+                                            <input type="text" id="AffirmDate" name="AffirmDate" class="form-control datepicker mtn" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="text-align: center">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" >
+                                            <span class="input-group-addon">&nbsp;&nbsp;&nbsp;业&nbsp;务&nbsp;单&nbsp;元&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <select id="Business_GUID2" name="Business_GUID" required="true"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon">业&nbsp;务&nbsp;子&nbsp;单&nbsp;元</span>
+                                            <select id="SubBusiness_GUID2" name="SubBusiness_GUID" required="true"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon"> 账期截止日期 </span>
+                                            <input type="text" id="Date" name="Date" class="form-control  datepicker mtn" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon">货币</span>
+                                            <select id="Currency" name="Currency" required="true"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon">收入金额</span>
+                                            <input type="text" id="Amount" name="" class="form-control money" autocomplete="off"
+                                                   placeholder="" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon">税种</span>
+                                            <select id="TaxationType" name="TaxationType" required></select>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                               
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <fieldset disabled>
+                                        <div class="form-group">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-addon">税费金额</span>
+                                                <input id="TaxationAmount" name="TaxationAmount" type="text" class="form-control money" placeholder="" required>
+
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon">含税总收入</span>
+                                            <input id="SumAmount" name="" type="text" class="form-control" placeholder="" required="true" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">备注</span>
+                                            <input id="Remark" name="Remark" type="text" class="form-control" placeholder="" required="true">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div id="PZ" class="col-md-12" style="  display: none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon">合同/发票/凭证号</span>
+                                            <input type="text" class="Pnumber form-control" placeholder="">
+                                            <span class="input-group-addon"><a onclick="add()" href="#">增加</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input class="file_upload" type="file" multiple>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button onclick="SumintIncome()" type="button" id="btnSubmitIncome" class="btn btn-primary" >提交</button> 
+
+                      <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+
+                </div>
+    
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+
+

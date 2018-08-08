@@ -1,0 +1,5 @@
+D:\fms\FMSNEW\FMS.Models\bin\Release\FMS.Models.dll.config
+D:\fms\FMSNEW\FMS.Models\bin\Release\FMS.Models.dll
+D:\fms\FMSNEW\FMS.Models\bin\Release\FMS.Models.pdb
+D:\fms\FMSNEW\FMS.Models\obj\Release\FMS.Models.dll
+D:\fms\FMSNEW\FMS.Models\obj\Release\FMS.Models.pdb

@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ <html xmlns='http://www.w3.org/1999/xhtml' xmlns:svg='http://www.w3.org/2000/svg' xmlns:vml='urn:schemas-microsoft-com:vml'>
+
+<head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8' />
+    <meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+    <!--[if vml]><style>vml\:* {behavior: url(#default#VML);}</style><![endif]-->
+    <title>@ViewBag.Title</title>    
+    <link type="image/x-icon" href="@Url.Content("~/Content/Images/favicon.ico")" rel="shortcut icon"/>
+    <link href="@Url.Content("~/Content/CSS/Site_Style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/CSS/Framework_Style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/CSS/Content_Style.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/EasyUI/themes/icon.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Uploadify/uploadify.css")" rel="stylesheet" type="text/css" />
+    <div id="theme">
+        <link href='../../Content/EasyUI/themes/default/easyui.css' type='text/css' rel='Stylesheet' />
+    </div> 
+    <script src="//cdn.bootcss.com/json2/20140204/json2.min.js" type="text/javascript"></script>
+    <script src="//code.jquery.com/jquery-1.10.0.min.js" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.cookie.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/EasyUI/jquery.easyui.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Common.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/EasyUIExtend.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/json2.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Content/Uploadify/jquery.uploadify.min.js")" type="text/javascript"></script>
+    @if (System.Threading.Thread.CurrentThread.CurrentCulture.ToString() == "zh-CN")
+    { 
+        <script src="@Url.Content("~/Content/EasyUI/locale/easyui-lang-zh_CN.js")" type="text/javascript"></script>
+    }
+    else
+    { 
+        <script src="@Url.Content("~/Content/EasyUI/locale/easyui-lang-en.js")" type="text/javascript"></script>
+    }  
+     
+    @RenderSection("script",false)
+</head>
+<body id="Framework" class="easyui-layout" fit="true">
+    <div id="head" region="north" border="false">
+        <div id="loginInfo">   
+            @Html.Partial("LoginLayout_PageHead_V3")
+            <div id="languageswitch">
+                @Html.Partial("_LogOnPartial_V3")&nbsp;&nbsp;&nbsp;
+            </div>
+        </div>
+        <a href="#"  onclick="ToPending()"   >
+            <img
+                @{
+                    string logo = string.Empty;
+                    if (System.Threading.Thread.CurrentThread.CurrentCulture.ToString() == "zh-CN")
+                    {
+                        logo = "../../Content/Image/Logo_CN.png";
+                    }
+                    else
+                    {
+                        logo = "../../Content/Image/Logo_EN.png";
+                    }
+                }
+                src="@logo" />
+        </a>
+        <div style="float:right;display:none;">
+            @Html.Partial("_ThemeSelector")
+        </div>      
+                
+        <div id="ProductList" style="min-width:800px;">
+            @{
+                SSOModel.SystemInfo[] syss = ((Utilities.CustomPrincipal)this.Context.User).UserData.UserSystemInfos;
+                string sysId = System.Configuration.ConfigurationManager.AppSettings["SubSystemID"];
+            }
+                
+            @foreach (var item in syss)
+            {
+                <div title="@item.Name" url="@item.URL" style="padding:10px" 
+                     data-options="id:'@item.ID',content:'@item.URL',closable:false,selected:@((sysId==item.ID).ToString().ToLower())"></div>
+            }
+        </div>
+        <div id="btnExit" style="border-top:0;border-left:0;border-right:0;"  > 
+            <a href="/Company/ChooseCompany" class="easyui-linkbutton" data-options="" style="float: left;margin-right:20px;">选择其他公司</a>
+            <a style="margin-right:50px;" href="/Common/LogOff" class="easyui-linkbutton">@General.Resource.Common.Exit</a>
+        </div>
+    </div>
+    <div id="nav" region="west" border="false" title=" " collapsible="true" headerCls="panelHead">
+        @Html.Partial("_TreeMenu")
+    </div>
+    <div id="main" region="center" border="false" title=" " headerCls="panelHead" data-options="onLoad:ShowTitle" >        
+        @RenderBody()
+    </div>
+    <div id="footer" region="south" border="false">
+        <a href="http://www.novofront.com">Powered by Novofront</a>
+    </div>
+<input type="hidden" id="title"/>
+<script language="javascript" type="text/javascript">
+    var flag = false;
+    $(function () {
+        $("#ProductList").tabs({
+            fit: true,
+            height: 27,
+            tabWidth: 110,
+            scrollIncrement: 120,
+            border: false,
+            tools: '#btnExit',
+            plain: true,
+            onSelect: function (title, index) {
+                if (flag) {
+                    url = $("#ProductList").tabs("getTab", title).panel("options").content;
+                    window.location = url;
+                }
+                flag = true;
+            }
+        });
+        var bgc = $(".tabs").css("background-color");
+        $(".tabs-tool").css("background-color", bgc);
+        if ($.cookie("theme") == undefined) {
+            $.cookie("theme", "default", { path: "/", expires: 7 })
+        }
+        $("#theme").empty();
+        $("#theme").html("<link href='../../Content/EasyUI/themes/" + $.cookie("theme") + "/easyui.css' type='text/css' rel='Stylesheet' />");
+    }
+);
+    function ToPending() {
+        window.location.href = "/common/pending";
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="PR_List"></table>
+
+<script language="javascript" type="text/javascript">
+	var LinkHandle = function (value) {
+		var link = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Details</a> ";
+		return link;
+	};
+
+	var DateHandle = function (value, row, index) {
+		return ChangeDateFormat(value);
+	}
+
+	$(function () {
+		$("#PR_List").datagrid({
+		    url: '/PaymentQuery/GetPaymentList',
+			columns: [[
+				{ field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payee' },
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: DateHandle },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+				{ field: 'RP_GUID', title: '', formatter: LinkHandle }
+			]],
+			pagination: true,
+			rownumbers: true,
+			singleSelect: true
+		});
+	});
+
+	function InitDialog() {
+		$("#PR_List").after('<div id="WinPR"></div>');
+		$("#WinPR").dialog({
+			title: ' ',
+			collapsible: false,
+			minimizable: false,
+			width: 550,
+			height: 300,
+			onClose: function () {
+			    $("#WinPR").dialog("destroy");
+			}
+		});
+	}
+
+	function AddClick(id) {
+	    InitDialog();
+	    $('#WinPR').dialog("refresh", "/PaymentQuery/PaymentRecord/" + id);
+	}
+</script>
+
+

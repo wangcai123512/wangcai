@@ -1,0 +1,551 @@
+﻿@{ ViewBag.Title = "Index";
+   Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+
+<script type="text/javascript" src="@Url.Content("~/js/views/IndirectMaterialPurchasingQuery/index.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/purchasetaxrate.js")"></script>
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF" >
+    <div id="content">
+        <div class="row" style="margin-top: 20px;" onclick="removeClass()">
+        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">间接物料查询与处置</span></div>
+            <div class="col-md-12" style="margin: auto">
+                <div class="panel panel-visible">
+                    <div class="panel-body pbn">
+                        <div id="toolbar">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <form>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-7" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">购入日期</span>
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px">
+                                            至
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;供&nbsp;应&nbsp;商&nbsp;&nbsp;&nbsp;</span>
+                                                    <select id="customer" name="customer" required="true">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                                <div class="col-md-12" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">业务单元</span>
+                                                            <select id="Business_GUID" name="Business_GUID" required="true">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                            <div class="col-md-6" style="margin-bottom: 0px">
+                                                <div class="col-md-12" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">业务子单元</span>
+                                                            <select id="SubBusiness_GUID" name="SubBusiness_GUID" required="true">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>                
+                                    <div class="col-md-3" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;状&nbsp;&nbsp;&nbsp;&nbsp;态&nbsp;&nbsp;</span>
+                                                    <select id="state" name="state" >
+                                                       
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <div class="col-md-9" style="margin-bottom: 0px">
+                                        <div class="col-md-4" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">物料类别 </span>
+                                                    <select id="PurchasingType" name="PurchasingType" onchange="GetSubType('#PurchasingType', '#PurchasingTypeSub')"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">物料子类别 </span>
+                                                    <select id="PurchasingTypeSub" name="PurchasingTypeSub" onchange="GetMMType('#PurchasingTypeSub', '#MaterielManage')"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-left:0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="width:100%">
+                                                    <span class="input-group-addon" style="color: #000000;">物料名称</span>
+                                                    <select id="MaterielManage" name="MaterielManage"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div class="col-md-7" style="margin: auto">
+                                          
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto;">
+                                            <button onclick="query()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">
+                                            查询</button>
+                                        </div>
+                                        <div class="col-md-3" style="margin: auto">
+                                          <button onclick="javascript:window.location = '/DirectMaterialPurchasingRecord/Index'" type="button" style="width: 100px;
+                                                border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold"
+                                                class="btn btn-primary pull-right">
+                                                返回上页
+                                                </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <table id="dataList" style="font-size: 12px">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </section>
+</div>
+<!--间接物料编辑model-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+            <input type="hidden" value="" id="editActionHandler" name="editActionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="editModalLabel">
+                    编辑
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="cmxform" id="Edit_Form" method="post">
+                    <input type="hidden" id="GUID" name="GUID" />
+                    <input type="hidden" id="C_GUID" name="C_GUID" />
+                    <input type="hidden" id="AID_Flag" name="AID_Flag" />
+                    <input type="hidden" id="Remark" name="Remark" />
+                    <input type="hidden" id="CostType" name="CostType" />
+                    <input type="hidden" id="SurplusValue" name="SurplusValue" />
+                    <input type="hidden" id="State" name="State" />
+                    <input type="hidden" id="DepreciationPeriod" name="DepreciationPeriod" />
+                    <div class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">购入日期</span>
+                                    <input type="text" class="Date form-control datepicker mtn " id="Date" name="Date"
+                                        require="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;金&nbsp;&nbsp;&nbsp;&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="Amount"  name="Amount" class="Amount form-control money" maxlength="10"
+                                        onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">业务单元</span>
+                                    <select id="Business_GUID1" name="Business_GUID" require="true">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">业务子单元</span>
+                                    <select id="SubBusiness_GUID1" name="SubBusiness_GUID" require="true">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;货&nbsp;&nbsp;&nbsp;&nbsp;币&nbsp;&nbsp;</span>
+                                    <select id="Currency" name="Currency" require="true">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;供&nbsp;应&nbsp;商&nbsp;&nbsp;&nbsp;</span>
+                                    <select id="RPer" name="RPer" require="true">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-4" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">物料类别</span>
+                                        <select id="EditPurchasingType" name="InvType" onchange="GetSubType('#EditPurchasingType', '#EditPurchasingTypeSub')"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">物料子类别</span>
+                                        <select id="EditPurchasingTypeSub" name="SonInvType" onchange="GetMMType('#EditPurchasingTypeSub', '#EditMaterielManage')"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">物料名称</span>
+                                        <select id="EditMaterielManage" name="MaterielManage"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                            <div class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                   <span class="input-group-addon" style="color: #000000">物料描述</span>
+                                    <input type="text" id="Description" name="Description" maxlength="500" class="form-control"
+                                        value="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <div>
+                    <input type="hidden" id="picpath" name="picpath" value="test"/>
+                    <input type="hidden" id="changing" name="changing" value=""/>
+                    <input id="inputAttach" name="inputAttach" type="file" multiple class="file-loading" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="SaveChanges()">
+                    提交
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--直接物料转售model-->
+<div class="modal fade" id="resaleModal" tabindex="-1" role="dialog" aria-labelledby="resaleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;">
+        <div class="modal-content">
+            <input type="hidden" value="" id="resaleActionHandler" name="resaleActionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="ResaleClose()">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="resaleModalLabel">
+                    转售
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form class="cmxform" id="Resale_Form" method="post">
+                        <input type="hidden" id="tmpAID_GUID2" name="tmpAID_GUID" />
+                        <input type="hidden" name="InvType" id="InvType2"  value="营业外收入"/>
+                        <input type="hidden" name="GUID" id="IE_GUID2"/>
+                        <input type="hidden" name="Amountinfosd" id="Amountinfosd"/>
+                        <input type="hidden" id="Inventory_Number" name="Inventory_Number" />
+                        <input type="hidden" id="Detailed_Categories" name="Detailed_Categories" value="间接物料"/>
+                        <input type="hidden" name="StateIE" id="State2" value="应收"/>       
+                        <input type="reset" name="reset" style="display: none;" />
+                        <input type="hidden" id="unitprice" name="unitprice" />   
+                        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 25px; font-weight: 900; color: #074592; text-decoration: underline" id="Type" ></span></div>            
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="client" name="RPer" required="true">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                                   <div class="col-md-6" style="padding-left: 25px">
+                                        <div class="form-group">
+                                            <div class="btn-group btn-group-sm pull-left" style="margin: 0">
+                                                <button onclick="AddCustomer(2)" type="button" style="width: 150px; border-radius: 0px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">新客户登记</button>
+                                            </div>
+                                        </div>
+                                    </div>                           
+                       </div>
+                         <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;收入确认日期&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="AffirmDate2" name="AffirmDate" class="form-control datepicker mtn" value="@ViewData["DateNow"]"  />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;账期截止日期&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="Date2" name="Date" class="form-control datepicker mtn" value="@ViewData["DateNow"]"/>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                       
+                        <div class="col-md-12" style="text-align: center">          
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="RealseCurrency" name="Currency" required="true">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                                 <div class="col-md-6" style="padding-left: 25px">
+                             <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;库&nbsp;存&nbsp;数&nbsp;量&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="InventoryQuantity" name="InventoryQuantity" class="form-control money"
+                                           maxlength="10" autocomplete="off"
+                                           placeholder="" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                       
+                        <div class="col-md-12" style="text-align: center">
+
+                         <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;库&nbsp;&nbsp;存&nbsp;&nbsp;金&nbsp;&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="number"   id="InitialAmount" name="InventoryAmount" class="form-control "
+                                         maxlength="10"  disabled />                                                                                                     
+                                </div>
+                            </div>
+                        </div>
+                                           <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;转&nbsp;售&nbsp;数&nbsp;量&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="number" id="ResaleNumber" name="ResaleNumber" class="form-control money"
+                                               maxlength="10" autocomplete="off"
+                                               placeholder=""  onblur="ResaleNumberChange(value)"/>
+                                    </div>
+                                </div>
+                            </div>                          
+                        </div>
+                        <div class="col-md-12" style="text-align: center">               
+                     <div class="col-md-6" style="padding-right: 25px">
+                               <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;转&nbsp;售&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="number" id="Amountinfos" name="Amount" class="form-control money"
+                                            autocomplete="off"
+                                           placeholder="" readonly/>
+                                </div>
+                            </div>
+                        </div> 
+                            <div class="col-md-6" style="padding-left: 25px">
+                  
+                                <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;收&nbsp;入&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                     <input type="text" id="ResaleActualAmount" name="ResaleActualAmount" class="form-control money" autocomplete="off"
+                                                       placeholder="" required="true" >
+
+                                </div>
+                            </div>
+                            </div>   
+                            
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                             <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税&nbsp;&nbsp;种&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="TaxationType" name="TaxationType" required="true"  onchange="taxChange(value)">
+                                    </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <fieldset readonly="readonly">
+                                     <div class="form-group">
+                                          <div class="input-group input-group-sm" style="margin: 0">
+                                               <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税&nbsp;费&nbsp;金&nbsp;额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                               <input id="TaxationAmounts" name="TaxationAmount" type="text" class="form-control money" placeholder=""  readonly>    
+                                          </div>
+                                      </div>
+                               </fieldset>
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="text-align: center">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <fieldset >
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;含&nbsp;税&nbsp;总&nbsp;收&nbsp;入&nbsp;&nbsp;&nbsp;</span>
+                                            <input id="SumAmounts" name="SumAmount" type="text" class="form-control" placeholder="" required="true">
+                                          
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                               <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <input id="Remarkinfo" name="Remark" type="text" class="form-control" placeholder=""/>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <div id="PZ2" class="col-md-12" style="text-align: center; display: none">
+                            <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">合同/发票/凭证号</span>
+                                        <input id="Pnumber2"  name="Pnumber"  type="text" class="Pnumber form-control" placeholder="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="padding-left: 25px">
+                                <div class="form-group" style="padding-top: 2px">
+                                    <input class="file_upload" type="file" id="certificate2" name="certificate2" />
+                                </div>
+                            </div>
+                            <div class="col-md-1" style="text-align: left;">
+                                <div style="margin-top: 5px" id="operate">
+                                    <a onclick="add(2)" href="#" style="font-size: 12px;" id="addRow">增加</a><br />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="PZ2_1" class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">合同/发票/凭证号</span>
+                                    <input id="Pnumber2" type="text" class="Pnumber form-control" placeholder="" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5" style="padding-left: 25px">
+                            <div class="form-group" style="padding-top: 2px">
+                                <input class="file_upload" type="file" id="certificate2" name="certificate2" />
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="text-align: left;">
+                            <div style="margin-top: 5px" id="operate">
+                                <a onclick="add(2)" href="#" style="font-size: 12px;" id="addRow">增加</a><br />
+                            </div>
+                        </div>
+                    </div>
+                        <div id="AddLayout2" style="text-align: center"></div>
+                        
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ResaleClose()">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="ResaleSubmit()">
+                    提交
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--已转售model--->
+<div class="modal fade" id="ResaleValue" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    已转售
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="dataListResaleValue" style="font-size: 12px">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+</div>
+

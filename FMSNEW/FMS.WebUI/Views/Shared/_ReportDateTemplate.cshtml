@@ -1,0 +1,66 @@
+﻿<div class="col-md-12" style="margin: auto">
+    <div class="col-md-4">
+        <input type="hidden" id="hidDate" name="salesPID" />
+        <div class="form-group">
+            <div class="input-group input-group-sm" style="margin: 0">
+                <span class="input-group-addon" style="color: #000000;">月度</span>
+                <select id="months" name="months" class="report-date"></select>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <div class="input-group input-group-sm" style="margin: 0">
+                <span class="input-group-addon" style="color: #000000;">季度</span>
+                <select id="quarters" name="quarters" class="report-date"></select>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+
+        <div class="form-group">
+            <div class="input-group input-group-sm" style="margin: 0">
+                <span class="input-group-addon" style="color: #000000;">年度</span>
+                <select id="years" name="years" class="report-date"></select>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4" style="display:none">
+        <div class="form-group">
+            <div class="input-group input-group-sm" style="margin: 0">
+                <span class="input-group-addon" style="color: #000000;">日期</span>
+                <input type="text" id="dateEnd" class="form-control datepicker mtn" required="" readonly="readonly" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12" style="margin: auto">
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary pull-left button-radius" id="btnQuery">
+            查询
+        </button>
+
+    </div>
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary pull-left button-radius" id="btnPreview" onclick="Preview()">
+            预览报表
+        </button>
+
+    </div>
+</div>
+<div id="Reports">
+    <div class="col-lg-4"><table id="Reports1"></table></div>
+    <div class="col-lg-4"><table id="Reports2"></table></div>
+    <div class="col-lg-4"><table id="Reports3"></table></div>
+</div>
+<div class="col-md-12">
+
+    <table id="dataList" style="font-size: 12px"></table>
+</div>
+

@@ -1,0 +1,173 @@
+﻿body
+{
+    /*min-width:800px;*/
+    /*width:800px;*/
+}
+form
+{
+    margin-bottom:0;
+    }
+table
+{
+    /*width:100%;
+    border: solid 1px #074592;*/ 
+    border-collapse: collapse;
+    padding:0;  
+    margin:0;
+    font-size:12px;
+}
+
+table td 
+{
+  text-align:left;
+}
+
+/*table th
+{
+   background-color:#99cccc;
+   text-align:left;
+ }*/
+ 
+.Even
+{
+    background-color:#eeeeee;
+    }
+     
+// fieldset
+// {
+//     width:auto;
+//     padding-left:0px;
+//     margin-left:0px;
+//     padding-right:0px;
+//     margin-right:0px;
+//     border-width:0px;
+//     }
+
+fieldset legend,.Title
+{
+    font-size:14px;
+    font-style: inherit;
+    font-weight:bold;
+    height:20px;
+    margin:5px 0px 5px 5px;
+    height:auto;
+    
+    }
+    
+ #_MvcPager_Ctrl0_pib
+ {
+        width:30px;
+     }
+     
+ .GroupHead
+ {
+     text-align:center;
+     background-color: #96CDCD;
+     margin:10px 0px 0px 0px;
+ }
+ /*.Pager
+ {
+     margin-top:3px;
+    text-align:center;
+     }
+ 
+ .Pager input[type="submit"],
+ .Pager input[type="button"]
+ {
+    background-image:none;
+    color:#074592;
+    font-weight:bold;
+     }*/
+ 
+ .Filter
+ {
+     border: 1px solid #074592;
+     height:auto;
+     line-height: 45px;
+     }
+.Fit
+{
+    line-height:normal;
+    }
+.Summary
+{
+    height:auto;
+    line-height:35px;
+    }
+
+.Summary a
+{
+    float:right;
+    font-weight:bold;
+    background-image:url("../images/Btn.png");
+    background-position:center;
+    background-repeat:no-repeat;
+    display:block;
+    WIDTH: 50px;
+    color:#FFFFFF;
+    text-align:center;
+    }
+    
+.Props
+{
+    border-width: 1px 0px 0px 0px;
+    }
+.Submit
+{
+    /*width:800px;*/
+    float:left;
+    clear:left;
+    margin:10px 0 0 5px;
+    }
+/*
+.RequireFlag,.ValidateMsg
+{
+    color: Red; 
+    font-weight:bold;
+    }*/
+table img
+{
+    height:150px; 
+    width:100px
+    }
+.TdEven
+{
+    width:150px;
+    }
+.TdOdd
+{
+    width:250px;
+    }
+/*
+.NormalBtn[type="button"]
+{
+    width:75px;
+    background-image:url("../images/Btn-Normal.png");
+    }
+
+.LargeBtn[type="button"]
+{
+    width:100px;
+    background-image:url("../images/Btn-Large.png");
+    }*/
+
+.cSpan
+{
+    font-family:Arial;
+    font-size:12px;
+    cursor:pointer;
+    text-decoration:underline;
+    font-weight:bold;
+    }
+.TestMess
+{
+    color:Red;  
+    display:block; 
+    float:left;
+    }
+    
+.lines-no .datagrid-body td
+{
+border-right:1px dotted transparent;
+border-bottom:1px dotted transparent;
+}

@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_AssetsGroup
+           
+<form id="AssetsGroup"  method="post">
+<table class="Props">
+    <input type="hidden" name="AG_GUID" value="@Model.AG_GUID" />
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td><input name="Name" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.FixedAssets.FixedAssets.DepreciationMethod</td>
+        <td><input name="DepreciationMethod" class="easyui-combobox" value="@Model.DepreciationMethod" 
+        data-options="panelHeight:'auto',required:true,method:'get',url:'@Url.Content("~/Json/DepreciationMethod.json")',textField:'text',valueField:'value'"/></td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.FixedAssets.FixedAssets.SalvageRate</td>
+        <td><input name="SalvageRate" class="easyui-numberbox" value="@Model.SalvageRate" data-options="required:true,min:0.01,max:100,precision:2"/></td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.FixedAssets.FixedAssets.Life</td>
+        <td><input name="Life" class="easyui-numberbox" value="@Model.Life" data-options="required:true,min:1"/></td>
+    </tr>
+</table >          
+</form>
+

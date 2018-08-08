@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "AssetsInfo";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Assets
+<form id="Role"  method="post">
+    <table class="Props">
+        <input type="hidden" name="A_GUID" value="@Model.A_GUID" />
+        <input type="hidden" name="Creator" value="@Model.Creator" />
+        <tr>
+            <td>@FMS.Resource.FixedAssets.FixedAssets.No</td>
+            <td><input name="No" class="easyui-validatebox" value="@Model.No" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@General.Resource.Common.Name</td>
+            <td><input name="Name" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.FixedAssets.FixedAssets.AssetsGroup</td>
+            <td><input name="AG_Guid" class="easyui-combobox" value="@Model.AG_GUID" 
+            data-options="required:true,url:'/FixedAssetsRegister/GetAssetsesGroup',textField:'text',valueField:'value',panelMaxHeight:'200',panelHeight:'auto'"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.FixedAssets.FixedAssets.PurchaseDate</td>
+            <td><input name="PurchaseDate" class="easyui-datebox" value="@Model.PurchaseDate.ToString("yyyy-MM-dd")"
+            data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.FixedAssets.FixedAssets.RegisterDate</td>
+            <td><input name="RegisterDate" class="easyui-datebox" value="@Model.RegisterDate.ToString("yyyy-MM-dd")"
+            data-options=""/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.FixedAssets.FixedAssets.AssetsCost</td>
+            <td><input name="AssetsCost" class="easyui-numberbox" value="@Model.AssetsCost" data-options="required:true,precision:2,groupSeparator:','"/></td>
+        </tr>
+    </table >          
+</form>
+
+

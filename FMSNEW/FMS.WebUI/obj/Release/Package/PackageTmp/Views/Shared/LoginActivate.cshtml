@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LoginLayout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px;background-color: #FFF">
+    <div id="content">
+        <div class="row" style="margin-top: 40px">
+            <div class="col-md-12" style="margin: auto">
+                <div class="col-md-3" style="margin: auto"></div>
+                <div class="col-md-6" style="margin: auto">
+                    <form id="Company_Form">
+                     <span id="ErrorMsg" style="color: Red"></span>
+                        <div class="form-group">
+                            <div class="input-group " style="margin: 0;">
+                                <span class="input-group-addon" style="color: #000000">&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;称&nbsp;</span>
+                                <input type="text" id="Name" name="Name" disabled class="form-control" placeholder="" value="@Session["loginName1"]" />
+                                <input type="hidden" id="LoginName" name="LoginName"  value="@Session["loginName"]" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group " style="margin: 0">
+                                <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密&nbsp;&nbsp;&nbsp;&nbsp;码&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <input type="password" id="Password" name="Password" class="form-control" placeholder="至少8位,必须有字母、数字、特殊符号、大小写！" />
+                            </div>
+                        </div>
+                         <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;验&nbsp;证&nbsp;码&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" class="form-control" name="ValidateCode" placeholder="" />
+                                    <span class="input-group-addon">
+                                    <img id="imgValidateCode" src="/Common/GetValidateCode" onclick="ChangeValidateCode(this)"
+                                        style="cursor: pointer; height: 20px" /></span>
+                                </div>
+                            </div>
+                      <div class="col-md-12" style="margin: auto">
+                         <div class="col-md-8" style="margin: auto">
+                        <div class="form-group" style="margin: auto; text-align: center">
+                            <button onclick="Login()" type="button" style="margin-top: 20px; height: 40px; width: 100%; border-radius: 100px; font-size: 20px; background-color: #f5f5f5; border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                登录</button>
+                        </div>
+                        </div>
+                         <div class="col-md-4" style="margin: auto">
+                                <div class="form-group" style="margin: auto; text-align: center">
+                                    <button onclick="javascript:window.location = '/Common/ForgetPassword'" type="button" style="margin-top: 20px;margin-right: -20px;height: 40px; width: 100px; border-radius: 100px; font-size: 16px; background-color: #f5f5f5;border: 2px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                        忘记密码</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+//    javascript: window.history.forward(1);
+//    jQuery(document).ready(function () {
+
+//        "use strict";
+
+//        // Init Theme Core 	  
+//        Core.init();
+
+//        // Enable Ajax Loading 	  
+//        Ajax.init();
+
+//        // Init Full Page BG(Backstretch) plugin
+//        //        $.backstretch("img/stock/splash/2.jpg");
+//    });
+
+////    function Login() {
+////        $("#Login-button").focus();
+////        //        $("#LoginInfo").submit();
+////        Submit();
+////    }
+
+//    var confirmMsg = function (r) {
+//        if (r) {
+//            $("#UserName").val($("#LoginName").val());
+//            $("#ForceForm").submit();
+//        }
+//    }
+
+    function Login() {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/Common/LoginActivate",
+            data: $('#Company_Form').serialize(),
+            async: false,
+            onSubmit: function () {
+                return $("#Company_Form").form('validate');
+            },
+            error: function (data) {
+                alert(JSON.parse(data).Msg);
+            },
+            success: function (data) {
+                if (data == "") {
+                    alert("密码错误，请重新输入密码！");
+                } else if (data.length > 31) {
+                    //window.location.href = "/Common/Login";
+                    window.location.href = "/Common/Index?cGuid=" + data;
+                } else {
+
+                    alert(JSON.parse(data).Msg);
+                    $("#ValidateCode").val("");
+                    $("#Password").val("");
+                    $("#imgValidateCode").click();
+
+
+                }
+            }
+        });
+        $('#editModal').modal('hide');
+        $('#dataList').bootstrapTable('refresh');
+    }
+
+    function ChangeValidateCode(obj) {
+        obj.src = "/Common/GetValidateCode?time=" + (new Date()).getTime();
+    }
+</script>

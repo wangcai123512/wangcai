@@ -1,0 +1,875 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FMS_DevelopModelStoreContainer" CdmEntityContainer="FMS_DevelopEntities">
+    <EntitySetMapping Name="R_CompanyAccount">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.R_CompanyAccount">
+        <MappingFragment StoreEntitySet="R_CompanyAccount">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="LA_GUID" ColumnName="LA_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="R_CompanyCurrceny">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.R_CompanyCurrceny">
+        <MappingFragment StoreEntitySet="R_CompanyCurrceny">
+          <ScalarProperty Name="I_GUID" ColumnName="I_GUID" />
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="sysdiagrams">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.sysdiagrams">
+        <MappingFragment StoreEntitySet="sysdiagrams">
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+          <ScalarProperty Name="version" ColumnName="version" />
+          <ScalarProperty Name="definition" ColumnName="definition" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Assets">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Assets">
+        <MappingFragment StoreEntitySet="T_Assets">
+          <ScalarProperty Name="A_GUID" ColumnName="A_GUID" />
+          <ScalarProperty Name="No" ColumnName="No" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="RegisterDate" ColumnName="RegisterDate" />
+          <ScalarProperty Name="PurchaseDate" ColumnName="PurchaseDate" />
+          <ScalarProperty Name="ScrapType" ColumnName="ScrapType" />
+          <ScalarProperty Name="ScrapDate" ColumnName="ScrapDate" />
+          <ScalarProperty Name="AG_GUID" ColumnName="AG_GUID" />
+          <ScalarProperty Name="AssetsCost" ColumnName="AssetsCost" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AssetsGroup">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AssetsGroup">
+        <MappingFragment StoreEntitySet="T_AssetsGroup">
+          <ScalarProperty Name="AG_GUID" ColumnName="AG_GUID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="DepreciationMethod" ColumnName="DepreciationMethod" />
+          <ScalarProperty Name="Life" ColumnName="Life" />
+          <ScalarProperty Name="SalvageRate" ColumnName="SalvageRate" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Bank">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Bank">
+        <MappingFragment StoreEntitySet="T_Bank">
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_BeginningBalance">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_BeginningBalance">
+        <MappingFragment StoreEntitySet="T_BeginningBalance">
+          <ScalarProperty Name="InitialDate" ColumnName="InitialDate" />
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Acc_GUID" ColumnName="Acc_GUID" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_BusinessCost">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_BusinessCost">
+        <MappingFragment StoreEntitySet="T_BusinessCost">
+          <ScalarProperty Name="BC_GUID" ColumnName="BC_GUID" />
+          <ScalarProperty Name="BC_Flag" ColumnName="BC_Flag" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="TaxationAmount" ColumnName="TaxationAmount" />
+          <ScalarProperty Name="TaxationType" ColumnName="TaxationType" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_BusinessPartner">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_BusinessPartner">
+        <MappingFragment StoreEntitySet="T_BusinessPartner">
+          <ScalarProperty Name="BP_GUID" ColumnName="BP_GUID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="IsSupplier" ColumnName="IsSupplier" />
+          <ScalarProperty Name="IsCustomer" ColumnName="IsCustomer" />
+          <ScalarProperty Name="IsPartner" ColumnName="IsPartner" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="ChineseFullName" ColumnName="ChineseFullName" />
+          <ScalarProperty Name="EnglishFullName" ColumnName="EnglishFullName" />
+          <ScalarProperty Name="Website" ColumnName="Website" />
+          <ScalarProperty Name="OrganizationCode" ColumnName="OrganizationCode" />
+          <ScalarProperty Name="IndustryInvolved" ColumnName="IndustryInvolved" />
+          <ScalarProperty Name="RegisteredAddress" ColumnName="RegisteredAddress" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_CashFlowItem">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_CashFlowItem">
+        <MappingFragment StoreEntitySet="T_CashFlowItem">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="No" ColumnName="No" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="RP_Flag" ColumnName="RP_Flag" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Company">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Company">
+        <MappingFragment StoreEntitySet="T_Company">
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="Province" ColumnName="Province" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="Taxpayer" ColumnName="Taxpayer" />
+          <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="MasterCompanyGuid" ColumnName="MasterCompanyGuid" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="Contacter" ColumnName="Contacter" />
+          <ScalarProperty Name="ContactWay" ColumnName="ContactWay" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+          <ScalarProperty Name="ChineseFullName" ColumnName="ChineseFullName" />
+          <ScalarProperty Name="EnglishFullName" ColumnName="EnglishFullName" />
+          <ScalarProperty Name="Website" ColumnName="Website" />
+          <ScalarProperty Name="OrganizationCode" ColumnName="OrganizationCode" />
+          <ScalarProperty Name="IndustryInvolved" ColumnName="IndustryInvolved" />
+          <ScalarProperty Name="RegisteredAddress" ColumnName="RegisteredAddress" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="LOGO" ColumnName="LOGO" />
+          <ScalarProperty Name="BusinessLicense" ColumnName="BusinessLicense" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_CompanySetting">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_CompanySetting">
+        <MappingFragment StoreEntitySet="T_CompanySetting">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="StandardCoin" ColumnName="StandardCoin" />
+          <ScalarProperty Name="ReportPeriod" ColumnName="ReportPeriod" />
+          <ScalarProperty Name="ReportStartDate" ColumnName="ReportStartDate" />
+          <ScalarProperty Name="AuditDate" ColumnName="AuditDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_CurrencyCode">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_CurrencyCode">
+        <MappingFragment StoreEntitySet="T_CurrencyCode">
+          <ScalarProperty Name="Seq" ColumnName="Seq" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="IsCommon" ColumnName="IsCommon" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_DeclareCostSpending">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_DeclareCostSpending">
+        <MappingFragment StoreEntitySet="T_DeclareCostSpending">
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="CreatDate" ColumnName="CreatDate" />
+          <ScalarProperty Name="CostSum" ColumnName="CostSum" />
+          <ScalarProperty Name="Profit_GUID" ColumnName="Profit_GUID" />
+          <ScalarProperty Name="Record" ColumnName="Record" />
+          <ScalarProperty Name="VoucherNo" ColumnName="VoucherNo" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_DeclareCustomer">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_DeclareCustomer">
+        <MappingFragment StoreEntitySet="T_DeclareCustomer">
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Profit_GUID" ColumnName="Profit_GUID" />
+          <ScalarProperty Name="Record" ColumnName="Record" />
+          <ScalarProperty Name="VoucherNo" ColumnName="VoucherNo" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_DetailedAccount">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_DetailedAccount">
+        <MappingFragment StoreEntitySet="T_DetailedAccount">
+          <ScalarProperty Name="DA_GUID" ColumnName="DA_GUID" />
+          <ScalarProperty Name="AccCode" ColumnName="AccCode" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="ParentAccGuid" ColumnName="ParentAccGuid" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="D_GUID" ColumnName="D_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_DetailedCategories">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_DetailedCategories">
+        <MappingFragment StoreEntitySet="T_DetailedCategories">
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="State" ColumnName="State" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_ExpenseType">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_ExpenseType">
+        <MappingFragment StoreEntitySet="T_ExpenseType">
+          <ScalarProperty Name="OtherFlag" ColumnName="OtherFlag" />
+          <ScalarProperty Name="ET_GUID" ColumnName="ET_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="ExpenseType" ColumnName="ExpenseType" />
+          <ScalarProperty Name="ExpenseFlag" ColumnName="ExpenseFlag" />
+          <ScalarProperty Name="SaleFlag" ColumnName="SaleFlag" />
+          <ScalarProperty Name="ManageFlag" ColumnName="ManageFlag" />
+          <ScalarProperty Name="FinanceFlag" ColumnName="FinanceFlag" />
+          <ScalarProperty Name="TaxFlag" ColumnName="TaxFlag" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_GeneralLedgerAccount">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_GeneralLedgerAccount">
+        <MappingFragment StoreEntitySet="T_GeneralLedgerAccount">
+          <ScalarProperty Name="LA_GUID" ColumnName="LA_GUID" />
+          <ScalarProperty Name="AccGroup" ColumnName="AccGroup" />
+          <ScalarProperty Name="AccCode" ColumnName="AccCode" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_IEDetails">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_IEDetails">
+        <MappingFragment StoreEntitySet="T_IEDetails">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_IEHistoryDetails">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_IEHistoryDetails">
+        <MappingFragment StoreEntitySet="T_IEHistoryDetails">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_IEHistoryRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_IEHistoryRecord">
+        <MappingFragment StoreEntitySet="T_IEHistoryRecord">
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="IE_Flag" ColumnName="IE_Flag" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Tax" ColumnName="Tax" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_IEWriteOff">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_IEWriteOff">
+        <MappingFragment StoreEntitySet="T_IEWriteOff">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="IE_Flag" ColumnName="IE_Flag" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_InvType">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_InvType">
+        <MappingFragment StoreEntitySet="T_InvType">
+          <ScalarProperty Name="Key" ColumnName="Key" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_ModuleList">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_ModuleList">
+        <MappingFragment StoreEntitySet="T_ModuleList">
+          <ScalarProperty Name="Guid" ColumnName="Guid" />
+          <ScalarProperty Name="ChineseName" ColumnName="ChineseName" />
+          <ScalarProperty Name="EnglishName" ColumnName="EnglishName" />
+          <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+          <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
+          <ScalarProperty Name="IsShowTree" ColumnName="IsShowTree" />
+          <ScalarProperty Name="IsLastChild" ColumnName="IsLastChild" />
+          <ScalarProperty Name="URL" ColumnName="URL" />
+          <ScalarProperty Name="SubfunctionCode" ColumnName="SubfunctionCode" />
+          <ScalarProperty Name="ModuleState" ColumnName="ModuleState" />
+          <ScalarProperty Name="Level" ColumnName="Level" />
+          <ScalarProperty Name="Block" ColumnName="Block" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Payable">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Payable">
+        <MappingFragment StoreEntitySet="T_Payable">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="Payee" ColumnName="Payee" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_RateHistory">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_RateHistory">
+        <MappingFragment StoreEntitySet="T_RateHistory">
+          <ScalarProperty Name="TRate" ColumnName="TRate" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="CurrentRecord" ColumnName="CurrentRecord" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="FAmount" ColumnName="FAmount" />
+          <ScalarProperty Name="FCurrency" ColumnName="FCurrency" />
+          <ScalarProperty Name="TAmount" ColumnName="TAmount" />
+          <ScalarProperty Name="TCurrency" ColumnName="TCurrency" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Receivables">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Receivables">
+        <MappingFragment StoreEntitySet="T_Receivables">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Payer" ColumnName="Payer" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_RecPayHistoryRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_RecPayHistoryRecord">
+        <MappingFragment StoreEntitySet="T_RecPayHistoryRecord">
+          <ScalarProperty Name="RP_GUID" ColumnName="RP_GUID" />
+          <ScalarProperty Name="RP_Flag" ColumnName="RP_Flag" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="R_Per" ColumnName="R_Per" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="CFItem" ColumnName="CFItem" />
+          <ScalarProperty Name="CFPItem" ColumnName="CFPItem" />
+          <ScalarProperty Name="Bank" ColumnName="Bank" />
+          <ScalarProperty Name="BankAccount" ColumnName="BankAccount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_RecPayRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_RecPayRecord">
+        <MappingFragment StoreEntitySet="T_RecPayRecord">
+          <ScalarProperty Name="Record" ColumnName="Record" />
+          <ScalarProperty Name="RP_GUID" ColumnName="RP_GUID" />
+          <ScalarProperty Name="RP_Flag" ColumnName="RP_Flag" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="RPable" ColumnName="RPable" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="CFItemGuid" ColumnName="CFItemGuid" />
+          <ScalarProperty Name="CFPItemGuid" ColumnName="CFPItemGuid" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+          <ScalarProperty Name="InvTypeDts" ColumnName="InvTypeDts" />
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Report">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Report">
+        <MappingFragment StoreEntitySet="T_Report">
+          <ScalarProperty Name="rep_status" ColumnName="rep_status" />
+          <ScalarProperty Name="rep_date" ColumnName="rep_date" />
+          <ScalarProperty Name="period_type" ColumnName="period_type" />
+          <ScalarProperty Name="Rep_GUID" ColumnName="Rep_GUID" />
+          <ScalarProperty Name="RepNo" ColumnName="RepNo" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="Year" ColumnName="Year" />
+          <ScalarProperty Name="Month" ColumnName="Month" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Tax">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Tax">
+        <MappingFragment StoreEntitySet="T_Tax">
+          <ScalarProperty Name="T_GUID" ColumnName="T_GUID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_User">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_User">
+        <MappingFragment StoreEntitySet="T_User">
+          <ScalarProperty Name="SuperUser" ColumnName="SuperUser" />
+          <ScalarProperty Name="TelName" ColumnName="TelName" />
+          <ScalarProperty Name="Language" ColumnName="Language" />
+          <ScalarProperty Name="GroupCode" ColumnName="GroupCode" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="NickName" ColumnName="NickName" />
+          <ScalarProperty Name="U_GUID" ColumnName="U_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="EnterC_GUID" ColumnName="EnterC_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_WageCost">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_WageCost">
+        <MappingFragment StoreEntitySet="T_WageCost">
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="W_GUID" ColumnName="W_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Employee" ColumnName="Employee" />
+          <ScalarProperty Name="Cash" ColumnName="Cash" />
+          <ScalarProperty Name="PersonalTaxes" ColumnName="PersonalTaxes" />
+          <ScalarProperty Name="SocialSecurity" ColumnName="SocialSecurity" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_CompanyAccounts">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_CompanyAccounts">
+        <MappingFragment StoreEntitySet="V_CompanyAccounts">
+          <ScalarProperty Name="Acc_GUID" ColumnName="Acc_GUID" />
+          <ScalarProperty Name="C_parentId" ColumnName="_parentId" />
+          <ScalarProperty Name="Acc_Name" ColumnName="Acc_Name" />
+          <ScalarProperty Name="Acc_Code" ColumnName="Acc_Code" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_IEDetails">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_IEDetails">
+        <MappingFragment StoreEntitySet="V_IEDetails">
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="Money" ColumnName="Money" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_IERecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_IERecord">
+        <MappingFragment StoreEntitySet="V_IERecord">
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="TaxationAmount" ColumnName="TaxationAmount" />
+          <ScalarProperty Name="RPerName" ColumnName="RPerName" />
+          <ScalarProperty Name="IE_Flag" ColumnName="IE_Flag" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_IERecords">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_IERecords">
+        <MappingFragment StoreEntitySet="V_IERecords">
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="IE_Flag" ColumnName="IE_Flag" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="TaxationAmount" ColumnName="TaxationAmount" />
+          <ScalarProperty Name="TaxationType" ColumnName="TaxationType" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+          <ScalarProperty Name="IEGroup" ColumnName="IEGroup" />
+          <ScalarProperty Name="IEDescription" ColumnName="IEDescription" />
+          <ScalarProperty Name="BPName" ColumnName="BPName" />
+          <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+          <ScalarProperty Name="RP_GUID" ColumnName="RP_GUID" />
+          <ScalarProperty Name="State" ColumnName="State" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_Payable">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_Payable">
+        <MappingFragment StoreEntitySet="V_Payable">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="Payer" ColumnName="Payer" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="RPerName" ColumnName="RPerName" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="IEGroup" ColumnName="IEGroup" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_Receivable">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_Receivable">
+        <MappingFragment StoreEntitySet="V_Receivable">
+          <ScalarProperty Name="R_GUID" ColumnName="R_GUID" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="Payer" ColumnName="Payer" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="RPerName" ColumnName="RPerName" />
+          <ScalarProperty Name="State" ColumnName="State" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_RerPayRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_RerPayRecord">
+        <MappingFragment StoreEntitySet="V_RerPayRecord">
+          <ScalarProperty Name="RP_GUID" ColumnName="RP_GUID" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="RP_Flag" ColumnName="RP_Flag" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="DebitLedgerAccount" ColumnName="DebitLedgerAccount" />
+          <ScalarProperty Name="DebitDetailsAccount" ColumnName="DebitDetailsAccount" />
+          <ScalarProperty Name="CreditLedgerAccount" ColumnName="CreditLedgerAccount" />
+          <ScalarProperty Name="CreditDetailsAccount" ColumnName="CreditDetailsAccount" />
+          <ScalarProperty Name="R_PerName" ColumnName="R_PerName" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="CFItemGuid" ColumnName="CFItemGuid" />
+          <ScalarProperty Name="CFPItemGuid" ColumnName="CFPItemGuid" />
+          <ScalarProperty Name="CFItemName" ColumnName="CFItemName" />
+          <ScalarProperty Name="CFPItemName" ColumnName="CFPItemName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AssetCostType">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AssetCostType">
+        <MappingFragment StoreEntitySet="T_AssetCostType">
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="code" ColumnName="code" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Product_Saled">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Product_Saled">
+        <MappingFragment StoreEntitySet="T_Product_Saled">
+          <ScalarProperty Name="saled_amount" ColumnName="saled_amount" />
+          <ScalarProperty Name="saled_date" ColumnName="saled_date" />
+          <ScalarProperty Name="ie_guid" ColumnName="ie_guid" />
+          <ScalarProperty Name="product_guid" ColumnName="product_guid" />
+          <ScalarProperty Name="sale_batch_id" ColumnName="sale_batch_id" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AID_Product">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AID_Product">
+        <MappingFragment StoreEntitySet="T_AID_Product">
+          <ScalarProperty Name="Product_Guid" ColumnName="Product_Guid" />
+          <ScalarProperty Name="Use_AID_Amount" ColumnName="Use_AID_Amount" />
+          <ScalarProperty Name="AID_Guid" ColumnName="AID_Guid" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="SP_QueryIEListForProductSales" FunctionName="FMS_DevelopModel.Store.SP_QueryIEListForProductSales">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="FMS_DevelopModel.SP_QueryIEListForProductSales_Result">
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="RPerName" ColumnName="RPerName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <EntitySetMapping Name="V_Product_Saled_Detail">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_Product_Saled_Detail">
+        <MappingFragment StoreEntitySet="V_Product_Saled_Detail">
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="saled_amount" ColumnName="saled_amount" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="customer_name" ColumnName="customer_name" />
+          <ScalarProperty Name="saled_date" ColumnName="saled_date" />
+          <ScalarProperty Name="ie_guid" ColumnName="ie_guid" />
+          <ScalarProperty Name="product_guid" ColumnName="product_guid" />
+          <ScalarProperty Name="sale_batch_id" ColumnName="sale_batch_id" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_ReportDetails">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_ReportDetails">
+        <MappingFragment StoreEntitySet="T_ReportDetails">
+          <ScalarProperty Name="ending_amount" ColumnName="ending_amount" />
+          <ScalarProperty Name="beginning_amount" ColumnName="beginning_amount" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="row_no" ColumnName="row_no" />
+          <ScalarProperty Name="rep_guid" ColumnName="rep_guid" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_Prodcut_List">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.V_Prodcut_List">
+        <MappingFragment StoreEntitySet="V_Prodcut_List">
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="MaterielManage_GUID" ColumnName="MaterielManage_GUID" />
+          <ScalarProperty Name="MM_Name" ColumnName="MM_Name" />
+          <ScalarProperty Name="MM_GUID" ColumnName="MM_GUID" />
+          <ScalarProperty Name="saled_count" ColumnName="saled_count" />
+          <ScalarProperty Name="used_count" ColumnName="used_count" />
+          <ScalarProperty Name="stock_count" ColumnName="stock_count" />
+          <ScalarProperty Name="sub_type_name" ColumnName="sub_type_name" />
+          <ScalarProperty Name="SubTypeId" ColumnName="SubTypeId" />
+          <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+          <ScalarProperty Name="type_name" ColumnName="type_name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AIDSubTypeRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AIDSubTypeRecord">
+        <MappingFragment StoreEntitySet="T_AIDSubTypeRecord">
+          <ScalarProperty Name="Depreciation_year" ColumnName="Depreciation_year" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="AST_ParentAidType" ColumnName="AST_ParentAidType" />
+          <ScalarProperty Name="ASTTypeName" ColumnName="ASTTypeName" />
+          <ScalarProperty Name="AST_GUID" ColumnName="AST_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AIDTypeRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AIDTypeRecord">
+        <MappingFragment StoreEntitySet="T_AIDTypeRecord">
+          <ScalarProperty Name="Asset_class" ColumnName="Asset_class" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="AID_FLAG" ColumnName="AID_FLAG" />
+          <ScalarProperty Name="AidTypeName" ColumnName="AidTypeName" />
+          <ScalarProperty Name="AT_GUID" ColumnName="AT_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_Product">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_Product">
+        <MappingFragment StoreEntitySet="T_Product">
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="MaterielManage_GUID" ColumnName="MaterielManage_GUID" />
+          <ScalarProperty Name="SubTypeId" ColumnName="SubTypeId" />
+          <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+          <ScalarProperty Name="saled_count" ColumnName="saled_count" />
+          <ScalarProperty Name="used_count" ColumnName="used_count" />
+          <ScalarProperty Name="stock_count" ColumnName="stock_count" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Create_Date" ColumnName="Create_Date" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_AIDRecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_AIDRecord">
+        <MappingFragment StoreEntitySet="T_AIDRecord">
+          <ScalarProperty Name="MaterielManage_GUID" ColumnName="MaterielManage_GUID" />
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="Inventory_Number" ColumnName="Inventory_Number" />
+          <ScalarProperty Name="Number" ColumnName="Number" />
+          <ScalarProperty Name="SubType" ColumnName="SubType" />
+          <ScalarProperty Name="GUID_Parent" ColumnName="GUID_Parent" />
+          <ScalarProperty Name="CostType" ColumnName="CostType" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="SurplusValue" ColumnName="SurplusValue" />
+          <ScalarProperty Name="DepreciationPeriod" ColumnName="DepreciationPeriod" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="GUID" ColumnName="GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_IERecord">
+      <EntityTypeMapping TypeName="FMS_DevelopModel.T_IERecord">
+        <MappingFragment StoreEntitySet="T_IERecord">
+          <ScalarProperty Name="DomesticSumAmount" ColumnName="DomesticSumAmount" />
+          <ScalarProperty Name="DomesticAmount" ColumnName="DomesticAmount" />
+          <ScalarProperty Name="TaxdomesticAmount" ColumnName="TaxdomesticAmount" />
+          <ScalarProperty Name="SubBusiness_GUID" ColumnName="SubBusiness_GUID" />
+          <ScalarProperty Name="Business_GUID" ColumnName="Business_GUID" />
+          <ScalarProperty Name="Resale_Amount" ColumnName="Resale_Amount" />
+          <ScalarProperty Name="GUID_Parent" ColumnName="GUID_Parent" />
+          <ScalarProperty Name="Material_type" ColumnName="Material_type" />
+          <ScalarProperty Name="Profit_GUID" ColumnName="Profit_GUID" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="RP_GUID" ColumnName="RP_GUID" />
+          <ScalarProperty Name="IEDescription" ColumnName="IEDescription" />
+          <ScalarProperty Name="IEGroup" ColumnName="IEGroup" />
+          <ScalarProperty Name="BA_GUID" ColumnName="BA_GUID" />
+          <ScalarProperty Name="B_GUID" ColumnName="B_GUID" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+          <ScalarProperty Name="SumAmount" ColumnName="SumAmount" />
+          <ScalarProperty Name="TaxationType" ColumnName="TaxationType" />
+          <ScalarProperty Name="TaxationAmount" ColumnName="TaxationAmount" />
+          <ScalarProperty Name="Amount" ColumnName="Amount" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="AffirmDate" ColumnName="AffirmDate" />
+          <ScalarProperty Name="C_GUID" ColumnName="C_GUID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="Creator" ColumnName="Creator" />
+          <ScalarProperty Name="RPer" ColumnName="RPer" />
+          <ScalarProperty Name="InvNo" ColumnName="InvNo" />
+          <ScalarProperty Name="InvType" ColumnName="InvType" />
+          <ScalarProperty Name="IE_Flag" ColumnName="IE_Flag" />
+          <ScalarProperty Name="IE_GUID" ColumnName="IE_GUID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

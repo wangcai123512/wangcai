@@ -1,0 +1,907 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<input type="hidden" id="IE_GUID"/>
+<input type="hidden" id="flag"/>
+<div id="toolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	    <a class="easyui-linkbutton" onclick="Export()">数据导出</a>
+        
+	</div>
+	<div>
+		<form id="conditionForm">
+		<table>
+			<tr>
+				<td>收款日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="DateBegin" data-options="width:97,panelHeight:'auto'" />至<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:97,panelHeight:'auto'"/></td>
+			</tr>
+			<tr>
+				<td>付款单位:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+			<tr>
+				<td>收款类别:</td>
+				<td>
+				    <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+				        <option value=""></option>
+				        <option value="未归账">未归账</option>
+				        <option value="经营活动收款">经营活动收款</option>
+				        <option value="投资活动收款">投资活动收款</option>
+				        <option value="筹资活动收款">筹资活动收款</option>
+				    </select>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="RR_List"></table>
+<a id="GO" class="easyui-linkbutton" onclick="Go()">进入归账</a>
+<div id="IncomeGroup" style="display:none">
+	<input type="radio" name="Type" id="radio1" value="经营活动收款" checked="checked"/>
+	<label for="radio1">经营活动收款</label></br>
+
+	<input type="radio" name="Type" id="radio2" value="投资活动收款"/>
+	<label for="radio2">投资活动收款</label></br>
+
+	<input type="radio" name="Type" id="radio3" value="筹资活动收款"/>
+	<label for="radio3">筹资活动收款</label></br>
+    <a class="easyui-linkbutton" onclick="Next()">下一页</a>
+</div>
+
+<div id="r1" style="display:none">
+        <input type="radio" name="TypeDts" id="radio11" value="销售商品/提供服务的收款"  />
+	    <label for="radio11">销售商品/提供服务的收款</label></br>
+        <input type="radio" name="TypeDts" id="radio12" value="收到的其他与经营活动有关的款客户预付、押金返还、暂支还款等"  />
+	    <label for="radio12">收到的其他与经营活动有关的款客户预付、押金返还、暂支还款等</label></br>
+        <input type="radio" name="TypeDts" id="radio13" value="收到的税费返还"  />
+	    <label for="radio13">收到的税费返还</label></br>
+        <a class="easyui-linkbutton"  onclick="Submit()">提交</a>
+        <a class="easyui-linkbutton"  onclick="Back()">返回</a>
+</div>
+
+<div id="r2" style="display:none">
+        <input type="radio" name="TypeDts" id="radio21" value="收回投资的收款"  />
+	    <label for="radio21">收回投资的收款</label></br>
+        <input type="radio" name="TypeDts" id="radio22" value="取得投资收益的收款"  />
+	    <label for="radio22">取得投资收益的收款</label></br>
+        <input type="radio" name="TypeDts" id="radio23" value="处置固定资产、无形资产和其他长期资产所收回的款"  />
+	    <label for="radio23">处置固定资产、无形资产和其他长期资产所收回的款</label></br>
+        <input type="radio" name="TypeDts" id="radio24" value="收到的其他与投资活动有关的款"  />
+	    <label for="radio24">收到的其他与投资活动有关的款</label></br>
+        <a class="easyui-linkbutton"  onclick="Submit()">提交</a>
+        <a class="easyui-linkbutton"  onclick="Back()">返回</a>
+</div>
+
+<div id="r3" style="display:none">
+        <input type="radio" name="TypeDts" id="radio31" value="吸取投资的收款"  />
+	    <label for="radio31">吸取投资的收款</label></br>
+        <input type="radio" name="TypeDts" id="radio32" value="借款所获得的收款"  />
+	    <label for="radio32">借款所获得的收款</label></br>
+        <input type="radio" name="TypeDts" id="radio33" value="收到的其他与筹资活动有关的款"  />
+	    <label for="radio33">收到的其他与筹资活动有关的款</label></br>
+        <a class="easyui-linkbutton"  onclick="Submit()">提交</a>
+        <a class="easyui-linkbutton"  onclick="Back()">返回</a>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var LinkHandle = function (value, row) {
+        var EditThreshold = '@(((DateTime)Session["EditThreshold"]).ToShortDateString())';
+        EditThreshold = (new Date(EditThreshold)).getTime();
+        var date = ChangeDateFormat(row.Date);
+        date = date.replace(/-/g, "/");
+        date = (new Date(date)).getTime();
+        if (date >= EditThreshold) {
+            var a = "<a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Edit</a>";
+            var b = "<a class='linkbtn' onclick='DeleteClick(\"" + value + "\")'>@General.Resource.Common.Delete</a>";
+            var c="";
+            if (row.InvType == "未归账"&&row.IE_GUID==null) {
+                c = "<a class='linkbtn' onclick='RIClick(\"" + row + "\")'>计入收入</a>";
+            }
+            if (row.InvType == "未归账"&&row.IE_GUID!=null) {
+                c = "";
+            }
+            return   a+" " + b+" "+c;
+        }
+        else {
+            var d = "<a class='linkbtn' onclick='CheckClick(\"" + value + "\")'>@General.Resource.Common.Check</a>";
+            return d;
+        }
+    };
+
+    var InvTypeHandle = function(value) {
+	    if (value == ""||value==null) {
+	        return '未归账';
+	    } else {
+	        return value;
+	    }
+	};
+
+    var FJHandle = function(value, row, index) {
+	    if (value == ""||value==null) {
+	        return "";
+	    } else {
+	        var v = "../Content/EasyUI/themes/icons/hxz.png";
+	        //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="'+v+'" />';
+	    }
+	};
+
+
+    $(function () {
+        $("#RR_List").datagrid({
+            onLoadSuccess:compute,
+            url: '/ReceivablesClassify/GetReceivablesList',
+            checkOnSelect:true,
+            selectOnCheck: true,
+            singleSelect:true,
+            columns: [[
+                { checkbox: true },
+                { field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: ChangeDateFormat },
+                { field: 'R_PerName', title: '付款单位' },
+                { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+                { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+                { field: "InvType", title: "@FMS.Resource.Finance.Finance.Receive@FMS.Resource.Finance.Finance.Group"},
+                { field: 'BankAccount', title: '@FMS.Resource.Finance.Finance.ReceivableAccount' },
+                { field: 'Remark', title: '@General.Resource.Common.Remark' },
+                { field: 'RPer', title: '@General.Resource.Common.Remark',hidden:true},
+                { field: 'IE_GUID', title: '',align: 'center',hidden:true},
+                { field: 'A_GUID', title: '附件',align: 'center',formatter: FJHandle },
+                    { field: 'RP_GUID', title: '', formatter: LinkHandle }
+                ]
+            ],
+            pagination: true,
+            rownumbers: true,
+            toolbar: "#toolbar"
+        });
+    });
+
+    function Go() {
+        document.getElementById("IncomeGroup").style.display = "block";
+    }
+
+    function Next() {
+        if ($("input[name='Type']:checked").val() == "经营活动收款") {
+            document.getElementById("r1").style.display = "block";
+            document.getElementById("IncomeGroup").style.display = "none";
+            document.getElementById("r2").style.display = "none";
+            document.getElementById("r3").style.display = "none";
+        }
+        if ($("input[name='Type']:checked").val() == "投资活动收款") {
+            document.getElementById("r2").style.display = "block";
+            document.getElementById("IncomeGroup").style.display = "none";
+            document.getElementById("r1").style.display = "none";
+            document.getElementById("r3").style.display = "none";
+        }
+        if ($("input[name='Type']:checked").val() == "筹资活动收款") {
+            document.getElementById("r3").style.display = "block";
+            document.getElementById("IncomeGroup").style.display = "none";
+            document.getElementById("r1").style.display = "none";
+            document.getElementById("r2").style.display = "none";
+        }
+    }
+
+    function Back() {
+        document.getElementById("IncomeGroup").style.display = "block";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+    }
+
+    function CheckAmount() {
+        var cancelIncomeRecordRow = $("#CancelIncomeRecord_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.IE_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.ajax({
+            url: '/ReceivablesClassify/UpdState?id=' + ieguid,
+            type: "POST",
+            success: function(data) {
+                ;
+            }
+        });
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=97B181C8-D807-4BF0-8D8D-B23273E7FEFE',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelIncomeRecordDiv").dialog("destroy");
+    }
+
+        function CheckRecordTwo() {
+        var cancelIncomeRecordRow = $("#CRT_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.IE_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.ajax({
+            url: '/ReceivablesClassify/UpdState?id=' + ieguid,
+            type: "POST",
+            success: function(data) {
+                ;
+            }
+        });
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=E90ABB77-27D2-48D7-9A20-6F8862F0BE11',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelRecordTwo").dialog("destroy");
+    }
+
+        function CheckRecordThree() {
+        var cancelIncomeRecordRow = $("#CRThree_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.RP_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=496F9D4D-F71B-437A-9EA0-26107D3449C3',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelRecordThree").dialog("destroy");
+    }
+
+      function CheckRecordFour() {
+        var cancelIncomeRecordRow = $("#CRT_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.RP_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=0D3AED4A-0904-450B-9919-A952CD2E9534',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelRecordFour").dialog("destroy");
+    }
+
+     function CheckRecordFive() {
+        var cancelIncomeRecordRow = $("#CRT_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.IE_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.ajax({
+            url: '/ReceivablesClassify/UpdState?id=' + ieguid,
+            type: "POST",
+            success: function(data) {
+                ;
+            }
+        });
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=C55B2A4E-129B-407B-AC0B-14C091587D45',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelRecordFive").dialog("destroy");
+    }
+
+    function CheckRecordSix() {
+        var cancelIncomeRecordRow = $("#CRT_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.IE_GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.ajax({
+            url: '/ReceivablesClassify/UpdState?id=' + ieguid,
+            type: "POST",
+            success: function(data) {
+                ;
+            }
+        });
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=56B5FE80-EE8D-4E52-A2E8-8EE9A5F5BB73',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#CancelRecordSix").dialog("destroy");
+    }
+
+    function CheckReceivablesDeclareThree() {
+        var cancelIncomeRecordRow = $("#GetReceivablesDeclare_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=77A24D5F-3E0C-4211-A552-191FEE0E06FD',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+           $.ajax({
+               url: '/ReceivablesRecord/UpdState?id=' + ieguid,
+               type: "POST"
+                });
+	        $('#RR_List').datagrid("reload");
+	});
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#GetReceivablesDeclareThree").dialog("destroy");
+    }
+
+        function CheckReceivablesDeclareFour() {
+        var cancelIncomeRecordRow = $("#GetReceivablesDeclare_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=AD2E5437-0917-43E1-807C-41CA6751360F',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+           $.ajax({
+               url: '/ReceivablesRecord/UpdState?id=' + ieguid,
+               type: "POST"
+                });
+	        $('#RR_List').datagrid("reload");
+	});
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#GetReceivablesDeclareFour").dialog("destroy");
+    }
+
+    function CheckReceivablesDeclareFive() {
+        var cancelIncomeRecordRow = $("#GetReceivablesDeclare_List").datagrid("getSelected");
+        var ieguid = cancelIncomeRecordRow.GUID;
+        var invtype = $("input[name='Type']:checked").val();
+        var typedts = $("input[name='TypeDts']:checked").val();
+        var items = $('#RR_List').datagrid('getChecked');
+
+        $.each(items, function(index, item) {
+            var id = item.RP_GUID;
+            $.ajax({
+                url: '/ReceivablesClassify/UpdRecInyType?id=' + id + '&invtype=' + invtype + '&typedts=' + typedts + '&ieguid=' + ieguid +'&cfitemguid=106B9F2C-24A5-48B5-9621-418D00A7A75A',
+                type: "POST",
+                success: function(data) {
+                    $.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+           $.ajax({
+               url: '/ReceivablesRecord/UpdState?id=' + ieguid,
+               type: "POST"
+                });
+	        $('#RR_List').datagrid("reload");
+	});
+                    if ($.parseJSON(data).Result) {
+                        $('#RR_List').datagrid("reload");
+                    }
+                },
+                error: errorHandle
+            });
+        });
+
+        document.getElementById("IncomeGroup").style.display = "none";
+        document.getElementById("r1").style.display = "none";
+        document.getElementById("r2").style.display = "none";
+        document.getElementById("r3").style.display = "none";
+        $("#GetReceivablesDeclareFive").dialog("destroy");
+    }
+
+    function Submit() {
+        if ($("input[name='TypeDts']:checked").val() == "销售商品/提供服务的收款") {
+            $("<div id='CancelIncomeRecordDiv'></div>").dialog({
+                title: '应收帐明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelIncomeRecordDiv").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckAmount(); }
+                    }
+                ]
+            });
+            $('#CancelIncomeRecordDiv').dialog("refresh", "/ReceivablesClassify/CancelIncomeRecord");
+        }
+        if ($("input[name='TypeDts']:checked").val() == "收到的税费返还") {
+            $("<div id='CancelRecordTwo'></div>").dialog({
+                title: '应收帐明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelRecordTwo").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckRecordTwo(); }
+                    }
+                ]
+            });
+            $('#CancelRecordTwo').dialog("refresh", "/ReceivablesClassify/CancelRecordTwo");
+        }
+        if ($("input[name='TypeDts']:checked").val() == "收到的其他与经营活动有关的款客户预付、押金返还、暂支还款等") {
+        	var id;
+	        var name;
+	        var date;
+	        var money;
+	        var cur;
+             $("#RR_List").after('<div id="CancelRecordOne"></div>');
+	        $("#CancelRecordOne").dialog({
+	            title: '详细归账',
+	            closed: true,
+	            width: 250,
+	            height: 300,
+	            onClose: function() {
+	                $("#CancelRecordOne").dialog("destroy");
+	            },
+	            buttons: [
+	                {
+	                    text: '提交',
+	                    handler: function() { CheckOne(); }
+	                }
+	            ]
+	        });
+	        var rows = $('#RR_List').datagrid('getChecked');
+	        $.each(rows, function(index, item) {
+	            id = item.RP_GUID;
+	            name = item.R_PerName;
+	            date = item.Date;
+	            money = item.SumAmount;
+	            cur = item.Currency;
+	        });
+	        $("#CancelRecordOne").dialog("open");
+	        $('#CancelRecordOne').dialog("refresh", "/ReceivablesClassify/CancelRecordOne?Guid=" + id + "&Name=" + name + "&Date=" + date + "&Money=" + money + "&Cur" + cur);
+        }
+
+        if ($("input[name='TypeDts']:checked").val() == "收回投资的收款") {
+            $("<div id='CancelRecordThree'></div>").dialog({
+                title: '投资所支付的付款明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelRecordThree").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckRecordThree(); }
+                    }
+                ]
+            });
+            $('#CancelRecordThree').dialog("refresh", "/ReceivablesClassify/CancelRecordThree");
+        }
+
+         if ($("input[name='TypeDts']:checked").val() == "收到的其他与投资活动有关的款") {
+            $("<div id='CancelRecordFour'></div>").dialog({
+                title: '支付的其他与投资活动有关的付款明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelRecordFour").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckRecordFour(); }
+                    }
+                ]
+            });
+            $('#CancelRecordFour').dialog("refresh", "/ReceivablesClassify/CancelRecordFour");
+        }
+         if ($("input[name='TypeDts']:checked").val() == "取得投资收益的收款") {
+            $("<div id='CancelRecordFive'></div>").dialog({
+                title: '应收帐明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelRecordFive").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckRecordFive(); }
+                    }
+                ]
+            });
+            $('#CancelRecordFive').dialog("refresh", "/ReceivablesClassify/CancelRecordFive");
+        }
+
+       if ($("input[name='TypeDts']:checked").val() == "处置固定资产、无形资产和其他长期资产所收回的款") {
+            $("<div id='CancelRecordSix'></div>").dialog({
+                title: '应收帐明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#CancelRecordSix").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckRecordSix(); }
+                    }
+                ]
+            });
+            $('#CancelRecordSix').dialog("refresh", "/ReceivablesClassify/CancelRecordSix");
+        }
+
+        if ($("input[name='TypeDts']:checked").val() == "吸取投资的收款") {
+            $("<div id='GetReceivablesDeclareThree'></div>").dialog({
+                title: '吸取投资的明细',
+                width: 800,
+                height: 377,
+                onClose: function() {
+                    $("#GetReceivablesDeclareThree").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckReceivablesDeclareThree(); }
+                    }
+                ]
+            });
+            $('#GetReceivablesDeclareThree').dialog("refresh", "/ReceivablesClassify/GetReceivablesDeclareThree");
+        }
+
+       if ($("input[name='TypeDts']:checked").val() == "借款所获得的收款") {
+            $("<div id='GetReceivablesDeclareFour'></div>").dialog({
+                title: '借款所获得的收款明细',
+                width: 800,
+                height: 497,
+                onClose: function() {
+                    $("#GetReceivablesDeclareFour").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckReceivablesDeclareFour(); }
+                    }
+                ]
+            });
+            $('#GetReceivablesDeclareFour').dialog("refresh", "/ReceivablesClassify/GetReceivablesDeclareFour");
+        }
+
+        if ($("input[name='TypeDts']:checked").val() == "收到的其他与筹资活动有关的款") {
+            $("<div id='GetReceivablesDeclareFive'></div>").dialog({
+                title: '收到的其他与筹资活动有关的款明细',
+                width: 800,
+                height: 377,
+                onClose: function() {
+                    $("#GetReceivablesDeclareFive").dialog("destroy");
+                },
+                buttons: [
+                    {
+                        text: '销账',
+                        handler: function() { CheckReceivablesDeclareFive(); }
+                    }
+                ]
+            });
+            $('#GetReceivablesDeclareFive').dialog("refresh", "/ReceivablesClassify/GetReceivablesDeclareFive");
+        }
+    }
+
+    function CheckOne() {
+    $('#CancelRecordOne_div #Receivablesfile_upload').uploadify('upload', '*');
+    var id=$('#GUID').val();
+    var invtype=$("input[name='Type']:checked").val();
+    var typedts=$("input[name='TypeDts']:checked").val();
+    var typedtsdts=$("input[name='TypeDtss']:checked").val();
+	var remark = $('#Remark').val();
+    var ieguids = $('#IE_GUID').val();
+    $.ajax({
+    url: "/ReceivablesClassify/UpdPayInyType?id="+id+"&invtype="+invtype+"&typedts="+typedts+"&typedtsdts="+typedtsdts+"&remark="+remark+"&ieguid="+ieguids+"&cfitemguid=F6330595-F588-46B0-8998-752C7A1D774B",
+	type: "POST",
+	success: function (data) {
+	$.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+           $.ajax({
+               url: '/ReceivablesRecord/UpdState?id=' + ieguids,
+               type: "POST"
+                });
+	        $('#RR_List').datagrid("reload");
+	});
+        if ($.parseJSON(data).Result) {
+            $("#CancelRecordOne").dialog("destroy");
+				}
+			},
+			error: errorHandle
+		});
+    }
+
+    function AddClick(id) {
+        InitDialog();
+        $('#WinRR').dialog("refresh", "/ReceivablesClassify/ReceivablesRecord/" + id);
+
+    }
+
+    function CheckClick(id) {
+        if ($("#WinCheck").length > 0) {
+            $("#WinCheck").dialog("close");
+        }
+        $("#RR_List").after('<div id="WinCheck"></div>');
+        $("#WinCheck").dialog({
+            title: ' ',
+            collapsible: false,
+            minimizable: false,
+            width: 550,
+            height: 300,
+            onClose: function() { $("#WinCheck").dialog("destroy"); }
+        });
+        $('#WinCheck').dialog("refresh", "/ReceivablesClassify/CheckReceivablesRecord/" + id);
+    }
+
+    function RIClick() {
+        $("#RR_List").after('<div id="WinIncome"></div>');
+        $("#WinIncome").dialog({
+			closed: true,
+			title: ' ',
+			width: 800,
+			height: 400,
+			onLoad: function () {
+             var row = $("#RR_List").datagrid('getSelected');
+                $('#hidRPer').val(row.RPer);
+                $("#SumAmount").val(row.SumAmount);
+                $("#Currency").val(row.Currency);
+			    $("#a5").hide();
+                $("#a11").hide();
+			    $("#IsubmitI").hide();
+			},
+            buttons: [{
+					text: '@General.Resource.Common.Save',
+					handler: function () { IESaveI();}
+				}]
+		});
+        $("#WinIncome").dialog("open");
+		$("#WinIncome").dialog("refresh","/IncomeRecord/Temporary");
+    }
+//    原来的
+//    	function IESaveI() {
+//	    $("#Income_Form").form('submit', {
+//	        url: "/IncomeRecord/UpdIncomeRecord",
+//	        onSubmit: function () {
+//	            //表单验证
+//	            return $("#Income_Form").form('validate');
+//	        },
+//	        success: function (data) {
+//	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+//	            if ($.parseJSON(data).Result) {
+//	                $('#WinIncome').dialog("close");
+//                    //销账-收入：状态应收-已收
+//	                var v = $("#Income_Form #IE_GUID").val();
+//                     var row = $("#RR_List").datagrid('getSelected');
+//                    $.ajax({
+//                        url: '/ReceivablesClassify/UpdState?id=' +v,
+//                        type: "POST",
+//                        success: function(d) {
+//                        if ($.parseJSON(d).Result) {
+//                             //销账-收款：添加关联IE_GUID,
+//                            $.ajax({
+//                                url: '/ReceivablesClassify/UpdRR?id=' + row.RP_GUID + '&ieguid=' + v,
+//                                type: "POST"});  
+//                            }
+//                        }
+//                    });
+//                    $('#RR_List').datagrid("reload");        
+//	            }
+//	        }
+//	    });
+//	}
+    	function IESaveI() {
+	    $("#Income_Form").form('submit', {
+	        url: "/IncomeRecord/UpdIncomeRecord",
+	        onSubmit: function () {
+	            //表单验证
+	            return $("#Income_Form").form('validate');
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+	            if ($.parseJSON(data).Result) {
+                     var row = $("#RR_List").datagrid('getSelected');
+                     $.ajax({
+                           url: '/ReceivablesClassify/UpdRR?id=' + row.RP_GUID + '&ieguid=已计入收入不为空就行',
+                           type: "POST"});  
+                    $('#RR_List').datagrid("reload");        
+	            }
+	        }
+	    });
+	}
+
+
+    function DeleteClick(id) {
+        $.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/ReceivablesClassify/DelReceivablesRecord/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#RR_List').datagrid("reload");
+                        }
+                    },
+                    error: errorHandle
+                });
+            }
+        });
+    }
+
+   function InitDialog() {
+		$("#RR_List").after('<div id="WinRR"></div>');
+		$("#WinRR").dialog({
+			title: ' ',
+			collapsible: false,
+			minimizable: false,
+			width: 800,
+			height:350,
+			onClose: function () { $("#WinRR").dialog("destroy"); },
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { SubmitForm(); }
+			}]
+		});
+	}
+    	
+    function SubmitForm() {
+        $("#ReceivablesRecord").form('submit', {
+            url: "/ReceivablesClassify/UpdReceivablesRecord",
+            onSubmit: function () {
+                //return $("#ReceivablesRecord").form("validate");
+                if ($("#ReceivablesRecord").form("validate")) 
+				{
+					    $('#file_upload').uploadify('upload', '*');
+				        while (FileFlag != null) {return Boolean(FileFlag);}
+				        $("#imageview").datagrid("reload");
+				}
+                return $("#ReceivablesRecord").form("validate");
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#WinRR').dialog("close");
+                    $('#RR_List').datagrid("reload");
+                }
+            }
+        });
+    }
+
+     function Search() {
+        $("#RR_List").datagrid("load",$("#conditionForm").serializeObject());
+    }
+
+    function Export() {
+        $("#conditionForm").form("submit",{url:'/ReceivablesClassify/ExportXls'});
+    }
+	
+    function compute() {
+        var rows = $('#RR_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#RR_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+        if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+
+

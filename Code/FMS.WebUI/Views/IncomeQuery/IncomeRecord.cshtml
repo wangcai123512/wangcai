@@ -1,0 +1,315 @@
+﻿@{
+	ViewBag.Title = "IncomeRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_IERecord
+<form id="Income_Form">
+    <input type="hidden" name="IE_GUID" id="IE_GUID" value="@Model.IE_GUID" />
+    <input type="hidden" name="InvType" id="InvType" value="@Model.InvType"/>
+    <span style="font-size:15px;font-weight:900" id="Type"></span>
+    <table>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate:</td>
+            <td><input class="easyui-datebox" id="AffirmDate" name="AffirmDate" value="@(Model.AffirmDate.Equals(DateTime.MinValue) ? string.Empty : Model.AffirmDate.ToShortDateString())"/></td>
+            <td>@FMS.Resource.Finance.Finance.Client:</td>
+            <td>
+                <input class="easyui-combobox" id="RPer" name="RPer"  value="@Model.RPer"
+                       data-options='editable:false,url:"/InternalAPI/GetPayer",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200'/>
+            </td>
+            <td colspan="2">
+                <a class="easyui-linkbutton" onclick="ShowDetails();">新客户登记</a>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.ClosingDate:
+            </td>
+            <td>
+                <input class="easyui-datebox" id="Date" name="Date" value="@(Model.Date.Equals(DateTime.MinValue) ? string.Empty : Model.Date.ToShortDateString())"/> </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="Amount" name="Amount" class="easyui-numberbox" value="@Model.Amount" data-options="required:true, precision:2,groupSeparator:','" />
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Taxation@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="TaxationAmount" name="TaxationAmount" class="easyui-numberbox" value="@Model.TaxationAmount" data-options="required:true, precision:2,groupSeparator:','" />
+            </td>
+            <td>@FMS.Resource.Finance.Finance.TaxationType:</td>
+            <td>
+                <input id="TaxationType" name="TaxationType" class="easyui-numberbox" value="@Model.TaxationType" data-options="required:true, precision:2,groupSeparator:','" />
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.SumAmount:</td>
+            <td>
+                <input id="SumAmount" name="SumAmount" class="easyui-numberbox" value="@Model.SumAmount" data-options="required:true, precision:2,groupSeparator:','" />
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+            <td>
+                <input id="Currency" name="Currency" value="@Model.Currency"/>
+            </td>
+        </tr>
+        @*<tr>
+	<td>@FMS.Resource.Finance.Finance.ReceivableAccount</td>
+	<td>
+		<input id="Bank" name="B_GUID" value="@Model.B_GUID"/>
+	</td>
+	<td></td>
+	<td colspan="2">
+		<input id="BankAccount" name="BA_GUID" value="@Model.BA_GUID"/>
+	</td>
+</tr>*@
+        <tr>
+            <td>@General.Resource.Common.Remark :</td>
+            <td>
+                <input class="easyui-validatebox" id="Remark" name="Remark" value="@Model.Remark"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.InvNo:
+            </td>
+            <td>
+                <input class="easyui-validatebox" id="InvNo" name="InvNo"  value="@Model.InvNo"/>
+            </td>
+            <td colspan="4">
+                <div>
+                    <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID" />
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple" />
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <div id="div_files"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+<div id="imageview"></div>
+<div id="Partner"></div>
+<div id="Attachmentshow"></div>
+<script language="javascript" type="text/javascript">
+	$(function () {
+		var StandardCoin;
+		var CommonCurrency;
+		var Tax;
+		var BankAccount;
+		$.ajax({
+			url: "/InternalAPI/GetUserCurrency",
+			async: false,
+			dataType: "json",
+			success: function (d) { CommonCurrency = d; }
+		});
+		$.ajax({
+			url: "/InternalAPI/GetCompanySetting",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				StandardCoin = d.StandardCoin;
+			}
+		});
+		$.ajax({
+			url: "/InternalAPI/GetBankAccounts",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				var obj = new Object();
+				obj.ID = "0";
+				obj.Name = "现金";
+				obj.children = new Array();
+				d.push(obj);
+				BankAccount = d;
+			}
+		});
+		 $.ajax({
+			url: "/InternalAPI/GetTax",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				Tax=d;
+			}
+		});
+		$("#Currency").combobox({
+			editable: false,
+			required: true,
+			data: CommonCurrency,
+			onLoadSuccess: function (data) {
+					$("#Currency").combobox("setValue", StandardCoin);
+			}
+		});
+			$("#TaxationType").combobox({
+				valueField:'T_GUID',
+				textField:'Name',
+				editable: false,
+				required: true,
+				data:Tax,
+			});
+			$("#BankAccount").combobox({
+			editable: false,
+			required: true,
+			textField: "Name",
+			valueField: "ID"
+		});
+			$("#Bank").combobox({
+			editable: false,
+			required: true,
+			data: BankAccount,
+			textField: "Name",
+			valueField: "ID",
+			onSelect: function (rec) {
+				$("#BankAccount").combobox("loadData", rec.children);
+			},
+			onChange: function (newV, oldV) {
+				if (newV != oldV) {
+					$("#BankAccount").combobox("clear");
+				}
+			},
+			onLoadSuccess:function(data)
+			{  
+			$("#Bank").combobox("select", "@Model.B_GUID");
+			}
+		});
+
+		$("#Partner").dialog({
+				collapsible: false,
+				minimizable: false,
+				maximizable: false,
+				closed: true,
+				title: "@FMS.Resource.BusinessPartner.BusinessPartner.Partner",
+				width: 400,
+				height: 200,
+				buttons: [{
+					text: '@General.Resource.Common.Save',
+					handler: function () { Save(); }
+				}]
+			});
+
+	   //添加界面的附件管理
+		var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+		var ASPSESSID = "@Session.SessionID";
+		$('#file_upload').uploadify({
+			width:120,
+			height: 20,
+			swf : '/Content/uploadify/uploadify.swf',    //FLash文件路径
+			buttonText: '上传发票附件',               //按钮文本
+			uploader: '/IncomeQuery/Upload',       //处理文件上传Action
+			queueID: 'fileQueue',                        //队列的ID
+			queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+			auto: false,                                 //选择文件后是否自动上传，默认为true
+			multi: true,                                 //是否为多选，默认为true
+			removeCompleted: true,                       //是否完成后移除序列，默认为true
+			fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+			fileTypeDesc: 'Image Files',                 //文件描述
+			fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+			onQueueComplete: function (event, data) {                 //所有队列完成后事件
+				//ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+				FileFlag = true;
+			},
+			onUploadStart: function (file) {
+				$("#file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#IE_GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+			},
+			onUploadError: function (event, queueId, fileObj, errorObj) {
+				console.log(errorObj);
+				FileFlag = false;
+			}
+		}); 	  
+	});
+	
+	
+	 function ShowDetails()
+	{
+		$("#Partner").dialog("center");
+		$("#Partner").dialog("open");       
+			$("#Partner").dialog("refresh", "/IncomeQuery/BusinessPartner");
+	}
+
+	 function Save() {
+		$("#BusinessPartner").form('submit', {
+			url: "/IncomeQuery/UpdPartner",
+			onSubmit: function () { return $("#BusinessPartner").form("validate"); },
+			success: successHandle
+		});
+	}
+	 
+	var successHandle = function (data) {
+		$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+		if ($.parseJSON(data).Result) {
+			$("#Partner").dialog("close");
+			$('#RPer').combobox("reload");
+		}
+	};
+	
+    var SaveAttachmentsuccessHandle= function (data) {
+		$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+		if ($.parseJSON(data).Result) {
+			$("#Attachmentshow").dialog("close");
+			$('#imageview').datagrid("reload");
+		    $('#imageview').datagrid("refresh");
+		}
+	};
+
+	var LinkHandle = function (value) {
+	     var link1 = " <a class='linkbtn' href='/IncomeRecord/DownLoadFile?fileID="+value+"'>浏览</a> ";
+	     var link2 = " <a class='linkbtn' onclick='DelClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+	     var link3 = " <a class='linkbtn' onclick='UpdClick(\"" + value + "\")'>修改</a> ";
+        return link1 + link2 + link3;
+	};
+
+	$(function() {
+	    var id =document.getElementById("IE_GUID").value ;
+	    $("#imageview").datagrid({
+	        url: '/IncomeRecord/GetAttachment?id=' + id,
+	        columns: [[
+	            { field: 'FileName', title: '文件名' },
+	            { field: 'FileRemark', title: '备注' },
+	            { field: 'A_GUID', title: '操作', formatter: LinkHandle }
+	        ]],
+	        rownumbers: true,
+	        singleSelect: true
+	    });
+	});
+	
+    function UpdClick(id) {
+        $("#Attachmentshow").dialog({
+			title: '附件 ',
+			collapsible: false,
+			minimizable: false,
+			width: 300,
+			height:150,
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { SaveAttachment(); }
+			}]
+		}); 
+		$("#Attachmentshow").dialog("refresh", "/IncomeQuery/Attachment/" + id);
+    }
+    	
+    function SaveAttachment() {
+		$("#Attachenmtform").form('submit', {
+			url: "/IncomeQuery/UpdAttachment/",
+			onSubmit: function () { return $("#Attachenmtform").form("validate"); },
+			success: SaveAttachmentsuccessHandle
+		});
+	}
+
+    function DelClick(id) {
+        $.messager.confirm('确认', '确认删除?', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/IncomeRecord/DelEveryAttachment/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#imageview').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+

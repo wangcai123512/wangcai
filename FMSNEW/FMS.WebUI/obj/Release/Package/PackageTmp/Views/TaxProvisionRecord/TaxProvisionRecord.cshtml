@@ -1,0 +1,2531 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/taxrate.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/jquery.qrcode.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/webuploader.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/Attachment.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/webuploader.css")"/>
+<style type="text/css">
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+</style>
+<script type="text/javascript">
+    
+    function getUrlParms(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return unescape(r[2]);
+        return null;
+    }
+
+    $(document).ready(function () {
+        //alert(reportDate);exit;
+        //判断是页面/TaxProvisionRecord/index点击时间进来的
+            var reportDate = getUrlParms("reportDate");
+            var isend = getUrlParms("isend");
+            var period = getUrlParms("period");
+            
+            //alert(period);
+            
+        //如果period=year，隐藏结算按钮
+            if (period == 'year') {
+                $("#TaxSubmitForm").hide();
+            }
+            
+            if (isend == "已结转" || isend == '1') {
+                $("#One").hide();
+                $("#Three").show();
+                $("#TaxSubmitForm").hide();
+
+                $.ajax(
+            {
+                url: "/TaxProvisionRecord/GetTaxReportIsend?reportDate=" + reportDate + "&period=" + period + "&isend=" + isend,
+                async: false,
+                type: "post",
+                dataType: "json",
+                success: function (d) {
+                    if (d.length > 0) {
+                        var XiaoAmount = d[0].XiaoAmount;
+                        var JingAmount = d[0].JingAmount;
+                        var YiJiaoAmount = d[0].YiJiaoAmount;
+
+                        var ChuNeiAmount = d[0].ChuNeiAmount;
+                        var XiaoChuAmount = d[0].XiaoChuAmount;
+                        var ChuKouAmount = d[0].ChuKouAmount;
+
+                        $("#outputtax").attr("value", XiaoAmount);
+                        $("#inputtax").attr("value", JingAmount);
+                        $("#payingtax").attr("value", YiJiaoAmount);
+                        $("#payDateTAX").attr("value", reportDate);
+
+                      
+                        $("#exportreduce").attr("value", ChuNeiAmount);
+                        $("#transfertax").attr("value", XiaoChuAmount);
+                        $("#exporttax").attr("value", ChuKouAmount);
+
+                        $("#amt").prop("readOnly", true);
+                        $("#exportreduce").attr("readOnly", true);
+                        $("#transfertax").attr("readOnly", true);
+                        $("#exporttax").attr("readOnly", true);
+
+                        $("#amt").attr("value", XiaoAmount - JingAmount - YiJiaoAmount - ChuNeiAmount + XiaoChuAmount + ChuKouAmount);
+                    } else {
+
+                    }
+                }
+
+            });
+            }
+            
+            if (reportDate != null && isend== '0') {
+                $("#One").hide();
+                $("#Three").show();
+
+                $.ajax(
+            {
+                url: "/TaxProvisionRecord/GetTaxReportbyDate?reportDate=" + reportDate + "&period=" + period + "&isend=" + isend,
+                async: false,
+                type: "post",
+                dataType: "json",
+                success: function (d) {
+                    if (d.length > 0) {
+                        var XiaoAmount = d[0].XiaoAmount;
+                        var JingAmount = d[0].JingAmount;
+                        var YiJiaoAmount = d[0].YiJiaoAmount;
+         
+                        $("#outputtax").attr("value", XiaoAmount);
+                        $("#inputtax").attr("value", JingAmount);
+                        $("#payingtax").attr("value", YiJiaoAmount);
+                        $("#payDateTAX").attr("value", reportDate);
+
+                        $("#amt").attr("value", XiaoAmount - JingAmount - YiJiaoAmount);
+                    } else {
+
+                    }
+                }
+
+                });
+                
+            }
+
+        $.ajax({
+                url: "/TaxProvisionRecord/GetZhengZhiDetail?name=" + "出口抵减内销产品应纳税额",
+                async: false,
+                type: "post",
+                dataType: "json",
+                success: function (d) {
+                    if (d=='') {
+                        $("#exportreduce_new").hide();
+                        $("#exportreduce").hide();
+                        $("#exporttax").css("margin-top", "30px")
+                    } else {
+
+                        $("#exportreduce_new").show();
+                        $("#exportreduce").show();
+                        $("#exportreduce_new").css("margin-top", "10px");
+                        $("#transfertax_new").css("margin-top", "10px");
+                    }
+                }
+
+            });
+
+    $.ajax(
+          {
+              url: "/TaxProvisionRecord/GetZhengZhiDetail?name=" + "进项税额转出",
+              async: false,
+              type: "post",
+              dataType: "json",
+              success: function (t) {
+                  if (t == '') {
+                      $("#transfertax_new").hide();
+                      $("#transfertax").hide();
+
+                  } else {
+                      $("#transfertax_new").show();
+                      $("#transfertax").show();
+                      $("#transfertax").css("margin-top", "10px");
+                      $("#exporttax").css("margin-top", "10px");
+                  }
+              }
+
+          });
+
+    $.ajax(
+           {
+               url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "消费税",
+               async: false,
+               type: "post",
+               dataType: "json",
+               success: function (d) {
+                   if (d == '') {
+                       $("#Excise_new").hide();
+                       $("#Excise").hide();
+
+                   } else {
+
+                       $("#Excise_new").show();
+                       $("#Excise").show();
+                   }
+               }
+
+           });
+
+    $.ajax(
+           {
+               url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "资源税",
+               async: false,
+               type: "post",
+               dataType: "json",
+               success: function (d) {
+                   if (d == '') {
+
+                       $("#Resource_new").hide();
+                       $("#Resource").hide();
+                       document.getElementById("UrbanConstruction_new").setAttribute("style", "font-size: 14px; margin-bottom: 16px; font-weight:500;");
+                       document.getElementById("UrbanConstruction").setAttribute("style", "margin-bottom:20px;");
+                   } else {
+
+                       $("#Resource_new").show();
+                       $("#Resource").show();
+                   }
+               }
+
+           });
+
+    $.ajax(
+           {
+               url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "土地增值税",
+               async: false,
+               type: "post",
+               dataType: "json",
+               success: function (d) {
+                   if (d == '') {
+                       $("#LandValue_new").hide();
+                       $("#LandValue").hide();
+                       document.getElementById("UrbanLand").setAttribute("style", "margin-TOP:20px;margin-bottom:10px;");
+                   } else {
+
+                       $("#LandValue_new").show();
+                       $("#LandValue").show();
+                   }
+               }
+
+           });
+
+    $.ajax(
+          {
+              url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "城镇土地使用税",
+              async: false,
+              type: "post",
+              dataType: "json",
+              success: function (d) {
+                  if (d == '') {
+                      $("#UrbanLand_new").hide();
+                      $("#UrbanLand").hide();
+                      document.getElementById("Property").setAttribute("style", "margin-TOP:20px;margin-bottom:10px;");
+                  } else {
+
+                      $("#UrbanLand_new").show();
+                      $("#UrbanLand").show();
+                  }
+              }
+
+          });
+
+    $.ajax(
+         {
+             url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "房产税",
+             async: false,
+             type: "post",
+             dataType: "json",
+             success: function (d) {
+                 if (d == '') {
+                     $("#Property_new").hide();
+                     $("#Property").hide();
+                     document.getElementById("VehicleVessel").setAttribute("style", "margin-TOP:20px;margin-bottom:10px;");
+                 } else {
+
+                     $("#Property_new").show();
+                     $("#Property").show();
+                 }
+             }
+
+         });
+
+    $.ajax(
+         {
+             url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "车船税",
+             async: false,
+             type: "post",
+             dataType: "json",
+             success: function (d) {
+                 if (d == '') {
+                     $("#VehicleVessel_new").hide();
+                     $("#VehicleVessel").hide();
+                     document.getElementById("MineralResources").setAttribute("style", "margin-TOP:40px;margin-bottom:10px;");
+                 } else {
+
+                     $("#VehicleVessel_new").show();
+                     $("#VehicleVessel").show();
+                 }
+             }
+
+         });
+
+    $.ajax(
+         {
+             url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "矿产资源补偿费",
+             async: false,
+             type: "post",
+             dataType: "json",
+             success: function (d) {
+                 if (d == '') {
+                     $("#MineralResources_new").hide();
+                     $("#MineralResources").hide();
+                     document.getElementById("Dischargefee").setAttribute("style", "margin-TOP:40px;margin-bottom:10px;");
+                 } else {
+
+                     $("#MineralResources_new").show();
+                     $("#MineralResources").show();
+                 }
+             }
+
+         });
+
+    $.ajax(
+         {
+             url: "/TaxProvisionRecord/GetSalesTaxDetail?name=" + "排污费",
+             async: false,
+             type: "post",
+             dataType: "json",
+             success: function (d) {
+                 if (d == '') {
+                     $("#Dischargefee_new").hide();
+                     $("#Dischargefee").hide();
+
+                 } else {
+                     $("#Dischargefee_new").show();
+                     $("#Dischargefee").show();
+                 }
+             }
+
+         });
+
+    var currency
+    InitalDateInput();
+    $.ajax({
+        url: "/InternalAPI/GetCommonCurrency",
+        async: false,
+        dataType: "json",
+        success: function (d) {
+            currency = d;
+        }
+    });
+    $('#Currency').multiselect({
+        buttonWidth: '100%',
+        maxHeight: 150,
+        enableFiltering: true,
+        includeFilterNewBtn: false
+    });
+
+    $("#Currency").multiselect('dataprovider', currency);
+    $("#Currency").val("").multiselect('refresh');
+    $("#Currency").multiselect('select', standardCoin);
+
+    var detailType
+    $.ajax({
+        url: "/GeneralLedgerAccount/GetDetailSubject?Name="+"营业税金及附加",
+        async: false,
+        dataType: "json",
+        success: function (d) {
+
+            detailType = d;
+        },
+        error: function (a, b, c) {
+
+            alert(a);
+        }
+    });
+
+    $('#IEGroup').multiselect({
+        buttonWidth: '100%',
+        maxHeight: 150,
+        enableFiltering: true,
+        includeFilterNewBtn: false,
+        nonSelectedText: ''
+
+    });
+    $("#IEGroup").multiselect('dataprovider', detailType);
+    $("#IEGroup").val("").multiselect("refresh");
+
+    var guid;
+    var guid = NewGUID();
+    $("#Example_1 #GUID").val(guid);
+    $("#IE_GUID").val(guid);
+    IntiFileUpload("#certificate", guid);
+    TaxDateInit();
+    $("#btnPreview").hide();
+    $('#dataList').bootstrapTable({
+        url: "/TaxProvisionRecord/GetTaxSettlement?Flag="+"Tax",
+        method: 'get',
+        pageSize: 10,
+        pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+        pageNumber: 1,
+        singleSelect: true,
+        clickToSelect: true,
+        checkOnSelect: true,
+        selectOnCheck: true,
+        pagination: true,
+        search: false, // 开启搜索功能
+        showColumns: false,
+        showRefresh: false,
+        showQuery: false,
+        showToggle: false,
+        showExport: false,
+        uniqueId: "GUID",
+        exportTypes: ['xml', 'txt', 'excel'],
+        columns: [[
+            { field: 'Rep_date', title: '月份', align: 'center', formatter: Handle },
+            { field: 'Rep_status', align: 'center', title: '结算状态' },
+            { field: 'Amount', title: '结算金额', align: 'center', formatter: DecimalFmter },
+            { field: 'GUID', title: '操作', align: 'center', formatter: LinkHandle1 },
+        ]],
+        pagination: true,
+        rownumbers: true
+
+    });
+
+    $('.report-date').change(function () {
+        $.ajax(
+           {
+               url: "/TaxProvisionRecord/GetTaxSettlement?Flag="+"Tax",
+               async: false,
+               type: "post",
+               dataType: "json",
+               data: { repDate: $("#months").val() },
+               success: function (d) {
+                   if (d.length > 0) {
+                       $('#btnPreview').hide();
+                       $("#Reports").hide();
+                       $("#SettlementList").show();
+                   } else {
+                       $('#btnPreview').show();
+                       $("#Reports").hide();
+                       $("#SettlementList").hide();
+                       $("#Settlement").show();
+                   }
+               }
+
+           });
+    })
+
+
+    //$("#payDateTAX").datepicker({
+    //    language: "zh-CN",
+    //    autoclose: true, //选中之后自动隐藏日期选择框
+    //    clearBtn: true, //清除按钮
+    //    todayBtn: true,
+    //    endDate: new Date(),
+    //    format: "yyyy/mm/dd"//日期格式
+    //});
+
+    $("#payDate").datepicker({
+        language: "zh-CN",
+        autoclose: true, //选中之后自动隐藏日期选择框
+        clearBtn: true, //清除按钮
+        todayBtn: true,
+        endDate: new Date(),
+        format: "yyyy/mm/dd"//日期格式
+    });
+
+    //$("#payDateTAX").val(formatDateTime(new Date()));
+    $("#payDate").val(formatDateTime(new Date()));
+
+    $("#Detail").on("hidden.bs.modal", function () {
+        $('#DetailTable').bootstrapTable('destroy');
+    });
+
+
+    //        $("#SumAmount").blur(function () {
+    //            var amount = document.getElementById('SumAmount').value == '' ? 0 : document.getElementById('SumAmount').value;
+    //            document.getElementById('SumAmount').value = Money(parseFloat(amount));
+    //        });
+
+    //计算增值税
+
+    $("#Example_1 #outputtax").blur(function () {
+        Amt( "#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+            "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax","#Example_1 #amt")
+    });
+
+    $("#Example_1 #inputtax").blur(function () {
+        Amt("#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+            "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax","#Example_1 #amt")
+    });
+
+    $("#Example_1 #transfertax").blur(function () {
+        Amt( "#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+            "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax", "#Example_1 #amt")
+    });
+
+    $("#Example_1 #exportreduce").blur(function () {
+        Amt("#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+            "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax", "#Example_1 #amt")
+    });
+
+    $("#Example_1 #payingtax").blur(function () {
+        Amt("#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+           "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax", "#Example_1 #amt")
+    });
+
+    $("#Example_1 #exporttax").blur(function () {
+        Amt("#Example_1 #outputtax", "#Example_1 #inputtax", "#Example_1 #transfertax",
+           "#Example_1 #exportreduce", "#Example_1 #payingtax", "#Example_1 #exporttax", "#Example_1 #amt")
+    });
+
+
+    //计算营业税金及附加
+    $("#Example_1 #Excise").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+            "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+            "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+            "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #Sales").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+            "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+            "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+            "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #UrbanConstruction").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+            "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+            "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+            "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #Resource").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #LandValue").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+            "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+            "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+            "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #UrbanLand").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #Property").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #VehicleVessel").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #EducationFee").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #MineralResources").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    $("#Example_1 #Dischargefee").blur(function () {
+        Sum("#Example_1 #Excise", "#Example_1 #Sales", "#Example_1 #UrbanConstruction",
+           "#Example_1 #Resource", "#Example_1 #LandValue", "#Example_1 #UrbanLand",
+           "#Example_1 #Property", "#Example_1 #VehicleVessel", "#Example_1 #EducationFee",
+           "#Example_1 #MineralResources", "#Example_1 #Dischargefee", "#Example_1 #Amount")
+    });
+
+    });
+
+    var formatDateTime = function (date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        return y + '/' + m + '/' + d ;
+    };
+    function IntiFileUpload(selector, guid) {
+        //      var files = $("#certificate").fileinput('getFileStack');
+        FileInputBaseSetting(selector);
+        $(selector).fileinput('refresh', {
+            uploadUrl: '/InternalAPI/FileUpload',
+            allowedFileExtensions: ['jpg', 'png'],
+            uploadExtraData: function () { // callback example
+                var out = {};
+                out['frGuid'] = guid;
+                return out;
+            }
+        });
+    }
+    function TaxDateInit() {
+        var months = "";
+        var now = new moment(); //当前日期
+        var nowMonth = now.month() + 1; //当前月
+        var nowYear = now.year(); //当前年
+        var lstMonths = new Array();
+        var temp = new Object;
+        temp.label = "选择 ";
+        temp.value = "0";
+        lstMonths.push(temp);
+        for (var i = 1; i <= nowMonth; i++) {
+            temp = new Object;
+            temp.label = nowYear + "/" + i;
+            temp.value = nowYear + "/" + i;
+            lstMonths.push(temp);
+        }
+        $("#months").multiselect('dataprovider', lstMonths);
+
+    }
+
+    function Amt(selector1, selector2, selector3, selector4, selector5, selector6, selector7) {
+        var p1 = $(selector1).val();
+        var p2 = $(selector2).val();
+        var p3 = $(selector3).val();
+        var p4 = $(selector4).val();
+        var p5 = $(selector5).val();
+        var p6 = $(selector6).val();
+        var p7 = $(selector7).val();
+        if (p1 == "") {
+            p1 = 0;
+        }
+        if (p2 == "") {
+            p2 = 0;
+        }
+        if (p3 == "") {
+            p3 = 0;
+        }
+        if (p4 == "") {
+            p4 = 0;
+        }
+        if (p5 == "") {
+            p5 = 0;
+        }
+        if (p6 == "") {
+            p6 = 0;
+        }
+        if (p7 == "") {
+            p7 = 0;
+        }
+
+        p1 = parseFloat(p1);
+        p2 = parseFloat(p2);
+        p3 = parseFloat(p3);
+        p4 = parseFloat(p4);
+        p5 = parseFloat(p5);
+        p6 = parseFloat(p6);
+        p7 = parseFloat(p7);
+
+        //alert(p1 - p2 + p3 - p4 - p5 + p6);
+        $(selector7).val(Money(p1 - p2 + p3 - p4 - p5 + p6));
+        //alert(Money(p1 - p2 + p3 - p4 - p5 + p6));
+    };
+
+    function Sum(selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9, selector10, selector11, selector12) {
+        var p1 = $(selector1).val();
+        var p2 = $(selector2).val();
+        var p3 = $(selector3).val();
+        var p4 = $(selector4).val();
+        var p5 = $(selector5).val();
+        var p6 = $(selector6).val();
+        var p7 = $(selector7).val();
+        var p8 = $(selector8).val();
+        var p9 = $(selector9).val();
+        var p10 = $(selector10).val();
+        var p11 = $(selector11).val();
+        var p12 = $(selector12).val();
+        if (p1 == "") {
+            p1 = 0;
+        }
+        if (p2 == "") {
+            p2 = 0;
+        }
+        if (p3 == "") {
+            p3 = 0;
+        }
+        if (p4 == "") {
+            p4 = 0;
+        }
+        if (p5 == "") {
+            p5 = 0;
+        }
+        if (p6 == "") {
+            p6 = 0;
+        }
+        if (p7 == "") {
+            p7 = 0;
+        }
+        if (p8 == "") {
+            p8 = 0;
+        }
+        if (p9 == "") {
+            p9 = 0;
+        }
+        if (p10 == "") {
+            p10 = 0;
+        }
+        if (p11 == "") {
+            p11 = 0;
+        }
+        if (p12 == "") {
+            p12 = 0;
+        }
+
+        p1 = parseFloat(p1);
+        p2 = parseFloat(p2);
+        p3 = parseFloat(p3);
+        p4 = parseFloat(p4);
+        p5 = parseFloat(p5);
+        p6 = parseFloat(p6);
+        p7 = parseFloat(p7);
+        p8 = parseFloat(p8);
+        p9 = parseFloat(p9);
+        p10 = parseFloat(p10);
+        p11 = parseFloat(p11);
+        p12 = parseFloat(p12);
+
+        $(selector12).val(Money(p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11));
+    };
+
+
+
+</script>
+
+<div id="main" style="margin-top: 100px;">
+<aside id="sidebar_left" style="font-size: 16px;">
+    <div class="sidebar-menu" style="margin-top: 10px">
+        <ul class="nav" style="">
+        <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+            <li class="active"> <a onclick="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'" href="javascript:window.location = '/TaxProvisionRecord/TaxProvisionRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px; color: #08C">记录税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+           <li> <a onclick="javascript:window.location = '/ExpenseQuery/TaxQuery'" href="javascript:window.location = '/ExpenseQuery/TaxQuery'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">查询税费</span> <span class="sidebar-title-tray"></span> </a> </li>
+            @*<li> <a onclick="javascript:window.location = '/ExpenseQuery/Index'" href="javascript:window.location = '/ExpenseQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询与编辑成本与费用记录</span></a> </li>*@
+            <li> <a @*onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"*@><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+        </ul>
+    </div>
+</aside>
+<!-- Start: Content -->
+<section id="content_wrapper">
+<div id="MAIN" style="background-color: #FFF">
+<div id="content" style="padding-bottom: 150px;" onclick="removeClass()">
+    <div id="One" class="row" style="margin-top: 20px">
+    <div class="col-md-12" style="margin: auto">
+        <div class="col-md-12" style="margin-bottom: 0px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">记录税费</span></div>
+        <div class="col-md-4" style="margin: auto"></div>
+        <div class="col-md-4" style="margin: auto">
+            @*<button type="button" id="btn1" onclick="btn1click()" style="margin-top: 10px; height: 45px; width: 100%; border-radius: 100px; font-size: 18px;background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                记录增值税</button>*@
+
+            <button type="button" id="btn1" onclick="javascript:window.location = '/TaxProvisionRecord/index'" style="margin-top: 10px; height: 45px; width: 100%; border-radius: 100px; font-size: 18px;background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                记录增值税
+            </button>
+            <button type="button" onclick="btn2click()" style="margin-top: 20px; height: 45px; width: 100%; border-radius: 100px; font-size: 18px;background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                记录营业税金及附加</button>
+            <button type="button" onclick="javascript:window.location = '/TaxProvisionRecord/ComTaxRecord'" style="margin-top: 20px; height: 45px; width: 100%; border-radius: 100px; font-size: 18px; background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                记录企业所得税</button>
+            <button type="button" onclick="btn4click()" style="display:none;margin-top: 20px; height: 45px; width: 100%; border-radius: 100px; font-size: 18px; background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                记录个人所得税</button>
+            <div class="col-md-12" style="margin: auto; text-align: center">
+                <button onclick="javascript:window.location = '/Common/Index'" type="button" style="margin-top: 20px; height: 30px; width: 50%; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">返回上页</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+ <div class="row" id="Two" style="margin-top: 20px;display:none" >
+    <div id="Example_1"> 
+      <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">记录营业税金及附加</span></div>
+      <div class="col-md-12" style="margin: auto">
+      <div class="col-md-1" style="margin: auto"></div>
+      <div class="col-md-10" style="margin: auto">
+                <div class="col-md-12" style="margin-bottom: 0px">
+
+                 <form class="cmxform" id="Expense_Form" method="get">
+                     <div id="title" class="col-md-12">
+
+                         <div class="col-md-6" style="margin-left:0px;">
+                             <label style="font-size: 13px;">日期</label>
+                         </div>
+                         <div class="col-md-6" style="margin-left:-238px;">
+                             <label style="font-size: 13px;">营业税金及附加</label>
+                         </div>
+                         
+                         <div class="col-md-6" style="margin-left:-178px;width:152px;">
+                             <label style="font-size: 13px;">营业税金及附加子类别</label>
+                         </div>
+
+                     </div>
+                  <input type="hidden" name="GUID" id="GUID"/>
+                  <input type="hidden" name="IE_GUID" id="IE_GUID"/>
+                  <input type="hidden" name="State" id="State" value="应付"/>
+                  <input type="hidden" name="InvType" id="InvType"/>
+                  <input type="hidden" name="SumAmount" id="SumAmount1" />
+                  <input type="hidden" name="Profit_Name" id="Profit_Name"/>
+                     
+                     <div class="col-md-6" style="width:110px;margin-left:-20px;">
+                         <div class="input-group input-group-sm" style="margin: 0">
+                             <input type="text" class="form-control mtn" id="payDate" name="payDate" autocomplete="off" value="">
+                         </div>
+                     </div>
+
+
+
+                     <div class="col-md-6" style="width:140px;margin-left:15px;">
+
+                         <div class="input-group input-group-sm" style="margin: 0">
+                             <input type="text" id="Amount" name="Amount" class="form-control" maxlength="10" min="0.1" value="0.00">
+                         </div>
+
+                     </div>
+
+                     <div class="col-md-6" style="width:120px;margin-left:44px;">
+                         <div class="input-group input-group-sm" style="width:169px">
+                             <label id="Excise_new" class="Excise_new" style="font-size: 14px; margin-bottom: 16px;font-weight:500;">消费税</label><br />
+                             <label style="font-size: 14px; margin-bottom: 16px;font-weight: 500;">教育费附加</label><br />
+                             <label style="font-size: 14px; margin-bottom: 16px;font-weight:500;">营业税</label><br />
+                             <label id="UrbanConstruction_new" class="UrbanConstruction_new" style="font-size: 14px; margin-bottom: 16px; font-weight:500;">城市维护建设税</label><br />
+                             <label id="Resource_new" class="Resource_new" style="font-size: 14px; margin-bottom: 16px;font-weight:500;">资源税</label><br />
+                             <label id="LandValue_new" class="LandValue_new" style="font-size: 14px; margin-bottom: 16px;font-weight:500;">土地增值税</label><br />
+                             <label id="UrbanLand_new" class="UrbanLand_new" style="font-size: 14px; margin-bottom: 16px;font-weight: 500;">城镇土地使用税</label><br />
+                             <label id="Property_new" class="Property_new" style="font-size: 14px; margin-bottom: 16px;font-weight: 500;">房产税</label><br />
+                             <label id="VehicleVessel_new" class="VehicleVessel_new" style="font-size: 14px; margin-bottom: 16px;font-weight: 500;">车船税</label><br />
+                             
+                             <label id="MineralResources_new" class="MineralResources_new" style="font-size: 14px; margin-bottom: 16px;font-weight: 500;">矿产资源补偿费</label><br />
+                             <label id="Dischargefee_new" class="Dischargefee_new" style="font-size: 14px; font-weight: 500;">排污费</label>
+                         </div>
+
+                     </div>
+
+                     <div class="col-md-6" style="width:120px;margin-left:55px;">
+
+                         <div class="input-group input-group-sm" style="margin: 0">
+                             <input type="number" id="Excise" name="Excise" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="EducationFee" name="EducationFee" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="Sales" name="Sales" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="UrbanConstruction" name="UrbanConstruction" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="Resource" name="Resource" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="LandValue" name="LandValue" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="UrbanLand" name="UrbanLand" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="Property" name="Property" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="VehicleVessel" name="VehicleVessel" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             
+                             <input type="number" id="MineralResources" name="MineralResources" class="form-control" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                             <input type="number" id="Dischargefee" name="Dischargefee" class="form-control" maxlength="10" min="0.1" value="0.00">
+                         </div>
+
+
+                     </div>
+                       <!--<div class="col-md-12" style="text-align: center">
+                             <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税费类别&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="IEGroup" name="IEGroup">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;费用描述&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="IEDescription" name="IEDescription" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                   </div>
+                    <div class="col-md-12" style="text-align: center">
+                        <div class="col-md-6" style="padding-right: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;税费计提日期&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="AffirmDate" name="AffirmDate" class="form-control datepicker mtn">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-left: 25px">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">合同/发票/凭证号</span>
+                                            <input type="text" id="InvNo" name="InvNo" class="Pnumber form-control" placeholder="">
+                                       </div>
+                                    </div>
+                         </div>
+                    </div>               
+                    <div class="col-md-12" style="text-align: center">
+                       <div class="col-md-6" style="padding-right: 25px">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;税费金额&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <input id="SumAmount" name="SumAmount" type="number" class="form-control" placeholder="" maxlength="10" min="0.1">
+
+                                        </div>
+                                    </div>
+                         </div>
+                         <div class="col-md-6" style="padding-left: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;货币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="Currency" name="Currency">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                     </div>
+                     <div class="col-md-12" style="text-align: center">
+                         <div class="col-md-6" style="padding-right: 25px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="text" id="Remark" name="Remark" class="form-control" placeholder="">
+                                   </div>
+                                </div>
+                            </div>
+                        <div class="col-md-6" style="padding-left: 25px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                 <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                     <button class="btn btn-primary btn-sm" style="width:83px;margin-left:2px;margin-right:20px" type="button" onclick="ShowFirstUpLoadDialog()"> 上传附件</button>
+                                                <button class="btn btn-primary btn-sm"style="width:83px;"  id="" name="" type="button" onclick="showUploadFile()"> &nbsp;&nbsp;&nbsp;浏&nbsp;&nbsp;&nbsp;览....</button>         
+                                </div>
+                            </div>
+                        </div> 
+                     </div>-->
+                     <div class="col-md-12" style="margin: auto;">
+                            <div class="col-md-6" style="margin: auto">
+                                <!--<button onclick="ISubmit()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">提交</button>-->
+                                <button onclick="SalesSubmit()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">提交</button>
+                            </div>
+                            <div class="col-md-6" style="margin: auto">
+                                <button onclick="Back1()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>
+                            </div>
+                        </div>
+                      </form>
+                       </div>
+                            </div>
+                        </div>
+    </div>                
+</div>
+    
+        <!--20180313修改注释-->
+    
+        <div id="Three" class="row" style="margin-top: 20px;display:none">
+            <div class="col-md-12" style="margin-bottom: 0px; text-align: center"><span style="font-size: 18px; font-weight: 900; color: #074592; text-decoration: underline">计录增值税</span></div>
+            <form id="TaxForm" action="#">
+                <div id="title" class="col-md-12">
+                    
+                    <div class="col-md-2" style="margin-left:12px;">
+                        <label style="font-size: 13px;">日期</label>
+                    </div>
+                    <div class="col-md-2" style="margin-left:-60px;">
+                        <label style="font-size: 13px;">增值税金额</label>
+                    </div>
+                    <div class="col-md-2" style="margin-left:-60px;">
+                        
+                    </div>
+
+                    <div class="col-md-2" style="margin-left:-62px;">
+                        <label style="font-size: 13px;">增值税子类别</label>
+                    </div>
+
+                </div>
+                <div id="AddLayout" style="">
+
+                    <div id="Example_1" class="col-md-12">
+                        <input type="hidden" name="RP_GUID" value="" id="RP_GUID" />
+                        <input type="hidden" name="IE_GUID" value="" id="IE_GUID" />
+                        <input type="hidden" name="GUID" value="" id="GUID" />
+                        <input type="hidden" name="DisAmount" value="" id="DisAmount" />
+                        <input type="hidden" name="InvNo" value="" id="InvNo" />
+                        <input type="hidden" name="Remark" value="" id="Remark" />
+                        <input type="hidden" name="Mark" value="" id="Mark" />
+                        @*<input type="hidden" name="reportDate" id="reportDate" value="@ViewBag.reportDate" />*@
+                        <div class="col-md-2" style="width:110px;margin-left:-20px;">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                @*<input type="text" class="form-control mtn" id="payDateTAX" name="payDateTAX" value="">*@
+                                <input type="text" class="form-control" readonly="readonly" id="payDateTAX" name="payDateTAX" value="">
+                            </div>
+                        </div>
+
+                        
+                        
+                        <div class="col-md-2" style="width:140px;margin-left:15px;">
+
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <input type="text" id="amt" name="amt" class="Amount form-control money" maxlength="10" min="0.1" value="0.00">
+                                    
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-1" style="width:120px;margin-left:44px;">
+                            <div class="input-group input-group-sm" style="width:169px">
+                                <label style="font-size: 14px; margin-bottom: 16px;font-weight:500;margin-top:7px;">进项税额</label><br />
+                                <label style="font-size: 14px; margin-bottom: 16px;font-weight:500;">销项税额</label><br />
+                                <label id="exportreduce_new" class="exportreduce_new" style="font-size: 14px; margin-bottom: 16px;font-weight:500;">出口抵减内销产品应纳税额</label><br />
+                                <label id="transfertax_new" class="transfertax_new" style="font-size: 14px; margin-bottom: 16px;font-weight:500;">进项税额转出</label><br />
+                                <label style="font-size: 14px; margin-bottom: 16px;font-weight:500;">出口退税</label><br />
+                                <label style="font-size: 14px;font-weight:500;">已交税金</label>
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-md-1" style="width:120px;margin-left:55px;">
+                            
+                <div class="input-group input-group-sm" style="margin: 0">
+                    <input type="number" id="inputtax" name="inputtax" readonly="readonly" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;border:none;"><br />
+                    <input type="number" id="outputtax" readonly="readonly" name="outputtax" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom: 19px; border: none;"><br />
+
+
+
+    <input type="number" id="exportreduce" name="exportreduce" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                     <input type="number" id="transfertax" name="transfertax" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;"><br />
+                     <input type="number" id="exporttax" name="exporttax" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="margin-bottom:5px;margin-top:11px;"><br /> 
+
+                
+
+                    <input type="number" id="payingtax" readonly="readonly" name="payingtax" class="Amount form-control money" maxlength="10" min="0.1" value="0.00" style="border: none;">
+                        </div>
+
+
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+            <!--<div class="col-md-12" style="margin-bottom: 0px; text-align: center"><span style="font-size: 18px; font-weight: 900; color: #074592; text-decoration: underline">计录增值税</span></div>
+        <div class="col-md-12" style="margin: auto">
+        <div class="col-md-4">
+            <input type="hidden" id="hidDate" name="salesPID" />
+            <div class="form-group">
+                <div class="input-group input-group-sm" style="margin: 0">
+                    <span class="input-group-addon" style="color: #000000;">月度</span>
+                    <select id="months" name="months" class="report-date"></select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+
+
+        </div>
+        <div class="col-md-4">
+
+
+
+        </div>
+    </div>
+
+    <div class="col-md-12" style="margin: auto">
+        @*<div class="col-md-3">
+            <button type="button" class="btn btn-primary pull-left button-radius" id="btnQuery">
+                查询
+            </button>
+
+        </div>*@
+        <div class="col-md-3">
+                <button type="button" class="btn btn-primary pull-left button-radius" id="btnPreview" onclick="Preview()">
+                    预览增值税费
+                </button>
+
+            </div>
+        </div>
+        <div id="Reports" style="display:none">
+              <input type="hidden" value="" id="TaxGUID">
+              <input type="hidden" value="" id="Date">
+            <div class="col-lg-6">
+            <table id="Reports1"></table></div>
+            <div class="col-lg-6">
+            <table id="Reports2"></table></div>
+            <div class="col-md-12">
+            <div class="col-md-8" style="text-align:right;margin-top: 10px">
+            <span id ="TotalTax"></span>
+            </div>
+            <div class="col-md-4" style="float:right">
+            <button onclick="Back()" class="btn btn-primary pull-right button-radius">
+                        返回
+                    </button>
+                     <button type="button" class="btn btn-primary pull-right button-radius" id="Settlement" onclick="Create()">
+                            结算
+                        </button>
+            </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12" id="SettlementList">
+            <table id="dataList" style="font-size: 12px"></table>
+            <div class="col-md-12" style="margin: auto; text-align: center">
+            <button onclick="Back1()" type="button" style="float:right" class="btn btn-primary pull-right button-radius">返回上页</button>
+        </div>
+        </div>-->
+
+                <div class="col-md-12" style="margin: auto; margin-bottom: 20px;">
+                    <div class="col-md-4" style="margin: auto;">
+
+                    </div>
+                    <div class="col-md-4" style="margin: auto;margin-top: 10px;" id="TaxSubmitForm">
+                        <button type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold"
+                                class="btn btn-primary pull-right" onclick='TaxSubmitForm()'>
+                            结转
+                        </button>
+                    </div>
+                    <div class="col-md-4" style="margin: auto;margin-top:10px;">
+                        <button onclick="javascript:history.back(-1);" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>      
+    @*<button onclick="Back1()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>*@
+                    </div>
+                </div>
+            </form>
+
+            <div style="width: 50%;margin-left:33%">
+                <div style="color: #074592;">明细列表</div>
+                <table id="ERTable" class="table-condensed" style="font-size: 12px; border-top: 1px solid #074592; "></table>
+            </div>
+        </div>
+
+    
+        
+
+
+</div>
+</div>
+</section>
+</div>
+
+
+<div class="modal fade" id="Detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                   明细
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-bottom: 20px">
+                 
+                   
+                    
+                    <div class="col-md-12" style="margin-bottom: 10px">
+                        <table id="DetailTable"style="font-size: 12px">
+                        
+                        </table>
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" >
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--上传附件model-->
+<div class="modal fade" id="AttachmentImportModal" tabindex="-1" role="dialog" aria-labelledby="AttachmentImportModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseAttachmentImportModal()">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="excelImportModal">附件上传</h4>
+            </div>
+            <div>
+                <div class="modal-body" style="width: 50%;float: left;">
+                    <input  type="hidden" id="uploadformid" />                   
+                        <div id="uploader" class="wu-example" >
+                            <!--用来存放文件信息-->
+                            <div class="btns">
+                                <table>                                    
+                                    <tr>
+                                        <td>
+                                            <div id="picker" >选择文件</div>
+                                        </td>
+                                        <td>
+                                            <div id="thelist" class="uploader-list"></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <input type="hidden" id="flag"/>
+                    </div>
+                <div class="modal-body" style="width: 50%;float: left;padding: 5px;padding-left:85px">
+                    <div id="qrcode" class="modal-body" style="width: 100%;padding: 10px;text-align: center;">
+                        <img src="/img/qrcode.jpg" />
+                    </div>
+                    <div style="width: 60%;text-align: center;margin-left:42px">
+                        <span style="font-size: 14px">扫描二维码通过手机上传附件</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="CloseAttachmentImportModal()">Close</button>
+                <button id="ASubmitBtn" class="btn btn-primary" type="button" onclick="ASubmitBtn()">提交</button>
+            </div>
+        </div>
+                           
+    </div>
+</div>
+<!--显示当前id附件记录model-->
+<div class="modal fade" id="showhaveuploadedModal" tabindex="-1" role="dialog" aria-labelledby="countryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">附件查看</h4>
+            </div>
+            <div class="modal-body">
+                <table id="showhaveuploaded">
+
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--编辑当前记录名称model-->
+<div class="modal fade" id="edithaveuploadedModal" tabindex="-1" role="dialog" aria-labelledby="edithaveuploadedModal"
+    aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+         <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑附件名称
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div  class="row">
+                <form class="cmxform" id="D_Form" method="post">
+                            <input type="hidden" name="A_GUID" id="GUID" />
+                            <input type="hidden" name="FR_GUIDS" id="FR_GUID" />
+                            <div class="col-md-12" style="text-align: center">
+                                <div class="col-md-1">
+                                </div>
+                                <div class="col-md-5" style="padding-right: 25px">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;附&nbsp;件&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="TempFileName" name="FileName" class=" form-control " maxlength="10"
+                                         require="true" style="width:350px" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </form>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="EditUpload()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--提交之后上传之前的名称提交model-->
+<div class="modal fade" id="editunifiednameModal" tabindex="-1" role="dialog" aria-labelledby="editunifiednameModal"
+                aria-hidden="true">
+       <div class="modal-dialog" >
+             <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                文件名称
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div  class="row">
+                                <form class="nameform" id="name_Form" method="post"> 
+                                            <div class="col-md-12" style="text-align: center">
+                                                <div class="col-md-1">
+                                                </div>
+                                                <div class="col-md-5" style="padding-right: 25px">
+                                                    <div class="form-group">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;附&nbsp;件&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                                           <input type="text" id="TempFileNameFirst" name="TempFileNameFirst" class=" form-control " maxlength="10"
+                                                                 required style="width:350px" />                                          
+                                                             
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button id="ctlBtn" class="btn btn-primary" type="button">
+                                上传
+                            </button>
+                        </div>
+             </div>
+           <!-- /.modal-content -->
+      </div>
+</div>
+<script language="javascript" type="text/javascript">
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }   
+    function Money(price) {
+        if (price > 0) {
+            var priceString = price.toString();
+            var priceInt = parseInt(price);
+            var len = priceInt.toString().length;
+            var num = len / 3;
+            var remainder = len % 3;
+            var priceStr = '';
+            for (var i = 1; i <= len; i++) {
+                priceStr += priceString.charAt(i - 1);
+                if (i == (remainder) && len > remainder) priceStr += ',';
+                if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ',';
+            }
+            if (priceString.indexOf('.') < 0) {
+                priceStr = priceStr + '.00';
+            } else {
+                priceStr += priceString.substr(priceString.indexOf('.'));
+                if (priceString.length - priceString.indexOf('.') - 1 < 2) {
+                    priceStr = priceStr + '0';
+                }
+            }
+            return priceStr;
+        } else if (price < 0) {
+            var absprice = Math.abs(price);
+            var priceStr = 0-absprice.toFixed(2);
+            return priceStr;
+    }else{
+    return price;
+    }
+    }
+
+    function DateCheck() {
+        if ($("#months").val() == "0") {
+            alert("请选择月份");
+            return false;
+        }
+        return true;
+    }
+    
+    function btn2click() {
+        $("#One").hide();
+        $("#Two").show();
+    }
+    function Back() {
+        $("#One").show();
+        $("#Two").hide();
+    }
+    function removeClass() {
+        $(".filter").hide();
+
+    }
+    var SumAmount = 0;
+    var SumAmount1 = 0;
+    var flag;
+    var month;
+    function Preview() {
+        flag = "";
+        SumAmount = 0;
+        SumAmount1 = 0;
+          if (!DateCheck()) {
+              return false;
+          }
+          $("#Reports").show();
+          $("#SettlementList").hide();
+          var d = $("#months").val();
+          if ($("#Date").val() == "") {
+              $("#Date").val(d);
+          }
+          $('#Reports1').bootstrapTable('destroy');
+          $('#Reports2').bootstrapTable('destroy');
+          $('#Reports1').bootstrapTable({
+              url: "/TaxProvisionRecord/GetIETaxList",
+              method: 'get',
+              pageSize: 10,
+              pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+              pageNumber: 1,
+              singleSelect: true,
+              clickToSelect: true,
+              checkOnSelect: true,
+              selectOnCheck: true,
+              pagination: true,
+              search: false, // 开启搜索功能
+              showColumns: false,
+              showRefresh: false,
+              showQuery: false,
+              showToggle: false,
+              showExport: false,
+              uniqueId: "TaxationGUID",
+              exportTypes: ['xml', 'txt', 'excel'],
+              columns: [[
+                { field: 'TaxationType', title: '名称'},
+                { field: 'TaxationAmount', title: '收入增值税金额(本币)', formatter: DecimalFmter },
+                { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle},
+            ]],
+              pagination: true,
+              rownumbers: true,
+              queryParams: { MounthDate: $("#months").val(), Flag: "I" }
+          });
+          $('#Reports2').bootstrapTable({
+              url: "/TaxProvisionRecord/GetIETaxList",
+              method: 'get',
+              pageSize: 10,
+              pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+              pageNumber: 1,
+              singleSelect: true,
+              clickToSelect: true,
+              checkOnSelect: true,
+              selectOnCheck: true,
+              pagination: true,
+              search: false, // 开启搜索功能
+              showColumns: false,
+              showRefresh: false,
+              showQuery: false,
+              showToggle: false,
+              showExport: false,
+              uniqueId: "TaxationGUID",
+              exportTypes: ['xml', 'txt', 'excel'],
+              columns: [[
+                { field: 'TaxationType', title: '名称'},
+                { field: 'TaxationAmount', title: '成本与费用增值税金额(本币)', formatter: DecimalFmter },
+                { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle },
+            ]],
+              pagination: true,
+              rownumbers: true,
+              queryParams: { MounthDate: $("#months").val(), Flag: "E"}
+          });
+
+          var TaxAmount
+          var TaxAmount1
+          var str = "当月应缴增值税金额："
+          var str1 = "-"
+          month = $("#months").val();
+          if ('@Session["Taxpayer"]' == '小规模纳税人') {
+              $.ajax({
+                  url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + month+"&Flag="+"I",
+                  async: false,
+                  dataType: "json",
+                  success: function (d) {
+
+                      TaxAmount = d;
+                  }
+              });
+              if (TaxAmount.length == 0) { 
+                flag = "dis"
+              }
+              if (TaxAmount.length == 1) {
+                  str += TaxAmount[0].TaxationAmount;
+                  SumAmount += TaxAmount[0].TaxationAmount;
+              } else if (TaxAmount.length > 1) { 
+              for (var i = 0; i<TaxAmount.length; i++) {
+                  var  b = TaxAmount[i].TaxationAmount;
+                  str += b + "+";
+                  SumAmount += TaxAmount[i].TaxationAmount;
+              }
+              if (str.length > 0) {
+                  str = str.substr(0, str.length - 1);
+                  str = str + '=' + SumAmount.toFixed(2);
+              }
+          }
+          document.getElementById("TotalTax").innerHTML = str;
+          }
+          if ('@Session["Taxpayer"]' == '一般纳税人') {
+              $.ajax({
+                  url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + month + "&Flag=" + "I",
+                  async: false,
+                  dataType: "json",
+                  success: function (d) {
+
+                      TaxAmount = d;
+                  }
+              });
+              $.ajax({
+                  url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + month + "&Flag=" + "E",
+                  async: false,
+                  dataType: "json",
+                  success: function (d) {
+
+                      TaxAmount1 = d;
+                  }
+              });
+              if (TaxAmount.length == 0 && TaxAmount1.length == 0) {
+                  flag = "dis"
+              }
+              if (TaxAmount.length == 1 && TaxAmount1.length == 0) {
+                  str += TaxAmount[0].TaxationAmount;
+                  SumAmount += TaxAmount[0].TaxationAmount;
+              }
+              if (TaxAmount.length == 0 && TaxAmount1.length == 1) {
+                  if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                      str += -TaxAmount1[0].TaxationAmount;
+                      SumAmount -= TaxAmount1[0].TaxationAmount;
+                  } else {
+                      flag = "dis";
+                  }
+              }
+              if (TaxAmount.length == 1 && TaxAmount1.length == 1) {
+                  str += TaxAmount[0].TaxationAmount;
+                  SumAmount += TaxAmount[0].TaxationAmount;
+                  if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                      str += -TaxAmount1[0].TaxationAmount;
+                      SumAmount -= TaxAmount1[0].TaxationAmount;
+                      str = str + "=" + SumAmount.toFixed(2);
+                  }
+
+              }
+              if (TaxAmount.length > 1 && TaxAmount1.length == 0) {
+                  for (var i = 0; i < TaxAmount.length; i++) {
+                      var b = TaxAmount[i].TaxationAmount;
+                      str += b + "+";
+                      SumAmount += TaxAmount[i].TaxationAmount;
+                  }
+                  if (str.length > 0) {
+                      str = str.substr(0, str.length - 1);
+
+                  }
+                  var str2 = '='
+                  str = str + str2 + SumAmount.toFixed(2);
+              }
+
+              if (TaxAmount.length > 1 && TaxAmount1.length == 1) {
+                  for (var i = 0; i < TaxAmount.length; i++) {
+                      var b = TaxAmount[i].TaxationAmount;
+                      str += b + "+";
+                      SumAmount += TaxAmount[i].TaxationAmount;
+                  }
+                  if (str.length > 0) {
+                      str = str.substr(0, str.length - 1);
+
+                  }
+                  if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                      SumAmount -= TaxAmount1[0].TaxationAmount;
+                      str = str + "-" + TaxAmount1[0].TaxationAmount;
+
+                  }
+                  var str2 = '='
+                  str = str + str2 + SumAmount.toFixed(2);
+              }
+              if (TaxAmount.length == 0 && TaxAmount1.length > 1) {
+                  for (var i = 0; i < TaxAmount1.length; i++) {
+                      if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                          var b = -TaxAmount1[i].TaxationAmount;
+                          str += b + "-";
+                          SumAmount -= TaxAmount1[i].TaxationAmount;
+                      }
+                  }
+                  if (SumAmount < 0) {
+                      if (str.length > 0) {
+                          str = str.substr(0, str.length - 1);
+
+                      }
+                      var str2 = '='
+                      str = str + str2 + SumAmount.toFixed(2);
+                  } else {
+                      flag = "dis";
+                  }
+
+              }
+              if (TaxAmount.length == 1 && TaxAmount1.length > 1) {
+                  var b = TaxAmount[0].TaxationAmount;
+                  SumAmount = TaxAmount[0].TaxationAmount;
+                  str += b;
+                  for (var i = 0; i < TaxAmount1.length; i++) {
+                      if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                          var c = TaxAmount1[i].TaxationAmount;
+                          str1 += c + "-";
+                          SumAmount1 += TaxAmount1[i].TaxationAmount;
+                      }
+                  }
+                  SumAmount = SumAmount - SumAmount1
+                  if (str1.length > 0) {
+                      str1 = str1.substr(0, str1.length - 1);
+                      str1 = str1 + '=';
+
+                      str = str + str1 + SumAmount.toFixed(2);
+                  }
+              }
+              else if (TaxAmount.length > 1 && TaxAmount1.length > 1) {
+
+                  for (var i = 0; i < TaxAmount.length; i++) {
+                      var b = TaxAmount[i].TaxationAmount;
+                      str += b + "+";
+                      SumAmount += TaxAmount[i].TaxationAmount;
+                  }
+                  if (str.length > 0) {
+                      str = str.substr(0, str.length - 1);
+
+                  }
+
+
+
+                  for (var i = 0; i < TaxAmount1.length; i++) {
+                      if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                          var c = TaxAmount1[i].TaxationAmount;
+                          str1 += c + "-";
+                          SumAmount1 += TaxAmount1[i].TaxationAmount;
+                      }
+                  }
+
+
+                  SumAmount = SumAmount - SumAmount1
+                  if (str1.length > 0) {
+                      str1 = str1.substr(0, str1.length - 1);
+                      str1 = str1 + '=';
+
+                      str = str + str1 + SumAmount.toFixed(2);
+                  }
+              }
+
+
+            document.getElementById("TotalTax").innerHTML = str;
+          }
+      }
+
+
+      var DecimalFmter = function (s) {
+          if (s == null || s == "undefined" || s == '0') {
+              return "";
+          }
+          var h = '';
+          s = s.toString();
+          if (s.charAt(0) == '-') {
+              h = '-';
+              s = s.slice(1);
+          }
+          if (/[^0-9\.]/.test(s)) return "NaN";
+          s = s.replace(/^(\d*)$/, "$1.");
+          s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+          s = s.replace(".", ",");
+          var re = /(\d)(\d{3},)/;
+          while (re.test(s)) s = s.replace(re, "$1,$2");
+          s = s.replace(/,(\d\d)$/, ".$1");
+          return h + s.replace(/^\./, "0.");
+
+      }
+      var Handle = function (value, row, index) {
+          var link = "<a class='linkbtn' onclick='GetTaxSettlement(\"" + row.Rep_date + "\")'><font>\ " + row.Rep_date + "\</font></a>";
+          return link;
+      }
+      var LinkHandle = function (value, row) {
+          var link = "<a class='linkbtn' onclick='GetDetails(\"" + value + "\",\"" + row.IE_Flag + "\")'>明细</a>";
+           return link;
+       }
+
+       var LinkHandle1 = function (value, row) {
+           if (row.Rep_status == '已结算') {
+               var link1 = "<a class='linkbtn' onclick='ResetStatus(\"" + value + "\")'>反结算</a>";
+           } else { 
+           var link1 = "<a class='linkbtn' onclick='ReSet(\"" + value + "\",\"" + row.Rep_date + "\")'>结算</a>";
+       }
+           return link1;
+       }
+       function GetDetails(id, flag) {
+       var url; 
+       var columns = new Array();
+       if(flag=="I"){
+           url = '/IncomeQuery/GetIncomeList_Bootstraptable'
+          columns.push({ field: 'AffirmDate', width: '110', align: 'center', title: '确认日期', formatter: DateHandle, remoteSort: true });
+           columns.push({ field: 'RPerName', width: '100', align: 'center', title: '客户' });
+            columns.push({field: 'SumAmount', width: '110', align: 'center', title: '收入金额', formatter: DecimalFmter});
+            columns.push({ field: 'Tax', width: '110', align: 'center', title: '增值税金额', formatter: DecimalFmter });
+              columns.push({ field: 'Currency', width: '80', align: 'center', title: '货币' });
+       }else{
+         url='/ExpenseQuery/GetExpenseList_Bootstraptable'
+         columns.push({ field: 'AffirmDate', width: '110', align: 'center', title: '确认日期', formatter: DateHandle, remoteSort: true });
+           columns.push({ field: 'RPerName', width: '100', align: 'center', title: '供应商' });
+            columns.push({field: 'SumAmount', width: '110', align: 'center', title: '成本金额', formatter: DecimalFmter});
+            columns.push({ field: 'Tax', width: '110', align: 'center', title: '增值税金额', formatter: DecimalFmter });
+              columns.push({ field: 'Currency', width: '80', align: 'center', title: '货币' });
+       }
+        $('#DetailTable').bootstrapTable({
+            url: url,
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+//            sortName: 'CreateDate', // 设置默认排序为 name
+//            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false,
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            uniqueId: "IE_GUID",
+            columns: columns,
+            queryParams: { TaxationGUID: id, MounthDate: $("#Date").val()}
+        });
+            $('#Detail').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+    }
+    function ResetStatus(id) {
+        if (confirm('确认修改?')) {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "/TaxProvisionRecord/UpdTaxSet",
+                data: { GUID: id, Rep_status: "未结算" },
+                success: function (data) {
+                   
+                    if ($.parseJSON(data).Result) {
+                        alert("提交成功");
+                        $("#dataList").bootstrapTable("refresh");
+                    } else {
+                        alert("提交失败");
+                    }
+                }
+
+            });
+        }
+    }
+
+    function ReSet(id, Rep_date) {
+           flag = "";
+           $("#TaxGUID").val(id);
+           $("#Date").val(Rep_date);
+           $("#SettlementList").hide();
+           $("#Reports").show();
+           $("#Settlement").show();
+           $('#Reports1').bootstrapTable('destroy');
+           $('#Reports2').bootstrapTable('destroy');
+           $('#Reports1').bootstrapTable({
+               url: "/TaxProvisionRecord/GetIETaxList",
+               method: 'get',
+               pageSize: 10,
+               pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+               pageNumber: 1,
+               singleSelect: true,
+               clickToSelect: true,
+               checkOnSelect: true,
+               selectOnCheck: true,
+               pagination: true,
+               search: false, // 开启搜索功能
+               showColumns: false,
+               showRefresh: false,
+               showQuery: false,
+               showToggle: false,
+               showExport: false,
+               uniqueId: "TaxationGUID",
+               exportTypes: ['xml', 'txt', 'excel'],
+               columns: [[
+                { field: 'TaxationType', title: '名称' },
+                { field: 'TaxationAmount', title: '收入增值税金额(本币)', formatter: DecimalFmter },
+                 { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle },
+            ]],
+               pagination: true,
+               rownumbers: true,
+               queryParams: { MounthDate: Rep_date, Flag: "I" }
+           });
+           $('#Reports2').bootstrapTable({
+               url: "/TaxProvisionRecord/GetIETaxList",
+               method: 'get',
+               pageSize: 10,
+               pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+               pageNumber: 1,
+               singleSelect: true,
+               clickToSelect: true,
+               checkOnSelect: true,
+               selectOnCheck: true,
+               pagination: true,
+               search: false, // 开启搜索功能
+               showColumns: false,
+               showRefresh: false,
+               showQuery: false,
+               showToggle: false,
+               showExport: false,
+               uniqueId: "TaxationGUID",
+               exportTypes: ['xml', 'txt', 'excel'],
+               columns: [[
+                { field: 'TaxationType', title: '名称' },
+                { field: 'TaxationAmount', title: '成本与费用增值税金额(本币)', formatter: DecimalFmter },
+                 { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle },
+            ]],
+               pagination: true,
+               rownumbers: true,
+               queryParams: { MounthDate: Rep_date, Flag: "E" }
+           });
+
+           var TaxAmount
+           var TaxAmount1
+
+           var str = "当月应缴增值税金额："
+           var str1 = "-"
+           if ('@Session["Taxpayer"]' == '小规模纳税人') {
+               SumAmount = 0;
+               SumAmount1 = 0;
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "I",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount = d;
+                   }
+               });
+              
+               if (TaxAmount.length == 1) {
+                   str += TaxAmount[0].TaxationAmount;
+                   SumAmount += TaxAmount[0].TaxationAmount;
+               } else {
+                   for (var i = 0; i < TaxAmount.length; i++) {
+                       var b = TaxAmount[i].TaxationAmount;
+                       str += b + "+";
+                       SumAmount += TaxAmount[i].TaxationAmount;
+                   }
+                   if (str.length > 0) {
+                       str = str.substr(0, str.length - 1);
+                       str = str + '=' + SumAmount.toFixed(2);
+                   }
+               }
+               document.getElementById("TotalTax").innerHTML = str;
+           }
+           if ('@Session["Taxpayer"]' == '一般纳税人') {
+               SumAmount = 0;
+               SumAmount1 = 0;
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "I",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount = d;
+                   }
+               });
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "E",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount1 = d;
+                   }
+               });
+
+               if (TaxAmount.length == 0 && TaxAmount1.length == 0) {
+                   flag = "dis"
+               }
+               if (TaxAmount.length == 1 && TaxAmount1.length == 0) {
+                   str += TaxAmount[0].TaxationAmount;
+                   SumAmount += TaxAmount[0].TaxationAmount;
+               }
+               if (TaxAmount.length == 0 && TaxAmount1.length == 1) {
+                   if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                       str += -TaxAmount1[0].TaxationAmount;
+                       SumAmount -= TaxAmount1[0].TaxationAmount;
+                   } else {
+                       flag = "dis";
+                   }
+               }
+               if (TaxAmount.length == 1 && TaxAmount1.length == 1) {
+                   str += TaxAmount[0].TaxationAmount;
+                   SumAmount += TaxAmount[0].TaxationAmount;
+                   if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                       str += -TaxAmount1[0].TaxationAmount;
+                       SumAmount -= TaxAmount1[0].TaxationAmount;
+                       str = str + "=" + SumAmount.toFixed(2);
+                   }
+                  
+               }
+               if (TaxAmount.length > 1 && TaxAmount1.length == 0) {
+                   for (var i = 0; i < TaxAmount.length; i++) {
+                       var b = TaxAmount[i].TaxationAmount;
+                       str += b + "+";
+                       SumAmount += TaxAmount[i].TaxationAmount;
+                   }
+                   if (str.length > 0) {
+                       str = str.substr(0, str.length - 1);
+
+                   }
+                   var str2 = '='
+                   str = str + str2 + SumAmount.toFixed(2);
+               }
+
+               if (TaxAmount.length > 1 && TaxAmount1.length == 1) {
+                   for (var i = 0; i < TaxAmount.length; i++) {
+                       var b = TaxAmount[i].TaxationAmount;
+                       str += b + "+";
+                       SumAmount += TaxAmount[i].TaxationAmount;
+                   }
+                   if (str.length > 0) {
+                       str = str.substr(0, str.length - 1);
+
+                   }
+                   if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) { 
+                         SumAmount -= TaxAmount1[0].TaxationAmount;
+                         str = str + "-" + TaxAmount1[0].TaxationAmount;
+
+                   }
+                   var str2 = '='
+                   str = str + str2 + SumAmount.toFixed(2);
+               }
+               if (TaxAmount.length == 0 && TaxAmount1.length >1) {
+                   for (var i = 0; i < TaxAmount1.length; i++) {
+                       if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                           var b = -TaxAmount1[i].TaxationAmount;
+                           str += b + "-";
+                           SumAmount -= TaxAmount1[i].TaxationAmount;
+                       }
+                   }
+                   if (SumAmount<0) {
+                       if (str.length > 0) {
+                           str = str.substr(0, str.length - 1);
+
+                       }
+                       var str2 = '='
+                       str = str + str2 + SumAmount.toFixed(2);
+                   }else{
+                      flag = "dis";
+                   }
+
+              }
+              if (TaxAmount.length == 1 && TaxAmount1.length > 1) {
+                  var b = TaxAmount[0].TaxationAmount;
+                  SumAmount = TaxAmount[0].TaxationAmount;
+                  str += b;
+                  for (var i = 0; i < TaxAmount1.length; i++) {
+                      if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                          var c = TaxAmount1[i].TaxationAmount;
+                          str1 += c + "-";
+                          SumAmount1 += TaxAmount1[i].TaxationAmount;
+                      }
+                  }
+                  SumAmount = SumAmount - SumAmount1
+                  if (str1.length > 0) {
+                      str1 = str1.substr(0, str1.length - 1);
+                      str1 = str1 + '=';
+
+                      str = str + str1 + SumAmount.toFixed(2);
+                  }
+              }
+              else if (TaxAmount.length > 1 && TaxAmount1.length > 1) {
+
+                  for (var i = 0; i < TaxAmount.length; i++) {
+                      var b = TaxAmount[i].TaxationAmount;
+                      str += b + "+";
+                      SumAmount += TaxAmount[i].TaxationAmount;
+                  }
+                  if (str.length > 0) {
+                      str = str.substr(0, str.length - 1);
+
+                  }
+
+
+
+                  for (var i = 0; i < TaxAmount1.length; i++) {
+                      if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                          var c = TaxAmount1[i].TaxationAmount;
+                          str1 += c + "-";
+                          SumAmount1 += TaxAmount1[i].TaxationAmount;
+                      }
+                  }
+
+
+                  SumAmount = SumAmount - SumAmount1
+                  if (str1.length > 0) {
+                      str1 = str1.substr(0, str1.length - 1);
+                      str1 = str1 + '=';
+
+                      str = str + str1 + SumAmount.toFixed(2);
+                  }
+              }
+
+
+               document.getElementById("TotalTax").innerHTML = str;
+           }
+       }
+       function GetTaxSettlement(Rep_date) {
+           $("#SettlementList").hide();
+           $("#Reports").show();
+           $("#Settlement").hide();
+           $("#Date").val(Rep_date);
+           $('#Reports1').bootstrapTable('destroy');
+           $('#Reports2').bootstrapTable('destroy');
+           $('#Reports1').bootstrapTable({
+               url: "/TaxProvisionRecord/GetIETaxList",
+               method: 'get',
+               pageSize: 10,
+               pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+               pageNumber: 1,
+               singleSelect: true,
+               clickToSelect: true,
+               checkOnSelect: true,
+               selectOnCheck: true,
+               pagination: true,
+               search: false, // 开启搜索功能
+               showColumns: false,
+               showRefresh: false,
+               showQuery: false,
+               showToggle: false,
+               showExport: false,
+               uniqueId: "TaxationGUID",
+               exportTypes: ['xml', 'txt', 'excel'],
+               columns: [[
+                { field: 'TaxationType', title: '名称' },
+                { field: 'TaxationAmount', title: '收入增值税金额(本币)', formatter: DecimalFmter },
+                 { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle },
+            ]],
+               pagination: true,
+               rownumbers: true,
+               queryParams: { MounthDate: Rep_date, Flag: "I" }
+           });
+           $('#Reports2').bootstrapTable({
+               url: "/TaxProvisionRecord/GetIETaxList",
+               method: 'get',
+               pageSize: 10,
+               pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+               pageNumber: 1,
+               singleSelect: true,
+               clickToSelect: true,
+               checkOnSelect: true,
+               selectOnCheck: true,
+               pagination: true,
+               search: false, // 开启搜索功能
+               showColumns: false,
+               showRefresh: false,
+               showQuery: false,
+               showToggle: false,
+               showExport: false,
+               uniqueId: "TaxationGUID",
+               exportTypes: ['xml', 'txt', 'excel'],
+               columns: [[
+                { field: 'TaxationType', title: '名称' },
+                { field: 'TaxationAmount', title: '成本与费用增值税金额(本币)', formatter: DecimalFmter },
+                 { field: 'Currency', title: '货币' },
+                { field: 'TaxationGUID', title: '操作', formatter: LinkHandle },
+            ]],
+               pagination: true,
+               rownumbers: true,
+               queryParams: { MounthDate: Rep_date, Flag: "E" }
+           });
+
+           var TaxAmount
+           var TaxAmount1
+           
+           var str = "当月应缴增值税金额："
+           var str1= "-"
+           if ('@Session["Taxpayer"]' == '小规模纳税人') {
+               SumAmount = 0;
+               SumAmount1 = 0;
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "I",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount = d;
+                   }
+               });
+              
+               if (TaxAmount.length == 1) {
+                   str += TaxAmount[0].TaxationAmount;
+                   SumAmount1 += TaxAmount[0].TaxationAmount;
+               } else {
+                   for (var i = 0; i < TaxAmount.length; i++) {
+                       var b = TaxAmount[i].TaxationAmount;
+                       str += b + "+";
+                       SumAmount1 += TaxAmount[i].TaxationAmount;
+                   }
+                   if (str.length > 0) {
+                       str = str.substr(0, str.length - 1);
+                       str = str + '=' + SumAmount1.toFixed(2);
+                   }
+               }
+              
+               document.getElementById("TotalTax").innerHTML = str;
+           }
+           if ('@Session["Taxpayer"]' == '一般纳税人') {
+               SumAmount = 0;
+               SumAmount1 = 0;
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "I",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount = d;
+                   }
+               });
+               $.ajax({
+                   url: "/TaxProvisionRecord/GetIETaxList?MounthDate=" + Rep_date + "&Flag=" + "E",
+                   async: false,
+                   dataType: "json",
+                   success: function (d) {
+
+                       TaxAmount1 = d;
+                   }
+               });
+
+               if (TaxAmount.length == 0 && TaxAmount1.length == 0) {
+                   flag = "dis"
+               }
+               if (TaxAmount.length == 1 && TaxAmount1.length == 0) {
+                   str += TaxAmount[0].TaxationAmount;
+                   SumAmount += TaxAmount[0].TaxationAmount;
+               }
+               if (TaxAmount.length == 0 && TaxAmount1.length == 1) {
+                   str += -TaxAmount1[0].TaxationAmount;
+                   SumAmount -= TaxAmount1[0].TaxationAmount;
+               } else if (TaxAmount.length > 0 && TaxAmount1.length > 0) {
+                   if (TaxAmount.length == 1) {
+                       str += TaxAmount[0].TaxationAmount;
+                       SumAmount += TaxAmount[0].TaxationAmount;
+                   } else {
+                       for (var i = 0; i < TaxAmount.length; i++) {
+                           var b = TaxAmount[i].TaxationAmount;
+                           str += b + "+";
+                           SumAmount += TaxAmount[i].TaxationAmount;
+                       }
+                       if (str.length > 0) {
+                           str = str.substr(0, str.length - 1);
+
+                       }
+                   }
+                   if (TaxAmount1.length == 1) {
+                       if (TaxAmount1[0].TaxationType.indexOf("专用") >= 0) {
+                           str1 += TaxAmount1[0].TaxationAmount;
+                           SumAmount1 += TaxAmount1[0].TaxationAmount;
+                       }
+                   } else {
+                       for (var i = 0; i < TaxAmount1.length; i++) {
+                           if (TaxAmount1[i].TaxationType.indexOf("专用") >= 0) {
+                               var c = TaxAmount1[i].TaxationAmount;
+                               str1 += c + "-";
+                               SumAmount1 += TaxAmount1[i].TaxationAmount;
+                           }
+                       }
+                   }
+                   if (TaxAmount.length > 0 || TaxAmount1.length > 0) {
+                       SumAmount = SumAmount - SumAmount1
+                       if (str1.length > 0) {
+                           str1 = str1.substr(0, str1.length - 1);
+                           str1 = str1 + '=';
+                       }
+                       str = str + str1 + SumAmount.toFixed(2);
+                   }
+               }
+
+
+               document.getElementById("TotalTax").innerHTML = str;
+           }
+       }
+       function Back() {
+           $("#Reports").hide();
+           $("#SettlementList").show();
+       }
+       function Back1() {
+           $("#Two").hide();
+           $("#Three").hide();
+           $("#One").show();
+       }
+       function Create() {
+           var GUID = $("#TaxGUID").val();
+           var mon = $("#Date").val();
+           if (month == undefined) {
+               month = mon;
+           }
+           if (flag == "dis") {
+            alert("无需结算！")
+           } else {
+           $.ajax(
+                {
+                    url: "/TaxProvisionRecord/CreateTaxSettlement",
+                    type: "post",
+                    async: false,
+                    dataType: "json",
+                    data: { repDate: month, Amount: SumAmount, Rep_status: "已结算", GUID: GUID, Flag: "Tax",State:"未付" },
+                    success: function (d) {
+                        if (d.success == true) {
+                            alert("提交成功");
+                            $("#Reports").hide();
+                            $("#SettlementList").show();
+                            $("#btnPreview").hide();
+                            $("#Three").show();
+                            $("#dataList").bootstrapTable("refresh");
+                        } else {
+                            alert("提交失败");
+                        }
+                    }
+
+                })
+            }
+            }
+
+            var DateHandle = function (jsondate) {
+
+                jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+                if (jsondate < 0) {
+                    return "";
+                } else {
+                    if (jsondate.indexOf("+") > 0) {
+                        jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                    } else if (jsondate.indexOf("-") > 0) {
+                        jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                    }
+
+                    var date = new Date(parseInt(jsondate, 10));
+                    var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                    var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                    return date.getFullYear() + "/" + month + "/" + currentDate;
+                }
+            }
+    function ISubmit() {
+        var sumAmount = document.getElementById('SumAmount').value;
+        sumAmount = sumAmount.replace(",", "");
+        $("#SumAmount1").val(sumAmount);
+        $("#InvType").val('税费');
+        var gName = $("#IEGroup").val();
+        if(gName=='企业所得税'){
+            $('#Profit_Name').val('所得税费用');
+        }else{
+            $('#Profit_Name').val('主营业务成本');
+        }
+        if ($("#IEGroup").val() == null) {
+            alert("请选择税费类别");
+            return false;
+        }
+        if ($("#IEDescription").val() == "") {
+            alert("请输入费用描述");
+            return false;
+        }
+        if ($("#AffirmDate").val() == "") {
+            alert("请选择税费计提日期");
+            return false;
+        }
+        if ($("#SumAmount").val() == "") {
+            alert("请输入税费金额");
+            return false;
+        }
+        if ($("#Currency").val() == null) {
+            alert("请选择货币");
+            return false;
+        }
+        else{
+           $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/ExpenseRecord/UpdExpenseRecord",
+                data: $('#Expense_Form').serialize(),
+                async: false,
+                onSubmit: function () {
+                    return $("#Expense_Form").form('validate');
+                },
+                error: function (request) {
+                    alert("Connection error");
+                },
+            success: function (data) {
+                var rs = JSON.parse(data);
+                if (rs.success == true) {
+                    alert("提交成功");
+                    location.reload(true);
+                } else {
+                    alert("提交失败");
+                }
+            }
+        });
+        }
+    }
+
+    function getUrlParm(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return unescape(r[2]);
+        return null;
+    }
+
+    //20180314修改
+    function TaxSubmitForm() {
+        var Amount = document.getElementById('amt').value;
+        var inputtax = document.getElementById('inputtax').value;
+        var outputtax = document.getElementById('outputtax').value;
+        var exportreduce = document.getElementById('exportreduce').value;
+        var transfertax = document.getElementById('transfertax').value;
+        var exporttax = document.getElementById('exporttax').value;
+        var payingtax = document.getElementById('payingtax').value;
+
+        var payDateTAX = $("#payDateTAX").val();
+
+        
+        var isend = getUrlParm("isend");
+
+        if(isend=0){
+            isend = '未结转';
+        }else{
+            isend = '已结转';
+        }
+
+        /*if ($("#amt").val() < 0) {
+            alert("不需要记录增值税");
+            return false;
+        }*/
+
+        if (payDateTAX == "") {
+            alert("请选择增值税日期");
+            return false;
+        }
+        
+        //alert(payDateTAX);
+        //alert(isend);
+        //exit;
+        $.ajax({
+            url: "/TaxProvisionRecord/isFinish?RepDate=" + payDateTAX + "&status=" + isend,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data).Result) {
+
+                    if (confirm('确认结转?')) {
+
+                        $.ajax({
+                            url: "/TaxProvisionRecord/AddTaxProvisionRecord",
+                            type: "post",
+                            async: false,
+                            dataType: "json",
+                            data: { Amount: Amount, Date: payDateTAX, Name: '应交税费', inputtax: inputtax, outputtax: outputtax, exportreduce: exportreduce, transfertax: transfertax, exporttax: exporttax, payingtax: payingtax },
+                            success: function (d) {
+                                //alert(d.success); exit;
+                                if (d.success == true) {
+                                    alert("提交成功");
+                                    //location.reload(true);
+                                    location.href = '/TaxProvisionRecord/Index';
+                                } else {
+                                    alert("提交失败");
+                                }
+                            }
+                        });
+
+                    }
+                } else {
+                    if (status == "已结算") {
+                        alert("请先结转之前的月度账单！");
+                        location.href = '/TaxProvisionRecord/Index';
+                    } else {
+                        alert("请先结转之前的月度账单！");
+                        location.href = '/TaxProvisionRecord/Index';
+                    }
+                }
+            },
+            error: function () {
+                alert("操作失败");
+            }
+        });
+
+       
+        
+    }
+
+    //20180403修改
+    function SalesSubmit() {
+        var Amount = document.getElementById('Amount').value;
+        var Date = document.getElementById('payDate').value;
+        var Excise = document.getElementById('Excise').value;
+        var EducationFee = document.getElementById('EducationFee').value;
+        var Sales = document.getElementById('Sales').value;
+        var UrbanConstruction = document.getElementById('UrbanConstruction').value;
+        var Resource = document.getElementById('Resource').value;
+        var LandValue = document.getElementById('LandValue').value;
+        var UrbanLand = document.getElementById('UrbanLand').value;
+        var Property = document.getElementById('Property').value;
+        var VehicleVessel = document.getElementById('VehicleVessel').value;
+        var MineralResources = document.getElementById('MineralResources').value;
+        var Dischargefee = document.getElementById('Dischargefee').value;
+        
+
+        if ($("#payDate").val() == "") {
+            alert("请选日期");
+            return false;
+        }
+
+       
+        //alert(EducationFee);
+        //alert(taxname);
+        //exit;
+        $.ajax({
+            url: "/TaxProvisionRecord/AddSalesTaxRecord",
+            type: "post",
+            async: false,
+            dataType: "json",
+            data: {
+                Amount: Amount, Date: Date, Name: '应交税费', Excise: Excise, EducationFee: EducationFee, Sales: Sales, UrbanConstruction: UrbanConstruction,
+                Resource: Resource, LandValue: LandValue, UrbanLand: UrbanLand, Property: Property, VehicleVessel: VehicleVessel, MineralResources: MineralResources,
+                Dischargefee: Dischargefee
+            },
+            success: function (d) {
+                //alert(d.success); exit;
+                if (d.success == true) {
+                    alert("提交成功");
+                    location.reload(true);
+                } else {
+                    alert("提交失败");
+                }
+            }
+        });
+
+    }
+</script>
+
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        function getUrlParms(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null)
+                return unescape(r[2]);
+            return null;
+        }
+        
+        var reportDate = getUrlParms("reportDate");
+        var period= getUrlParms("period");
+        //alert(reportDate);exit;
+        //var reportDate= $("#payDateTAX").val();
+
+        //$('#ERTable').bootstrapTable({
+        //    url: "/TaxProvisionRecord/GetDetailTaxList?reportDate=" + reportDate,
+        //    method: 'GET',
+        //    pageSize: 10,
+        //    pageList: [5, 10, 25, 50, 100, 200], // 自定义分页列表
+        //    pageNumber: 1,
+        //    singleSelect: true,
+        //    clickToSelect: true,
+        //    checkOnSelect: true,
+        //    selectOnCheck: true,
+        //    pagination: true,
+        //    search: false,
+        //    showColumns: false,
+        //    showRefresh: false,
+        //    showQuery: false,
+        //    showToggle: false,
+        //    showExport: false,
+        //    exportTypes: ['xml', 'txt', 'excel'],
+        //    uniqueId: "IE_GUID",
+        //    columns: [
+        //        { field: 'TaxName', width: '150', align: 'center', title: '增值税子类别'},
+		//		{ field: 'AffirmDate', width: '110', align: 'center', title: '确认日期'},
+        //        { field: 'TaxAmount', width: '110', align: 'center', title: '金额'},
+		//		{ field: 'Is_end', width: '100', align: 'center', title: '是否结算' },
+				
+                
+        //    ],
+        //    queryParams: queryParams
+        //});
+        //GetDetailType("#incomeGrp", "#IEGroup");
+        //GetDetailType("#myModal #InvType", "#myModal #IEGroup");
+
+        if(reportDate!=null){
+            $('#ERTable').bootstrapTable('destroy');
+            $('#ERTable').bootstrapTable({
+                url: "/TaxProvisionRecord/GetDetailTaxList?AffirmDate=" + reportDate+"&period="+period,
+                method: 'get',
+                pageSize: 10,
+                pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+                pageNumber: 1,
+                singleSelect: true,
+                clickToSelect: true,
+                checkOnSelect: true,
+                selectOnCheck: true,
+                pagination: true,
+                search: false, // 开启搜索功能
+                showColumns: false,
+                showRefresh: false,
+                showQuery: false,
+                showToggle: false,
+                showExport: false,
+                uniqueId: "Rep_GUID",
+                exportTypes: ['xml', 'txt', 'excel'],
+                //detailView:true,
+                columns: [
+               { field: 'TaxName',align: 'left', title: '增值税子类别'},
+                    { field: 'AffirmDate',align: 'left', title: '确认日期',formatter: DateHandle, remoteSort: true},
+                    { field: 'TaxAmount',align: 'left', title: '金额'},
+                    //{ field: 'Is_end', width: '100', align: 'center', title: '是否结算' },
+                ],
+            });
+        }
+        
+    });
+    </script>

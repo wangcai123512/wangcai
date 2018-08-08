@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "User";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model Common.Models.User
+           
+<form id="User"  method="post">
+<table class="Props">
+    <input type="hidden" name="UGUID" value="@Model.UGUID" />
+    <input type="hidden" name="SysName" value="@Model.SysName" />
+    <tr>
+        <td>@Common.Resource.RolePermission.UserName</td>
+        <td><input name="UserName" type="text" class="easyui-validatebox" value="@Model.UserName" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@Common.Resource.RolePermission.LoginName</td>
+        <td><input name="LoginName" type="text" class="easyui-validatebox" value="@Model.LoginName" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@Common.Resource.RolePermission.LoginPwd</td>
+        <td><input name="LoginPwd" type="password" class="easyui-validatebox" value="@Model.LoginPwd" data-options="required:true"/></td>
+    </tr>
+</table >          
+</form>
+
+

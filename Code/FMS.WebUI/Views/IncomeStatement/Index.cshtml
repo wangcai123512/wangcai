@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<table id="IncomeStatements"></table>
+<script type="text/javascript">
+    var curRepID = null;
+
+    function RepDateFmter(val, row) {
+        return row.Year + '.' + row.Month;
+    }
+
+    function LinkFmter(val) {
+        return "<a onclick='ShowDialog(\"" + val + "\")' >@General.Resource.Common.Details</a> ";
+    }
+
+    function InitPerviewDialog() {
+        $("#IncomeStatements").after("<div id='WinPerviewIncomeStatement'></div>");
+        $("#WinPerviewIncomeStatement").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.Preview@FMS.Resource.FinanceReport.FinanceReport.Report",
+            buttons: [{
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate',
+                handler: function () { SaveIncomeStatement(); }
+            }],
+            onClose: function () {
+                $("#WinPerviewIncomeStatement").dialog("destroy");
+            }
+        });
+    }
+
+    function InitViewDialog() {
+        $("#IncomeStatements").after("<div id='WinIncomeStatement'></div>");
+        $("#WinIncomeStatement").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.IncomeStatement",
+            onClose: function () {
+                $("#WinIncomeStatement").dialog("destroy");
+            }
+        });
+    }
+
+    $(function () {
+        $("#IncomeStatements").datagrid({
+            url: '/IncomeStatement/GetIncomeStatements',
+            singleSelect: true,
+            fitColumns: true,
+            pagination: true,
+            columns: [[
+                { field: 'RepNo', title: '@FMS.Resource.FinanceReport.FinanceReport.RepNo' },
+                { field: 'Year', title: '@FMS.Resource.FinanceReport.FinanceReport.RepDate', formatter: RepDateFmter },
+                { field: 'Rep_GUID', title: '', formatter: LinkFmter }
+                ]],
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate@FMS.Resource.FinanceReport.FinanceReport.Report',
+                handler: function () { ShowDialog(''); }
+            }]
+        });
+    });
+
+    function ShowDialog(id) {
+        curRepID = id;
+        if (curRepID.length == 0) {
+            InitPerviewDialog();
+            $("#WinPerviewIncomeStatement").dialog("refresh", "/IncomeStatement/IncomeStatement/" + id);
+        }
+        else {
+            InitViewDialog();
+            $("#WinIncomeStatement").dialog("refresh", "/IncomeStatement/IncomeStatement/" + id);
+        }
+    }
+
+    function SaveIncomeStatement() {
+        $.ajax({
+            url: '/IncomeStatement/UpdIncomeStatement',
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                if (data.Result) {
+                    $("#WinPerviewIncomeStatement").dialog("close");
+                    $.messager.alert("Msg", data.Msg, "info");
+                    $("#IncomeStatements").datagrid("reload");
+                }
+                else {
+                    $.messager.alert("Msg", data.Msg, "error");
+                }
+            },
+            error: errorHandle
+        });
+    }
+
+</script>
+

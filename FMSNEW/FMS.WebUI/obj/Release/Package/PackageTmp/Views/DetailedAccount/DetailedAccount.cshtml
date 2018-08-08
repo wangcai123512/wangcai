@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "DetailedAccount";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_DetailedAccount
+
+<form id="DtlAccForm"  method="post">
+<table class="Props">
+    <input type="hidden" name="C_GUID" value="@Session["CurrentCompanyGuid"]" />
+    <input type="hidden" name="DA_GUID" value="@Model.DA_GUID" />
+    <input type="hidden" name="ParentAccGuid" value="@Model.ParentAccGuid"/>
+    <input type="hidden" id="flag" name="flag" value="@ViewData["flag"]"/>
+    <input type="hidden" id="hiddenName" name="hiddenName"/>
+    <tr>
+        <td>@FMS.Resource.Account.Account.AccCode</td>
+        <td><input name="AccCode" class="easyui-numberbox" value="@Model.AccCode" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td>
+            <input id="Name" name="Name" class="easyui-validatebox" value="@Model.Name"/>
+        </td>
+    </tr>
+</table >          
+</form>
+
+<script type="text/javascript" language="javascript">
+    var detail;
+    var flag = $('#flag').val();
+    $(function () {
+        if (flag == "1") {
+            $.ajax({
+                url: "/InternalAPI/GetDetail",
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    detail = d;
+                }
+            });
+            $("#DtlAccForm #Name").combobox({
+                valueField: 'GUID',
+                textField: 'Name',
+                editable: false,
+                required: true,
+                data: detail
+            });
+        }
+    });
+</script>

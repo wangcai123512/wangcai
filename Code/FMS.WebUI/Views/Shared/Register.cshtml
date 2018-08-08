@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Registe";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model  Common.Models.RegInfo
+<form method="post" id ="RegInfo">
+    <table class="Props">
+        <tr>
+            <td>用户Email :</td>
+            <td>@*<input class="easyui-validatebox" name="User.LoginName" data-options="required:true">*@
+                <input class="easyui-validatebox" validtype="email" name="User.LoginName" data-options="required:true" missingMessage="不能为空" invalidMessage="邮箱格式不正确"/><br/> </td>
+        </tr>
+        <tr>
+            <td>@General.Resource.Common.admin@General.Resource.Common.Password :</td>
+            <td><input class="easyui-validatebox" name="User.Password" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Company@General.Resource.Common.Name :</td>
+            <td><input class="easyui-validatebox" name="Company.Name" data-options="required:true"></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Address:</td>
+            <td><input class="easyui-validatebox" id="Address" name="Company.Address" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Contacter:</td>
+            <td><input class="easyui-validatebox" id="Contacter" name="Company.Contacter" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.CompanySetting.CompanySettingInfo.ContactWay:</td>
+            <td><input class="easyui-validatebox" id="ContactWay" name="Company.ContactWay" data-options="required:true"/></td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.CompanySetting.CompanySettingInfo.Type:</td>
+            <td><input class="easyui-validatebox" id="Type" name="Company.Type" data-options="required:true"/></td>
+        </tr>
+    </table >    
+</form>
+
+<script type="text/javascript">
+    
+</script>

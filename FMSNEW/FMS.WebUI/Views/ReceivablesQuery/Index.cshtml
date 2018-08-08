@@ -1,0 +1,119 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<div id="toolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+		<a class="easyui-linkbutton" onclick="Export()">数据导出</a>
+	</div>
+	<div>
+		<form id="conditionForm">
+		<table>
+			<tr>
+				<td>日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="DateBegin" data-options="width:100,panelHeight:'auto'" />-<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+			</tr>
+			<tr>
+				<td>付款方:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+			<tr>
+				<td>状态:</td>
+				<td>
+					<select class="easyui-combobox" id="conFlag" name="status" data-options="width:207,panelHeight:'auto'" >
+						<option value=""></option>
+						<option value="0">未归类</option>
+						<option value="1">已归类</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>收款类别:</td>
+				<td>
+					<select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+						<option value=""></option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="RR_List"></table>
+
+<script language="javascript" type="text/javascript">
+	var LinkHandle = function (value) {
+		var link1 = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Details</a> " ;
+		 var link2 = " <a class='linkbtn' onclick='delClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+		return link1+link2;
+	};
+
+	var DateHandle = function(value, row, index) {
+	    return ChangeDateFormat(value);
+	};
+
+	$(function () {
+		$("#RR_List").datagrid({
+		    onLoadSuccess:compute,
+			url: '/ReceivablesQuery/GetReceivablesList',
+			columns: [[
+				{ field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payer' },
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: DateHandle },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+				{ field: 'RP_GUID', title: '', formatter: LinkHandle }
+			]],
+			pagination: true,
+			rownumbers: true,
+			singleSelect: true,
+		    toolbar: "#toolbar"
+		});
+	});
+	
+	function InitDialog() {
+		$("#RR_List").after("<div id='WinRR'></div>");
+		$("#WinRR").dialog({
+			title: ' ',
+			width: 550,
+			height: 300,
+			onClose: function () {
+				$("#WinRR").dialog("destroy");
+			}
+		});
+	}
+
+	function AddClick(id) {
+		InitDialog();
+		$('#WinRR').dialog("refresh", "/ReceivablesQuery/ReceivablesRecord/" + id);	
+	}
+
+	function Search() {
+	    $("#RR_List").datagrid("load", $("#conditionForm").serializeObject());
+	}
+
+	function Export() {
+	    $("#conditionForm").form("submit", { url: '/ReceivablesQuery/ExportXls' });
+	}
+	  function compute() {
+        var rows = $('#RR_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#RR_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+
+
+
+

@@ -1,0 +1,192 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#RPer').multiselect({
+            buttonWidth: '100%',
+
+        });
+        $('#Currency').multiselect({
+            buttonWidth: '100%',
+            enableFiltering: true,
+            includeFilterNewBtn:false,
+
+        });
+
+        $('#TaxationType').multiselect({
+            buttonWidth: '100%',
+            enableFiltering: true,
+            includeFilterNewBtn:false,
+
+        });
+        $('#example4').multiselect({
+            buttonWidth: '100%',
+            enableFiltering: true,
+        });
+    });
+</script>
+<style type="text/css">
+    .LinkButton
+    {
+        height: 60px;
+        width: 100%;
+        border-radius: 100px; 
+        font-size: 20px;
+        background-color:#f5f5f5;
+        border: 5px solid #c0c0c0;
+        font-weight: bold;
+        margin-top: 10px; 
+    }
+</style>
+
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li class="active"> <a onclick="javascript:window.location = '/DirectMaterialPurchasingRecord/Index'" href="javascript:window.location ='/DirectMaterialPurchasingRecord/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">物料与资产</span> <span class=""></span> </a> </li>
+                 <li> <a onclick="javascript:window.location = '/DirectMaterialPurchasingTypeRecord/Index'" href="javascript:window.location='/DirectMaterialPurchasingTypeRecord/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">物料与资产类别设置</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/DirectMaterialPurchasingQuery/Index'" href="javascript:window.location='/DirectMaterialPurchasingQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">直接物料查询与处置</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/IndirectMaterialPurchasingQuery/Index'" href="javascript:window.location='/IndirectMaterialPurchasingQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">间接物料查询与处置</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/AssetPurchaseQuery/Index'" href="javascript:window.location='/AssetPurchaseQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">资产查询与处置</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div id="One" class="row" style="margin-top: 20px">
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592;text-decoration:underline">物料与资类别设置</span></div>
+                        <div class="col-md-4" style="margin: auto"></div>
+                        <div class="col-md-4" style="margin: auto">
+
+                            <div class="col-sm-12"  onclick="javascript:window.location = '/DirectMaterialPurchasingTypeRecord/DirectMaterialPurchasingTypeRecord'">
+                                         
+                                <button type="button" class="btn btn-default LinkButton">
+                                直接物料类别设置</button>
+                            </div>
+                            <div class="col-sm-12"   onclick="javascript:window.location = '/IndirectMaterialPurchasingTypeRecord/IndirectMaterialPurchasingTypeRecord'">
+                                         
+                                <button type="button" class="btn btn-default LinkButton">
+                                间接物料类别设置</button>
+                            </div>
+                            <div class="col-sm-12"   onclick="javascript:window.location = '/AssetPurchaseTypeRecord/AssetPurchaseTypeRecord'">
+                                         
+                                <button type="button"  class="btn btn-default LinkButton">
+                                资产类别设置</button>
+                            </div>
+@*
+                            <button type="button" id="btn1" onclick="btn1click()" style="margin-top: 20px; height: 60px; width: 100%; border-radius: 100px; font-size: 20px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                直接物料采购</button>
+                            <button type="button" style="margin-top: 20px; height: 60px; width: 100%; border-radius: 100px; font-size: 20px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                间接物料采购</button>
+                            <button type="button" style="margin-top: 20px; height: 60px; width: 100%; border-radius: 100px; font-size: 20px; background-color: #f5f5f5; border: 5px solid #c0c0c0; font-weight: bold" class="btn btn-default">
+                                资产采购</button>*@
+                            <div class="col-md-12" style="margin: auto; text-align: center">
+                                <button onclick="javascript:window.location = '/Common/Index'" type="button" style="margin-top: 30px; height: 40px; width: 50%; border-radius: 100px; font-size: 20px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">返回上页</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="Two" class="row" style="margin-top: 20px; display: none">
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-2" style="margin: auto"></div>
+                        <div class="col-md-8" style="margin: auto">
+                            <div class="col-md-12" style="margin-bottom: 50px">
+                                <form class="cmxform" id="Income_Form" method="get">
+                                  
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        $('#AffirmDate').datepicker();
+        $('#Date').datepicker();
+
+        FileInputBaseSetting('#file_upload')
+        $("#file_upload").fileinput('refresh', {
+            //            uploadUrl: "#",
+            showUpload: false,
+            layoutTemplates: feilInputLayoutTemplates,
+            allowedFileExtensions: ['jpg', 'png', 'gif'],
+            maxFileCount: 5,
+            mainClass: "input-group-lg",
+            browseClass: "btn bg-purple2 btn-sm",
+            dropZoneTitle: "拖拽收入发票或凭证图片到这里...",
+            initialPreview: []
+        });
+    });
+
+    function btn1click() {
+        $("#Type").text("记录营业收入：主营业务");
+        $("#One").hide();
+        $("#Two").show();
+    }
+
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    function IESubmit() {
+        var guid = NewGUID();
+        $("#IE_GUID").val(guid);
+
+        $("#Income_Form").form('submit', {
+            url: "/IncomeRecord/UpdIncomeRecord",
+            onSubmit: function () {
+                //表单验证
+                alert($("#IE_GUID").val());
+                return $("#Income_Form").form('validate');
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parse
+                    ON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    //提交成功，则开始上传文件！
+                    $('#file_upload').fileinput('upload');
+                    if ($("#flag").val() == "收入计入收款") {
+                        $.ajax({
+                            url: '/ReceivablesClassify/UpdState?id=' + $("#IE_GUID").val(),
+                            type: "POST"
+                        });
+                    }
+                    if ($("#flag").val() == "从预收客户款列表获取") {
+                        //更改状态
+                        $.ajax({
+                            url: '/ReceivablesClassify/UpdState?id=' + $("#IE_GUID").val(),
+                            type: "POST"
+                        });
+                        $.ajax({
+                            url: '/ReceivablesDeclareCustomer/UpdState?id=' + $("#IE_GUID").val() + '&state=' + "关闭",
+                            type: "POST"
+                        });
+                    }
+                    $("#Income_Form").form('clear');
+                }
+            }
+        });
+    }
+
+</script>

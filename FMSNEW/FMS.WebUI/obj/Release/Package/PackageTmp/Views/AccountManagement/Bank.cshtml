@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "AddBank";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Bank
+<form id="BankForm"  method="post">
+<table class="Props">
+    <input type="hidden" name="C_GUID" value="@Session["CurrentCompanyGuid"]" />
+   <input type="hidden" name="B_GUID" value="@Model.B_GUID" />
+    <tr>
+        <td>@FMS.Resource.Bank.Bank.BankName</td>
+        <td><input name="Name" class="easyui-validatebox" data-options="required:true" value="@Model.Name"/></td>
+    </tr>
+</table >          
+</form>
+

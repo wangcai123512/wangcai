@@ -1,0 +1,179 @@
+﻿@using System.Web.Security
+@{
+    ViewBag.Title = "IncomeRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<form id="Income_Form">
+    <input type="hidden" name="IE_GUID" id="IE_GUID" value="@ViewData["IE_GUID"]"/>
+    <input type="hidden" name="RP_GUID" id="RP_GUID" value="@ViewData["RP_GUID"]"/>
+    <input type="hidden" name="InvType" id="InvType" value="营业外收入"/>
+            <input type="hidden" name="State" id="State" value="应收" />
+    <span style="font-size: 15px; font-weight: 900" id="Type"></span>
+    <table>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate:</td>
+            <td><input class="easyui-datebox" id="AffirmDate" name="AffirmDate" value="@ViewData["Date"]"/></td>
+            <td>@FMS.Resource.Finance.Finance.Supplier:</td>
+            <td>
+                <input class="easyui-combobox" id="RPer" name="RPer" value="@ViewData["RPer"]"
+                       data-options='editable:false,url:"/InternalAPI/GetPayee",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200'/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.ExpiryDate:
+            </td>
+            <td>
+                <input class="easyui-datebox" id="Date" name="Date" value="@ViewData["Date"]"/> </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="Amount" name="Amount" class="easyui-numberbox" value="@ViewData["Amount"]" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Taxation@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="TaxationAmount" name="TaxationAmount" onkeyup="checkAmount()" class="easyui-numberbox" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.TaxationType:</td>
+            <td>
+                <input id="TaxationType" name="TaxationType"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.SumAmount:</td>
+            <td>
+                <input id="SumAmount" name="SumAmount" class="easyui-numberbox" onclick="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+            <td>
+                <input id="Currency" name="Currency" value="@ViewData["Currency"]"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@General.Resource.Common.Remark :</td>
+            <td>
+                <input class="easyui-validatebox" id="Remark" name="Remark"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.InvNo:
+            </td>
+            <td>
+                <input class="easyui-validatebox" id="InvNo" name="InvNo"/>
+            </td>
+            <td colspan="4">
+                <div>
+                    <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <div id="div_files"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        var StandardCoin;
+        var CommonCurrency;
+        var Tax;
+        var BankAccount;
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetBankAccounts",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                var obj = new Object();
+                obj.ID = "0";
+                obj.Name = "现金";
+                obj.children = new Array();
+                d.push(obj);
+                BankAccount = d;
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetTax",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                Tax = d;
+            }
+        });
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#Currency").combobox("setValue", StandardCoin);
+            }
+        });
+        $("#TaxationType").combobox({
+            valueField: 'T_GUID',
+            textField: 'Name',
+            editable: false,
+            required: true,
+            data: Tax
+        });
+
+        //添加界面的附件管理
+        var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+        var ASPSESSID = "@Session.SessionID";
+        $('#file_upload').uploadify({
+            width: 120,
+            height: 20,
+            swf: '/Content/uploadify/uploadify.swf',    //FLash文件路径
+            buttonText: '上传发票附件',               //按钮文本
+            uploader: '/AssetPurchaseQuery/Upload',       //处理文件上传Action
+            queueID: 'fileQueue',                        //队列的ID
+            queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+            auto: false,                                 //选择文件后是否自动上传，默认为true
+            multi: true,                                 //是否为多选，默认为true
+            removeCompleted: true,                       //是否完成后移除序列，默认为true
+            fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+            fileTypeDesc: 'Image Files',                 //文件描述
+            fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+            onQueueComplete: function (event, data) {                 //所有队列完成后事件
+                //ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+                FileFlag = true;
+            },
+            onUploadStart: function (file) {
+                $("#file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#IE_GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+            },
+            onUploadError: function (event, queueId, fileObj, errorObj) {
+                console.log(errorObj);
+                FileFlag = false;
+            }
+        });
+    });
+
+    function checkAmount() {
+        var amount = document.getElementById('Amount').value == '' ? 0 : document.getElementById('Amount').value;
+        var taxationamount = document.getElementById('TaxationAmount').value == '' ? 0 : document.getElementById('TaxationAmount').value;
+        amount = amount.replace(",", "");
+        taxationamount = taxationamount.replace(",", "");
+        document.getElementById('SumAmount').value = Money(parseFloat(amount) + parseFloat(taxationamount));
+    }
+
+    function Money(price) {
+        if (price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for (var i = 1; i <= len; i++) { priceStr += priceString.charAt(i - 1); if (i == (remainder) && len > remainder) priceStr += ','; if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if (priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if (priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return priceStr; } else { return price; }
+    }
+</script>
+
+
+

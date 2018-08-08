@@ -1,0 +1,257 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<div id="toolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	    <a class="easyui-linkbutton" onclick="Export()">数据导出</a>
+	</div>
+	<div>
+		<form id="searchconditionForm">
+		<table>
+			<tr>
+				<td>日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="DateBegin" data-options="width:97,panelHeight:'auto'"/>至<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:97,panelHeight:'auto'" /></td>
+			</tr>
+			<tr>
+				<td>供应商:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayee',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+			<tr>
+				<td>状态:</td>
+				<td>
+					<select class="easyui-combobox" id="conFlag" name="state" data-options="width:207,panelHeight:'auto'" >
+						<option value=""></option>
+						<option value="应付">应付</option>
+						<option value="已付">已付</option>
+					</select>
+				</td>
+			</tr>
+		    <tr>
+		        <td>费用类别:</td>
+		        <td>
+		            <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+		                <option value=""></option>
+		                <option value="营业成本">营业成本</option>
+		                <option value="销售费用">销售费用</option>
+		                <option value="管理费用">管理费用</option>
+		                <option value="财务费用">财务费用</option>
+		            </select>
+		        </td>
+		    </tr>
+            <tr>
+				<td>费用详细类别:</td>
+				<td><input class="easyui-combobox" id="conIncomeGrpDts" name="IncomeGrpDts" data-options="width:207,panelHeight:'auto'"/></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="ER_List"></table>
+<script language="javascript" type="text/javascript">
+	var LinkHandle = function (value) {
+		var link1 = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Edit</a> ";
+		var link2 = " <a class='linkbtn' onclick='delClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+		return link1 + link2;
+	};
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	var GroupHandle = function(value) {
+	    var iegroup;
+	    $.ajax({
+			url: "/InternalAPI/GetDetailsAccounts?id="+ value,
+			async: false,
+			dataType: "json",
+			success: function(d) {
+			    iegroup=eval(d);
+			    $.each(d, function (index, item) {  
+                 //循环获取数据    
+                 iegroup = d[index].Name;  
+             });  
+			}
+		});
+	    return iegroup;
+	};
+        var FJHandle = function(value, row, index) {
+	    if (value == ""||value==null) {
+	        return "";
+	    } else {
+	        var v = "../Content/EasyUI/themes/icons/hxz.png";
+	        //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="'+v+'" />';
+	    }
+	};
+    var detail;
+	
+	$(function() {
+	    $("#ER_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/ExpenseQuery/GetExpenseList',
+	        columns: [[
+	            { field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate', formatter: DateHandle },
+	            { field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Supplier' },
+	            { field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+	            { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.SumAmount', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+	            { field: "State", title: "@General.Resource.Common.Flag"},
+	            { field: 'Date', title: '@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.ExpiryDate', formatter: DateHandle },
+	            { field: "InvType", title: "@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Group" },
+	            { field: "IEGroup", title: "@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Explicit@FMS.Resource.Finance.Finance.Group",formatter: GroupHandle },
+	            { field: 'Remark', title: '@General.Resource.Common.Remark ' },
+                { field: 'A_GUID', title: '附件',align: 'center',formatter: FJHandle },
+				{ field: 'IE_GUID', title: '', formatter: LinkHandle }
+			]],
+		    pagination: true,
+		    rownumbers: true,
+		    singleSelect: true,
+	        toolbar: "#toolbar"
+		});
+
+            $.ajax({
+                url: "/InternalAPI/GetDetail",
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    detail = d;
+                }
+            });
+            $("#conIncomeGrpDts").combobox({
+                valueField: 'GUID',
+                textField: 'Name',
+                editable: false,
+                required: true,
+                data: detail
+            });
+
+	});
+
+	function AddClick(id) {
+		InitDialog();
+		$('#WinER').dialog("refresh", "/ExpenseQuery/ExpenseRecord/" + id);
+    }
+	
+    function delClick(id) {
+        $.messager.confirm('确认', '确认删除?', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/ExpenseQuery/DelExpenseRecord/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#ER_List').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+
+	function InitDialog() {
+		$("#ER_List").after('<div id="WinER"></div>');
+		$("#WinER").dialog({
+			title: ' ',
+			collapsible: false,
+			minimizable: false,
+			width: 800,
+			height: 350,
+			onClose: function () { $("#WinER").dialog("destroy"); },
+              buttons: [{
+	            text: '@General.Resource.Common.Save',
+	            handler: function () { SubmitForm(); }
+	        }]
+		});
+	}
+
+    function SubmitForm() {
+	    $("#Expense_Form").form('submit', {
+	        url: "/ExpenseQuery/UpdExpenseRecord",
+	        onSubmit: function () {
+				if ($("#Expense_Form").form("validate")) 
+				{
+					$('#file_upload').uploadify('upload', '*');
+						
+				};
+			},
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+	            if ($.parseJSON(data).Result) {
+	                $('#WinER').dialog("close");
+	                $("#ER_List").datagrid("reload");
+	            }
+	        }
+	    });
+	}
+
+    function getIncomeGrpDts() {
+        var incomegrpdts;
+        var id;
+        var incomegrp=$("#conIncomeGrp").combobox('getValue');
+        if ( incomegrp=="营业成本") {
+            id = '51BFDD3E-2253-4FBF-A946-19C18C25C6FC';
+        }
+	    if ( incomegrp=="财务费用") {
+            id = 'F85560AA-4951-4214-AF7F-5B890C9524B2';
+        }
+	    if ( incomegrp=="销售费用") {
+            id = 'DC83D8A5-31F6-4DFE-B093-87F90A234E53';
+        }
+	    if ( incomegrp=="管理费用") {
+            id = '547E5A1A-1C20-4249-92C8-67FFFFBD38E7';
+        }
+
+        $.ajax({
+			url:  "/InternalAPI/GetDetailsAccountParentAccGuid?pid="+id,
+			async: false,
+			dataType: "json",
+			success: function(d) {
+			    incomegrpdts = d;
+			}
+		});
+        $("#conIncomeGrpDts").combobox({
+            editable: false,
+            required: true,
+            textField: "Name",
+            valueField: "Name",
+            data: incomegrpdts
+        });
+    }
+
+	function Search() {
+	    $("#ER_List").datagrid("load", $("#searchconditionForm").serializeObject());
+	}
+
+	function Export() {
+	    $("#searchconditionForm").form("submit", { url: '/ExpenseQuery/ExportXls' });
+	}
+	
+    function compute() {
+        var rows = $('#ER_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#ER_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+
+
+

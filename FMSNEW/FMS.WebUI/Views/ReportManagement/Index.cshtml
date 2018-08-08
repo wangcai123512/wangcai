@@ -1,0 +1,241 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+
+
+<div id="main" style="margin-top: 100px; background-color: #FFF;">
+    @Html.Partial("_ReportLeftMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="col-md-12" style="margin-top: -20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">报告中心</span></div>
+                <div class="row" style="margin-top: 30px;margin-left:30px;width:800px">
+
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-sm-2">
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = ">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    利润
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = '/NetCashFlowsRecord/Index'">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    现金流
+                                </button>   
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = '/AccountReceiveRecord/Index'">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    应收款
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = ">
+
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    库存
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = ">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    收入
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location ='/CostsAndExpensesTotalRecord/Index'">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    成本与费用
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = ">
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    应付款
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px" onclick="javascript:window.location = ">
+
+                                <button type="button" style="height: 40px; width:120px; border-radius: 100px; font-size: 15px;
+                                            background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    资产
+                                </button>
+
+                            </div>
+                        </div>
+
+
+
+                        @*<div class="col-sm-2">
+                                <div class="col-sm-12" style="margin-top: 30px" onclick="javascript:window.location = ">
+                                    <a style="height: 60px; width: 100%; font-size: 20px;">
+                                        收入分析
+                                    </a>
+                                </div>
+                                <div class="col-sm-12" style="margin-top: 30px" onclick="javascript:window.location = ">
+
+                                    <a style="height: 60px; width: 100%; font-size: 20px;">
+                                        成本分析
+                                    </a>
+
+                                </div>
+                            </div>*@
+                    </div>
+
+
+                    <div class="col-md-12" style="margin: auto">
+
+                        <hr />
+                        <div class="col-sm-3" style="margin-top: -20px">
+                            <div class="col-sm-12" style="margin-top: 10px">
+                                <button type="button" style="height: 50px; width:220px; font-size: 15px;
+                                    background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default" onclick="javascript:window.location = '/IncomeStatement/Index'">
+                                    利润表
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px">
+
+                                <button type="button" style="height: 50px; width: 220px;font-size: 15px;
+                                    background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default" onclick="javascript:window.location = '/CashFlowStatements/Index'">
+                                    现金流量表
+                                </button>
+
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px">
+                                <button type="button" style="height: 50px; width:220px;font-size: 15px;
+                                    background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default" onclick="javascript:window.location = '/BalanceSheet/Index'">
+                                    资产负债表
+                                </button>
+                            </div>
+                            <div class="col-sm-12" style="margin-top: 10px">
+
+                                <button type="button" style="height: 50px; width: 220px;font-size: 15px;
+                                    background-color:#f5f5f5; border: 5px solid #c0c0c0;font-weight: bold" class="btn btn-default">
+                                    所有者权益表
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                        </div>
+                        <div class="col-sm-7" style="margin-top: -20px">
+                            <ul class="circle">
+                                <li>
+                                    <label class="label-title">
+                                        本年至今净利润:
+                                    </label>
+
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        本月至今净利润:
+                                    </label>
+                                    <label class="label-money">400</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        本年至今净现金流:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        本月至今净现金流:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        应收款总金额:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        预期应收款总金额:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        应付款总金额:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        总资产:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                                <li>
+                                    <label class="label-title">
+                                        净资产:
+                                    </label>
+                                    <label class="label-money">50000</label>
+                                    <label>CNY</label>
+                                    <a style="float:right;color: #08C">统计</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+</div>
+<style type="text/css">
+    .circle li {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .label-title {
+        min-width: 170px;
+    }
+
+    .label-money {
+        min-width: 90px;
+    }
+</style>

@@ -1,0 +1,6 @@
+D:\fms\FMSNEW\FMS.Models\bin\Debug\FMS.Models.dll.config
+D:\fms\FMSNEW\FMS.Models\bin\Debug\FMS.Models.dll
+D:\fms\FMSNEW\FMS.Models\bin\Debug\FMS.Models.pdb
+D:\fms\FMSNEW\FMS.Models\obj\Debug\FMS.Models.dll
+D:\fms\FMSNEW\FMS.Models\obj\Debug\FMS.Models.pdb
+D:\fms\FMSNEW\FMS.Models\obj\Debug\FMS.Models.csprojResolveAssemblyReference.cache

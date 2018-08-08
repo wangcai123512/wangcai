@@ -1,0 +1,322 @@
+﻿@{ ViewBag.Title = "Index"; Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+<script type="text/javascript">
+    $(document).ready(function () {
+        var rper;
+        var currency;
+        $.ajax({
+            url: "/InternalAPI/GetCustomer",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                rper = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+
+        $('#customer').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+        });
+        $("#customer").multiselect('dataprovider', rper);
+
+
+        $('#currency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+        });
+        $("#currency").multiselect('dataprovider', currency);
+        $("#currency").multiselect('select', standardCoin);
+
+        $('#state').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+
+        });
+
+        $('#incomeGrp').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+
+        });
+
+        //////////////////
+
+        var rper;
+        var currency;
+        $.ajax({
+            url: "/InternalAPI/GetCustomer",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                rper = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+
+        $('#RPer').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+        });
+        $("#RPer").multiselect('dataprovider', rper);
+
+
+        $('#Currency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+        });
+        $("#Currency").multiselect('dataprovider', currency);
+
+        $('#TaxationType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false
+
+        });
+    });
+</script>
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li> <a onclick="javascript:window.location = '/ReceivablesRecord/ReceivablesRecord'" href="javascript:window.location = '/ReceivablesRecord/ReceivablesRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">记录收款</span> <span class="sidebar-title-tray"></span> </a> </li>
+                <li> <a @*onclick="javascript:window.location = '/ReceivablesClassify/Index'" href="javascript:window.location = '/ReceivablesClassify/Index'"*@><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询与归账收款</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/ReceivablesDeclareCustomer/Index'" href="javascript:window.location='/ReceivablesDeclareCustomer/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">申报收入外收款</span></a> </li>
+                <li class="active"> <a onclick="javascript:window.location = '/ReceivablesDeclareCustomer/Query'" href="javascript:window.location='/ReceivablesDeclareCustomer/Query'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C">查询收入外收款</span></a> </li>
+                <li> <a @*onclick="javascript:window.location = '/IncomeRecord/Temporary'" href="javascript:window.location = '/IncomeRecord/Temporary'"*@><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF" >
+    <div id="content">
+        <div class="row" style="margin-top: 20px;">
+        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">查询收入外收款记录</span></div>
+            <div class="col-md-12" style="margin: auto">
+                <div class="panel panel-visible">
+                    <div class="panel-body pbn">
+                        <div id="toolbar">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <form>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-7" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">收款日期&nbsp;  </span>
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px">
+                                            至
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;付款方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    <select id="customer" name="customer" required="true">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">收款类别&nbsp; </span>
+                                                    <select id="incomeGrp" name="incomeGrp" required="true">
+                                                        <option value="预收客户款" selected="selected">预收客户款</option>
+                                                        <option value="预收客户款">预收客户款</option>
+                                                        <option value="吸取投资">吸取投资</option>
+                                                        <option value="借款">借款</option>
+                                                        <option value="其他与筹资活动有关的收款">其他与筹资活动有关的收款</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;币&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    <select id="currency" name="currency" required="true">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                      <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;"> 状&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 态 &nbsp; </span>
+                                                    <select id="state" name="state" required="true">
+                                                        <option value="未收" selected="selected">未收</option>
+                                                        <option value="已收">已收</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div class="col-md-5" style="margin: auto">
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto">
+                                            <button onclick="query()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">查询</button>
+                                        </div>
+                                        <div class="col-md-5" style="margin: auto">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <table id="CompanyTable" style="font-size: 12px">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </section>
+</div>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+
+        $('#dateBegin').datepicker();
+        $('#dateEnd').datepicker();
+
+        $('#CompanyTable').bootstrapTable({
+            url: "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            sortName: 'Name', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                    { field: 'Date', title: '申报日期', formatter: ChangeDateFormat, align: 'center' },
+                    { field: 'RPerName', title: '付款方', align: 'center' },
+                    { field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter },
+                    { field: 'Currency', title: '货币', align: 'center' },
+                    { field: "InvType", title: '收款类别', align: 'center' },
+                    { field: 'Remark', title: '备注', align: 'center' },
+                    { field: 'AGUID', title: '附件', align: 'center', formatter: FJHandle },
+                    { field: 'State', title: '状态', align: 'center' }
+                    ]
+        });
+    });
+
+    function ChangeDateFormat(jsondate) {
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        }
+        else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "-" + month + "-" + currentDate;
+    }
+
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined") {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+
+    var FJHandle = function (value, row, index) {
+        if (value == "" || value == null) {
+            return "";
+        } else {
+            var v = "../Content/EasyUI/themes/icons/hxz.png";
+            //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="' + v + '" />';
+        }
+    };
+
+    function query() {
+        var datebegin = $('#dateBegin').val();
+        var dateend = $('#dateEnd').val();
+        var customer = $('#customer').val();
+        var currency = $('#currency').val();
+        var state = $('#state').val();
+        var incomeGrp = $('#incomeGrp').val();
+
+        $('#CompanyTable').bootstrapTable('refresh', { url: "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList?dateBegin=" + datebegin + "&dateEnd=" + dateend + "&customer=" + customer + "&currency=" + currency + "&state=" + state + "&incomeGrp=" + incomeGrp });
+    }
+</script>

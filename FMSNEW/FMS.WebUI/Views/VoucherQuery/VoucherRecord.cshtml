@@ -1,0 +1,2518 @@
+﻿@{
+    ViewBag.Title = "VoucherRecord";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+ <style type="text/css">
+  .multiselect-selected-text {
+            max-width: 7em;        
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 3px;
+        }
+ </style>
+ <script type="text/javascript">
+     $(document).ready(function () {
+
+         var table = document.getElementById("VoucherTable");
+         table.rows[1].cells[1].innerHTML = "<select style='text-align:center;width:100%;height:30px;' id='k' class='main1' onchange='GetOptgroup(this.options[this.selectedIndex],this,1);'></select>";
+         table.rows[1].cells[2].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main2'  onchange='GetOptgroup(this.options[this.selectedIndex],this,2);'></select>";
+         table.rows[1].cells[3].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main3'></select>";
+         table.rows[2].cells[1].innerHTML = "<select style='text-align:center;width:100%;height:30px;' id='k2' class='main1' onchange='GetOptgroup(this.options[this.selectedIndex],this,1);'></select>";
+         table.rows[2].cells[2].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main2' onchange='GetOptgroup(this.options[this.selectedIndex],this,2);'></select>";
+         table.rows[2].cells[3].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main3'></select>";
+         //         $('#k').multiselect({
+         //             buttonWidth: '100%',
+         //             maxHeight: 150,
+         //             enableFiltering: true,
+         //             includeFilterNewBtn: false,
+         //             enableCollapsibleOptGroups: true,
+         //             enableClickableOptGroups: true,
+         //             nonSelectedText: ''
+         //         });
+     });
+ </script>
+<div id="main" style="margin-top: 100px;">
+     <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+            <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                @*<li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>*@
+                <li class="active">
+                    <a class="accordion-toggle menu-open" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">会计凭证</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li class="active"> <a onclick="javascript:window.location = '/VoucherQuery/VoucherRecord'" href="javascript:window.location = '/VoucherQuery/VoucherRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C">新增会计凭证</span></a></li>
+                        <li> <a onclick="javascript:window.location = '/VoucherQuery/Index'" href="javascript:window.location = '/VoucherQuery/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询会计凭证</span></a></li>
+                    </ul>
+                </li>
+                @*<li> <a onclick="Undone()"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>*@
+
+            </ul>
+        </div>
+    </aside>
+     <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">新增会计凭证</span></div>
+                     <div class="col-md-12" style="margin: auto">
+                     <div class="col-md-2">
+                     @*<select id="Remark">
+                     <option value="收入">收入</option>
+                     <option value="成本与费用">成本与费用</option>
+                     <option value="收入外收款">收入外收款</option>
+                     <option value="成本外支出">成本外支出</option>
+                     <option value="收款">收款</option>
+                     <option value="付款">付款</option>
+                     </select>*@
+                    <div style="font-size: 12px;margin-top:10px">日期</div>
+                     </div>
+                     <div class="col-md-10">
+                     <div class="input-group input-group-sm" style="float:left;margin-left:-100px">
+                                   <input type="text" id="Date" name="Date" class="form-control datepicker mtn" value="" required="true">
+                                </div>
+                     </div>
+                     </div>
+                    <div class="col-md-12" style="margin-top:10px">
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <table id="VoucherTable" class="table  table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th style="text-align:center">摘要</th>
+                                                <th style="text-align:center">一级科目</th>
+                                                <th style="text-align:center">二级及明细科目</th>
+                                                <th style="text-align:center">三级科目</th>
+                                                <th style="text-align:center">借方金额</th>
+                                                <th style="text-align:center">贷方金额</th>
+                                                <th style="text-align:center">操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr id="2">
+                                             <td style="text-align:center;width:18%" onclick="tdclick(this,1)"></td>  
+                                                <td  style="text-align:center;width:18%"></td>  
+                                                 <td  style="text-align:center;width:18%"></td>  
+                                                 <td style="text-align:center;width:18%"></td> 
+                                                  <td  style="text-align:center;width:10%" onclick="tdclick(this,2)"></td>  
+                                                   <td  style="text-align:center; width:10%" onclick="tdclick(this,2)"></td> 
+                                                   <td   style="text-align:center;width:8%" @*onclick="deletetr(this)"*@>  
+                                                @*<button type="button"  class="btn btn-xs btn-link" style="color: #08C;">删除</button>*@  
+                                                </td> 
+                                            </tr>
+                                            <tr id="3">
+                                             <td style="text-align:center;width:18%" onclick="tdclick(this,1)"></td>  
+                                                <td  style="text-align:center;width:18%"></td>  
+                                                 <td  style="text-align:center;width:18%"></td>  
+                                                 <td style="text-align:center;width:18%"></td> 
+                                                  <td  style="text-align:center;width:10%" onclick="tdclick(this,2)"></td>  
+                                                   <td  style="text-align:center; width:10%" onclick="tdclick(this,2)"></td> 
+                                                   <td   style="text-align:center;width:8%" @*onclick="deletetr(this)"*@>  
+                                                @*<button type="button"  class="btn btn-xs btn-link" style="color: #08C;">删除</button>*@  
+                                                </td> 
+                                            </tr>
+                                            <tr id="aa">
+                                            <td style="text-align:center;width:18%"><span>附单据数</span><input maxlength="6" style="width:40%;border:none"></input><span>张</span></td>
+                                            <td style="text-align:center;width:18%"><span id="Sum"></span></td>
+                                            <td style="text-align:center;width:18%"></td>
+                                            <td style="text-align:center;width:18%"></td>
+                                            <td style="text-align:center;width:10%"><span id="Sum1"></span></td>
+                                            <td style="text-align:center;width:10%"><span id="Sum2"></span></td>
+                                            <td style="text-align:center;width:8%"></td>
+                                              
+                                            </tr>
+                                            <div id="AddLayout" style=""></div>
+                                            </tbody>
+                                        </table>
+                                        <div id="addtrdiv" style="margin-top:5px;margin-right:-70px; width: 15%; float: right;">  
+                                            <button type="button" class="btn btn-xs btn-link" onclick="addtr()" style="color: #08C;">添加</button>  
+                                        </div>  
+                                    </div>
+                                     <div class="col-md-12" style="margin: auto">
+                                    <div class="col-md-6" style="margin: auto">
+                                        <button id="vouchSubmit" onclick="VoucherSubmit()" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">提交</button>
+                                    </div>
+                                    <div class="col-md-6" style="margin: auto">
+                                        <button onclick="javascript:window.location ='/Common/Index'" type="button" style="width: 100px; border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-left">返回上页</button>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="modal fade" id="amyModal" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                   应收账款
+                </h4>
+            </div>
+            <div class="modal-body">
+                @*<iframe id="editform" width="100%" height="50%" frameborder="0"></iframe>*@
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="aTable" style="font-size: 12px">
+                        </table>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <button type="button" id="ShowB" style="width: 100px; border-radius: 100px; font-size: 10px; border: 0px solid #c0c0c0; font-weight: bold;"
+                                class="btn btn-primary pull-right" value='' onclick='REClick0(value)'>
+                            显示全部
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="aSubmitForm()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<div class="modal fade" id="bmyModal" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                   应收账款
+                </h4>
+            </div>
+            <div class="modal-body">
+                @*<iframe id="editform" width="100%" height="50%" frameborder="0"></iframe>*@
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="bTable" style="font-size: 12px">
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="aSubmitForm()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script type="text/javascript">
+//    var option1 = new Array("主营业务收入", "非主营业务收入","营业外收入","投资收入","补贴收入");
+
+    var optgroupName
+    var opt = {
+        资产: [
+
+//        { name: "固定资产清理" }
+    ],
+        负债: [
+
+    ],
+        所有者权益: [
+
+    ],
+      损益: [
+
+    ]
+    }; 
+    var rper;
+    var rper1;
+    var allRper;
+    var bankaccount;
+    var ledgerAccounts;
+    var Assets = new Array();
+    var Liabilities = new Array();
+    var OwnerEquity = new Array();
+    var Cost = new Array();
+    var IncomeStatement = new Array();
+    $(document).ready(function () {
+        $("#amyModal").on("hidden.bs.modal", function () {
+            $('#aTable').bootstrapTable('destroy');
+        });
+
+        $("#amyModal").on('show.bs.modal', function () {
+            $("#amyModal").css("top", "200px");
+            $("#amyModal").css("left", "200px");
+            //          $("#Voucher").css("top","200px");
+            $("#amyModal").css("margin", "0px");
+        });
+        var date = new Date();
+        var mon = date.getMonth() + 1;
+        var day = date.getDate();
+        var str = date.getFullYear() + "/" + (mon < 10 ? "0" + mon : mon) + "/" + (day < 10 ? "0" + day : day);
+        $('#Date').val(str);
+//        $('#Date').datepicker('update');
+        $.ajax({
+            url: "/GeneralLedgerAccount/GetLAccountList",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                ledgerAccounts = d;
+            }
+        });
+        for (var i = 0; i < ledgerAccounts.length; i++) {
+            if (ledgerAccounts[i].AccGroup == '1') {
+                Assets.push({ "name": ledgerAccounts[i].UinName, "LA_GUID": ledgerAccounts[i].LA_GUID,"AccCode": ledgerAccounts[i].AccCode});
+            }
+            if (ledgerAccounts[i].AccGroup == '2') {
+                Liabilities.push({ "name": ledgerAccounts[i].UinName, "LA_GUID": ledgerAccounts[i].LA_GUID,"AccCode": ledgerAccounts[i].AccCode });
+            }
+            if (ledgerAccounts[i].AccGroup == '4') {
+                OwnerEquity.push({ "name": ledgerAccounts[i].UinName, "LA_GUID": ledgerAccounts[i].LA_GUID,"AccCode": ledgerAccounts[i].AccCode });
+            }
+            if (ledgerAccounts[i].AccGroup == '5') {
+                Cost.push({ "name": ledgerAccounts[i].UinName, "LA_GUID": ledgerAccounts[i].LA_GUID,"AccCode": ledgerAccounts[i].AccCode });
+            }
+            if (ledgerAccounts[i].AccGroup == '6') {
+                IncomeStatement.push({ "name": ledgerAccounts[i].UinName, "LA_GUID": ledgerAccounts[i].LA_GUID ,"AccCode": ledgerAccounts[i].AccCode});
+            }
+
+        }
+        opt = {
+            资产: Assets,
+            负债: Liabilities,
+            所有者权益: OwnerEquity,
+            成本: Cost,
+            损益: IncomeStatement
+            //             [
+            //                    { name: "主营业务收入" },
+            //                    { name: "非主营业务收入" },
+            //                    { name: "营业外收入" },
+            //                    { name: "投资收入" },
+            //                    { name: "营业成本" },
+            //                    { name: "销售费用" },
+            //                    { name: "管理费用" },
+            //                    { name: "财务费用" },
+            //                    { name: "税金及附加" },
+            //                    { name: "所得税" }
+            //            ]
+        };
+        $.ajax({
+            url: "/InternalAPI/GetBankAccountss",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                bankaccount = d;
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCustomer",
+            async: false,
+            cache: false,
+            dataType: "json",
+            success: function (d) {
+                rper = d;
+                rper.splice(0, 1)
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetPayeeJson",
+            async: false,
+            cache: false,
+            dataType: "json",
+            success: function (d) {
+                rper1 = d;
+                rper1.splice(0, 1)
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetPartnersAll",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                allRper = d;
+                allRper.splice(0, 1)
+            }
+        });
+
+        InitalDateInput();
+
+
+        //        var tr = document.createElement("tr");
+        //        tr.id = '2';
+        $(function () {
+            var $select = $('#k');
+            $.each(opt, function (key, value) {
+                var group = $('<optgroup label="' + key + '" />');
+                $.each(value, function () {
+
+                    var option = $("<option value='" + this.LA_GUID + "' AccCode='" + this.AccCode + "'>" + this.name + "\</option>");
+
+                    group.append(option);
+                });
+                group.appendTo($select);
+            });
+            var x = document.getElementById("k");
+            x.selectedIndex = -1;
+
+            $('#k').multiselect({
+                buttonWidth: '100%',
+                maxHeight:310,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                enableCollapsibleOptGroups: true,
+                enableClickableOptGroups: true,
+                nonSelectedText: ''
+            });
+            $select.val("").multiselect("refresh");
+
+        });
+
+        $(function () {
+            var $select = $('#k2');
+            $.each(opt, function (key, value) {
+                var group = $('<optgroup label="' + key + '" />');
+                $.each(value, function () {
+                    var option = $("<option value='" + this.LA_GUID + "'  AccCode='" + this.AccCode + "'>" + this.name + "\</option>");
+                    group.append(option);
+                });
+                group.appendTo($select);
+            });
+            var x = document.getElementById("k");
+            x.selectedIndex = -1;
+
+            $('#k2').multiselect({
+                buttonWidth: '100%',
+                maxHeight: 310,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                enableCollapsibleOptGroups: true,
+                enableClickableOptGroups: true,
+                nonSelectedText: ''
+            });
+            $select.val("").multiselect("refresh");
+
+        });
+
+
+        $('.main2').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 310,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $('.main3').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 310,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $('#Remark').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $(".main3").multiselect('dataprovider', allRper);
+        $(".main3").val("").multiselect("refresh");
+        //        $("#k .main1").click(function () {
+        //            //            var a = table.rows.length;
+        //            //            for (var i = 3; i <= a; i++) {
+        //            //                $("tr[id=" + i + "]").remove();
+        //            //            }
+        //            var SecSubject;
+        //            var Choosename = $('#2 .main1 option:selected').val();
+        //            Choosename = Choosename.replace(/(^\s*)|(\s*$)/g, "");
+        //            if (optgroupName == "收入") {
+
+        //                if (Choosename == "税金") {
+        //                    var id = '@Session["Taxpayer"]';
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetTaxList?TaxPayer=" + id,
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        }
+        //                    });
+        //                    $("#2 .main2").multiselect('dataprovider', detailType);
+        //                    $("#2 .main2").val("").multiselect("refresh");
+        //                } else {
+        //                    $("#2 .main2").multiselect('dataprovider', rper);
+        //                    $("#2 .main2").val("").multiselect("refresh");
+        //                }
+        //            } if (optgroupName == "资产" && Choosename.indexOf("银行存款") > 0) {
+        //                $("#2 .main2").multiselect('dataprovider', bankaccount);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            } if (optgroupName == "资产" && (Choosename.indexOf("应收账款") || Choosename.indexOf("应付账款") || Choosename.indexOf("库存现金"))) {
+        //                $("#2 .main2").multiselect('dataprovider', allRper);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "资产" && Choosename.indexOf("其他货币资金")) {
+        //                $.ajax({
+        //                    url: "/InternalAPI/GetDetailSubject?Name=" + "其他货币资金",
+        //                    async: false,
+        //                    dataType: "json",
+        //                    success: function (d) {
+
+        //                        SecSubject = d;
+        //                        SecSubject.splice(0, 1)
+        //                    }
+        //                });
+
+        //                $("#2 .main2").multiselect('dataprovider', SecSubject);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "成本与费用") {
+        //                var detailType;
+        //                if (Choosename == "营业成本") {
+
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetDetailType?coloum=" + "ExpenseFlag",
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        },
+        //                        error: function (a, b, c) {
+
+        //                            alert(a);
+        //                        }
+        //                    });
+
+        //                }
+        //                if (Choosename == "销售费用") {
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetDetailType?coloum=" + "SaleFlag",
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        },
+        //                        error: function (a, b, c) {
+
+        //                            alert(a);
+        //                        }
+        //                    });
+
+        //                }
+        //                if (Choosename == "管理费用") {
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetDetailType?coloum=" + "ManageFlag",
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        },
+        //                        error: function (a, b, c) {
+
+        //                            alert(a);
+        //                        }
+        //                    });
+
+        //                }
+        //                if (Choosename == "财务费用") {
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetDetailType?coloum=" + "FinanceFlag",
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        },
+        //                        error: function (a, b, c) {
+
+        //                            alert(a);
+        //                        }
+        //                    });
+
+
+        //                }
+        //                if (Choosename == "税金") {
+        //                    $.ajax({
+        //                        url: "/InternalAPI/GetTaxList?TaxPayer=" + "1",
+        //                        async: false,
+        //                        dataType: "json",
+        //                        success: function (d) {
+
+        //                            detailType = d;
+        //                            detailType.splice(0, 1)
+        //                        }
+        //                    });
+        //                }
+        //                $("#2 .main2").multiselect('dataprovider', detailType);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "收入外收款") {
+        //                List1 = [];
+        //                for (var i = 0; i < option3.length; i++) {
+        //                    var temp = new Object;
+        //                    temp.lable = i + 1;
+        //                    temp.value = option3[i];
+        //                    List1.push(temp);
+        //                }
+        //                $("#2 .main2").multiselect('dataprovider', rper);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "成本外支出") {
+        //                List1 = [];
+        //                for (var i = 0; i < option4.length; i++) {
+        //                    var temp = new Object;
+        //                    temp.lable = i + 1;
+        //                    temp.value = option4[i];
+        //                    List1.push(temp);
+        //                }
+        //                $("#2 .main2").multiselect('dataprovider', rper1);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "收款") {
+        //                List1 = [];
+        //                for (var i = 0; i < option5.length; i++) {
+        //                    var temp = new Object;
+        //                    temp.lable = i + 1;
+        //                    temp.value = option5[i];
+        //                    List1.push(temp);
+        //                }
+        //                $("#2 .main2").multiselect('dataprovider', rper);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+        //            if (optgroupName == "付款") {
+        //                List1 = [];
+        //                for (var i = 0; i < option6.length; i++) {
+        //                    var temp = new Object;
+        //                    temp.lable = i + 1;
+        //                    temp.value = option6[i];
+        //                    List1.push(temp);
+        //                }
+        //                $("#2 .main2").multiselect('dataprovider', rper);
+        //                $("#2 .main2").val("").multiselect("refresh");
+        //            }
+
+        //        });
+    });
+
+    function aSubmitForm() {
+        alert("提交成功");
+        window.location.reload();
+
+    }
+
+
+
+   
+    var name;
+    function VoucherSubmit() {
+        var amount = 0;
+        var reAmount = 0;
+        var bankAmount = 0; //银行存款
+        var disAmount = 0; //未收付金额
+        var assetAmount=0;
+        var debtAmount = 0;
+        var assetAmount1 = 0;
+        var debtAmount1 = 0;
+        var sumAmount = 0;
+        var taxAmount = 0;
+        var InvType;
+        var Voucher;
+        var State;
+        var VoucherState;
+        var voucherRecord = new Object;
+        var RPLA_GUID;
+        var RPDA_GUID;
+        var VRP_GUID;
+        var VoucherFlag;
+        var VoucherInvtype;
+        var recordList = new Array();
+        var payList = new Array();
+        var voucherRecordList = new Array();
+        var param1 = new Array();
+        var param2= new Array();
+        var param3 = new Array();
+        var table = document.getElementById("VoucherTable");
+        var sumtr = document.getElementsByTagName("tr");
+        var tempMap = {};
+        var arrM = [];
+        var aa = [];
+        var VAccountRFlag = null;
+        $("#vouchSubmit").attr("disabled", true);
+        var TaFlag = null;
+        var assetCount = 0;
+        var debtCount = 0;
+        if (!CheckDate()) {
+            alert('请输入日期!');
+        } else {
+            voucherRecord.GUID = NewGUID();
+//            voucherRecord.IE_GUID = NewGUID();
+            VRP_GUID = NewGUID();
+
+            for (var i = 1; i < sumtr.length - 1; i++) {
+               
+               
+//                    assetAmount = 0;
+//                    debtAmount = 0;
+                var optionName = sumtr[i].cells[1].childNodes[1].innerText;
+                var optionName2 = sumtr[i].cells[2].childNodes[1].innerText;
+                var optionName3 = sumtr[i].cells[3].childNodes[1].innerText;
+                if (optionName == "") {
+                    continue;
+                }
+                assetAmount1 = 0;
+                debtAmount1 = 0;
+                InvType = null;
+                DetailInvType = null;
+                ThirdInvType = null;
+                State = null;
+                RPLA_GUID = null;
+                RPDA_GUID = null;
+                VoucherFlag = null;
+                sel = sumtr[i].cells[1].firstChild;
+                var optgroupName = sel.options[sel.selectedIndex].parentNode.label;
+                optionName = optionName.replace(/(^\s*)|(\s*$)/g, "");
+                optionName2 = optionName2.replace(/(^\s*)|(\s*$)/g, "");
+                optionName3 = optionName3.replace(/(^\s*)|(\s*$)/g, "");
+                DetailInvType = optionName2.replace(/(\d+||s+)/g, "");
+                ThirdInvType = optionName3.replace(/(\d+||s+)/g, "");
+                var record = new Object;
+                if (optionName.indexOf("银行存款") > 0 || optionName.indexOf("库存现金") > 0 || optionName.indexOf("其他货币资金") > 0) {
+//                    voucherRecord.RP_GUID = VRP_GUID;
+//                    var pay = new Object;
+                    if (table.rows[i].cells[4].innerHTML != "" && table.rows[i].cells[5].innerHTML == "") {
+                        assetAmount = table.rows[i].cells[4].innerHTML;
+                        record.assetAmount = assetAmount;
+                        record.debtAmount = "0";
+                        bankAmount = parseFloat(bankAmount) + parseFloat(assetAmount);
+                        record.VoucherFlag = "R";
+                        VAccountRFlag = "R";
+                        assetCount += 1;
+                    } else if (table.rows[i].cells[5].innerHTML != "" && table.rows[i].cells[4].innerHTML == "") {
+                        record.assetAmount = "0";
+                        debtAmount = table.rows[i].cells[5].innerHTML;
+                        record.debtAmount = debtAmount;
+                        bankAmount = parseFloat(bankAmount) + parseFloat(debtAmount);
+                        record.VoucherFlag = "P";
+                        VAccountRFlag = "P";
+                        debtCount += 1;
+                    }
+                    reAmount = bankAmount;
+                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                    record.InvType = InvType;
+                    record.VoucherType = "货币资产";
+                    record.Summary = table.rows[i].cells[0].innerHTML;
+                    record.IELA_GUID = sumtr[i].cells[1].childNodes[0].value.replace(/(^\s*)|(\s*$)/g, "");
+                    record.IEDA_GUID = sumtr[i].cells[2].childNodes[0].value.replace(/(^\s*)|(\s*$)/g,"");
+                    record.IETh_GUID = sumtr[i].cells[3].childNodes[0].value.replace(/(^\s*)|(\s*$)/g, "");
+                    record.IE_GUID = voucherRecord.GUID;
+                    record.GUID = NewGUID();
+                    recordList.push(record);
+
+                }
+
+                if (optionName.indexOf("银行存款") < 0 && optionName.indexOf("库存现金") < 0 && optionName.indexOf("其他货币资金") < 0) {
+                    
+                    if (optgroupName == '损益') {
+                        if (optionName.indexOf("主营业务收入") > 0 || optionName.indexOf("营业外收入") > 0 || optionName.indexOf("投资收益") > 0 || optionName.indexOf("其他业务收入") > 0) {
+                            if (table.rows[i].cells[5].innerHTML != "" && table.rows[i].cells[4].innerHTML == "") {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.debtAmount = debtAmount1;
+                                record.assetAmount = "0";
+                            }
+                            if (table.rows[i].cells[4].innerHTML != "" && table.rows[i].cells[5].innerHTML == "") {
+                                assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                record.assetAmount = assetAmount1;
+                                record.debtAmount = "0";
+                            }
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherFlag = "I";
+                            VoucherInvtype = "收入类";
+                        }
+                        if (optionName.indexOf("主营业务成本") > 0 || optionName.indexOf("管理费用") > 0 || optionName.indexOf("财务费用") > 0 || optionName.indexOf("销售费用") > 0 || optionName.indexOf("其他业务成本") > 0 || optionName.indexOf("营业外支出") > 0 || optionName.indexOf("所得税费用") > 0 || optionName.indexOf("营业税金及附加") > 0) {
+                            
+                        if (optionName.indexOf("所得税费用") > 0 || optionName.indexOf("营业税金及附加") > 0) {
+                            if (table.rows[i].cells[4].innerHTML != "" && table.rows[i].cells[5].innerHTML == "") {
+                                assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                record.assetAmount = assetAmount1;
+                                record.debtAmount = "0";
+                            }
+                            if (table.rows[i].cells[5].innerHTML != "" && table.rows[i].cells[4].innerHTML == "") {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.debtAmount = debtAmount1;
+                                record.assetAmount = "0";
+                            }
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            if (optionName.indexOf("所得税费用") > 0) { VoucherFlag = "CT"; }
+                            if (optionName.indexOf("营业税金及附加") > 0) { VoucherFlag = "YT"; }
+                            
+
+                            VoucherInvtype = "费用支出类";
+                        }
+                        else{
+                            if (table.rows[i].cells[4].innerHTML != "" && table.rows[i].cells[5].innerHTML == "") {
+                                assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                record.assetAmount = assetAmount1;
+                                record.debtAmount = "0";
+                            }
+                            if (table.rows[i].cells[5].innerHTML != "" && table.rows[i].cells[4].innerHTML == "") {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.debtAmount = debtAmount1;
+                                record.assetAmount = "0";
+                            }
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherFlag = "E";
+                            VoucherInvtype = "费用支出类";
+                            record.DetailInvType = optionName2.replace(/(\d+||s+)/g, "");
+                        }
+                        }
+                    }
+
+                    if (optgroupName == '资产') {
+                        if (optionName.indexOf("应收账款") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'I';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收账款") > 0 && table.rows[i].cells[4].innerHTML == "" && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'R';
+                            Voucher = 'SP';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收票据") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'I';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收票据") > 0 && table.rows[i].cells[4].innerHTML == "" && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'R';
+                            Voucher = 'SP';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收股利") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'I';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收股利") > 0 && table.rows[i].cells[4].innerHTML == "" && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'R';
+                            Voucher = 'SP';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收利息") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            VoucherFlag = 'I';
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("应收利息") > 0 && table.rows[i].cells[4].innerHTML == "" && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'R';
+                            Voucher = 'SP';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            VoucherInvtype = "流动资产";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                        }
+                        if (optionName.indexOf("备用金") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherFlag = "DC";
+                            VoucherInvtype = "流动资产";
+                        }
+                        if (optionName.indexOf("备用金") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherFlag = "P";
+                            VoucherInvtype = "流动资产";
+                        }
+                        if (optionName.indexOf("预付账款") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动资产";
+                        }
+                        if (optionName.indexOf("预付账款") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VAccountRFlag = "TS";
+                            VoucherFlag = "TS";
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动资产";
+                        }
+                        if (optionName.indexOf("其他应收款") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'DC';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动资产";
+                        }
+
+                        if (optionName.indexOf("其他应收款") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动资产";
+                        }
+                        if (optionName.indexOf("短期投资") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("短期投资") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'DC';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("长期股权投资") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("长期股权投资") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'DC';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("长期债权投资") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("长期债权投资") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'DC';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("固定资产") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'P';
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+                        if (optionName.indexOf("固定资产") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'DC';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "非流动资产";
+                        }
+
+                    }
+                    if (optgroupName == '所有者权益') {
+                        if (optionName.indexOf("实收资本") > 0) {
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                        }
+                        if (optionName.indexOf("资本公积") > 0) {
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                        }
+                        record.InvType = InvType;
+                        VoucherFlag = 'DC';
+                        if (table.rows[i].cells[5].innerHTML != "") {
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                        }
+                        else if (table.rows[i].cells[4].innerHTML != "") {
+                            record.assetAmount = table.rows[i].cells[4].innerHTML;
+                            record.debtAmount = "0";
+                         }
+                        
+                        record.Summary = table.rows[i].cells[0].innerHTML;
+                        record.RPer = sumtr[i].cells[3].childNodes[0].value;
+                        VoucherInvtype = "所有者权益";
+                    }
+                    if (optgroupName == '负债' && (optionName.indexOf("应付账款") > 0 || optionName.indexOf("应付票据") > 0 || optionName.indexOf("预收账款") > 0 || optionName.indexOf("其他应付款") > 0 || optionName.indexOf("短期借款") > 0 || optionName.indexOf("长期借款") > 0 || optionName.indexOf("应付利息") > 0 || optionName.indexOf("应付利润") > 0)) {
+                        if (optionName.indexOf("应付账款") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                            VoucherFlag = 'E';
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.debtAmount = debtAmount1;
+                            record.assetAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动负债";
+                        }
+                        else if (optionName.indexOf("应付账款") > 0 && table.rows[i].cells[5].innerHTML == "" && table.rows[i].cells[4].innerHTML != "") {
+                            VoucherFlag = 'E';
+                            Voucher = 'SP';
+                            record.assetAmount = table.rows[i].cells[4].innerHTML;
+                            record.debtAmount = "0";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            VoucherInvtype = "流动负债";
+                            name = sumtr[i].cells[3].childNodes[0].value;
+                        }
+                        else if (optionName.indexOf("应付账款") < 0) {
+                            if (optionName.indexOf("预收账款") > 0) {
+                                VoucherFlag = 'DC';
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.debtAmount = debtAmount1;
+                                record.assetAmount = "0";
+                                InvType = optionName.replace(/(\d+||s+)/g, "");
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("其他应付款") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                                VoucherFlag = 'DC';
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.assetAmount = "0";
+                                record.debtAmount = debtAmount1;
+                                InvType = optionName.replace(/(\d+||s+)/g, "");
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("其他应付款") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                                VoucherFlag = 'DS';
+                                assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                record.assetAmount = assetAmount1;
+                                record.debtAmount = "0";
+                                InvType = optionName.replace(/(\d+||s+)/g, "");
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("应付票据") > 0 && table.rows[i].cells[5].innerHTML != "") {
+                                VoucherFlag = 'E';
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                record.assetAmount = "0";
+                                record.debtAmount = debtAmount1;
+                                InvType = "应付票据";
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("应付票据") > 0 && table.rows[i].cells[4].innerHTML != "") {
+                                VoucherFlag = 'E';
+                                Voucher = 'SP';
+                                assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                record.assetAmount = assetAmount1;
+                                record.debtAmount = "0";
+                                InvType = "应付票据";
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("短期借款") > 0) {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                if (isNaN(debtAmount1) || debtAmount1 == "") {
+                                    assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                    record.assetAmount = assetAmount1;
+                                    record.debtAmount = "0";
+                                    VoucherFlag = 'P';
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                } else {
+                                    VoucherFlag = 'DC';
+                                    record.debtAmount = debtAmount1;
+                                    record.assetAmount = "0";
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                }
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("长期借款") > 0) {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                if (isNaN(debtAmount1) || debtAmount1 == "") {
+                                    assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                    record.assetAmount = assetAmount1;
+                                    record.debtAmount = "0";
+                                    VoucherFlag = 'P';
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                } else {
+                                    VoucherFlag = 'DC';
+                                    record.assetAmount = "0";
+                                    record.debtAmount = debtAmount1;
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                }
+                                record.InvType = InvType;
+                                VoucherInvtype = "长期或非流动";
+                            }
+
+                            if (optionName.indexOf("应付利润") > 0) {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                if (isNaN(debtAmount1) || debtAmount1 == "") {
+                                    assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                    record.assetAmount = assetAmount1;
+                                    record.debtAmount = "0";
+                                    VoucherFlag = 'P';
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                }
+//                                 else {
+//                                    VoucherFlag = 'DC';
+//                                    record.debtAmount = debtAmount1;
+//                                    record.assetAmount = "0";
+//                                    InvType = "短期借款所获得的收款";
+//                                }
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+                            if (optionName.indexOf("应付利息") > 0) {
+                                debtAmount1 = table.rows[i].cells[5].innerHTML;
+                                if (isNaN(debtAmount1) || debtAmount1 == "") {
+                                    assetAmount1 = table.rows[i].cells[4].innerHTML;
+                                    record.assetAmount = assetAmount1;
+                                    record.debtAmount = "0";
+                                    VoucherFlag = 'P';
+                                    InvType = optionName.replace(/(\d+||s+)/g, "");
+                                } 
+//                                else {
+//                                    VoucherFlag = 'DC';
+//                                    record.debtAmount = debtAmount1;
+//                                    record.assetAmount = "0";
+//                                    InvType = "短期借款所获得的收款";
+//                                }
+                                record.InvType = InvType;
+                                VoucherInvtype = "流动负债";
+                            }
+
+                        }
+                    }
+                    if (optgroupName == '负债' && optionName.indexOf("应交税费") > 0 && optionName2.indexOf("增值税") < 0) {
+
+                        if (table.rows[i].cells[4].innerHTML != "") {
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.debtAmount = "0";
+                            record.assetAmount = assetAmount1;
+                        }
+                        if (table.rows[i].cells[5].innerHTML != "") {
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.assetAmount = "0";
+                            record.debtAmount = debtAmount1;
+                        }
+                        if (optionName2.indexOf("个人所得税") > 0) { VoucherFlag = "SA"; } else {
+                            if (optionName2.indexOf("企业所得税") > 0) { VoucherFlag = "CT"; }
+                            else { VoucherFlag = "YT"; }
+                        }
+                       
+                        InvType = optionName.replace(/(\d+||s+)/g, "");
+                        record.InvType = InvType;
+                        record.DetailInvType = optionName2.replace(/(\d+||s+)/g, "");
+                        VoucherInvtype = "流动负债";
+                    }
+                    if (optgroupName == '负债' && optionName.indexOf("应交税费") > 0 && optionName2.indexOf("增值税")>0) {
+
+                        if (table.rows[i].cells[4].innerHTML != "") {
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.debtAmount = "0";
+                            record.assetAmount = assetAmount1;
+                        }
+                        if (table.rows[i].cells[5].innerHTML != "") {
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.assetAmount = "0";
+                            record.debtAmount = debtAmount1;
+                        }
+                        VoucherFlag = "TA";
+                        InvType = optionName.replace(/(\d+||s+)/g, "");
+                        record.InvType = InvType;
+                        record.DetailInvType = DetailInvType;
+                        record.ThirdInvType = ThirdInvType;
+                        if (ThirdInvType == "进项税额"){TaFlag="TaxB"}
+                        else  { TaFlag = "TaxS" }
+                        VoucherInvtype = "流动负债";
+
+                    }
+                    if (optgroupName == '负债' && optionName.indexOf("应付职工薪酬") > 0) {
+                        if (table.rows[i].cells[4].innerHTML != "" && table.rows[i].cells[5].innerHTML == "") {
+                            VoucherFlag = "SA";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            record.DetailInvType = DetailInvType;
+                            VoucherInvtype = "流动负债";
+                            assetAmount1 = table.rows[i].cells[4].innerHTML;
+                            record.assetAmount = assetAmount1;
+                            record.debtAmount = "0";
+
+                         }
+                        else if (table.rows[i].cells[5].innerHTML != "" && table.rows[i].cells[4].innerHTML == "") {
+                            VoucherFlag = "SA";
+                            InvType = optionName.replace(/(\d+||s+)/g, "");
+                            record.InvType = InvType;
+                            record.DetailInvType = DetailInvType;
+                            VoucherInvtype = "流动负债";
+                            debtAmount1 = table.rows[i].cells[5].innerHTML;
+                            record.assetAmount = "0";
+                            record.debtAmount = debtAmount1;
+                        }
+                    
+                    }
+                     
+                    record.IELA_GUID = sumtr[i].cells[1].childNodes[0].value.replace(/(^\s*)|(\s*$)/g, "");
+                    record.IEDA_GUID = sumtr[i].cells[2].childNodes[0].value.replace(/(^\s*)|(\s*$)/g, "");
+                    record.IETh_GUID = sumtr[i].cells[3].childNodes[0].value.replace(/(^\s*)|(\s*$)/g, "");
+                    record.VoucherFlag = VoucherFlag;
+                    record.GUID = NewGUID();
+                    record.VoucherType = VoucherInvtype
+                    record.IE_GUID = voucherRecord.GUID;
+                    record.Summary = table.rows[i].cells[0].innerHTML;
+                    voucherRecord.VoucherFlag = VoucherFlag;
+                    sumAmount = table.rows[sumtr.length - 1].cells[5].innerText;
+                    sumAmount = sumAmount.replace(/,/g, '');
+                    recordList.push(record);
+                }
+
+
+            }
+
+            if (bankAmount == parseFloat(String(sumAmount).replace(/,/g, ''))) {
+                if (assetAmount != 0) { State = "已收"; disAmount = 0; amount = parseFloat(sumAmount); } else if (debtAmount != 0) {
+                    State = "已付"; disAmount = 0; amount = parseFloat(sumAmount);
+
+                }
+
+            } else if (bankAmount != parseFloat(sumAmount)) {
+                if (assetAmount != 0) { if (VoucherFlag == "I") { State = "应收"; } else if (VoucherFlag == "DC") { State = "未收"; } } else if (debtAmount != 0) {
+                    if (VoucherFlag == "E") { State = "应付"; } else if (VoucherFlag == "DS" || VoucherFlag == "SA" || VoucherFlag == "YT" || VoucherFlag == "CT") { State = "未付"; }
+                }
+
+            }
+            
+            var reLength = recordList.length;
+            if (bankAmount != 0) {
+                amount = parseFloat(sumAmount);
+                disAmount = parseFloat(sumAmount) - parseFloat(bankAmount); amount = parseFloat(sumAmount);
+                for (var i = 0; i < reLength; i++) {
+                    if (State == "已付" || State == "已收") {
+                        recordList[i].State = State;
+                    } else {
+                    if (reLength > 1) { 
+                        if (i < (reLength - 1)) {
+                            if (State == "应收" || State == "未收") { if (recordList[i].VoucherType == "收入类" || recordList[i].VoucherInvtype == "流动负债") { recordList[i].State = "已收"; } } else if (State == "应付" || State == "未付") { if (recordList[i].VoucherType == "费用支出类" || recordList[i].VoucherInvtype == "流动负债") { recordList[i].State = "已付" } }
+                            recordList[i].DisAmount = "0";
+                        } else if (i == reLength - 1) {
+                            if (recordList[i].VoucherType == "费用支出类" || recordList[i].VoucherType == "收入类" || recordList[i].VoucherInvtype == "流动负债") {
+                            recordList[i].State = State;
+                            recordList[i].DisAmount = disAmount.toString();
+                            }
+                        }
+                    }
+                }
+                }
+            } else if (bankAmount == 0) {
+                disAmount = parseFloat(sumAmount);
+                amount = parseFloat(sumAmount);
+                if (VoucherFlag == "I") { State = "应收"; } else if (VoucherFlag == "DC") { State = "未收"; } else if (VoucherFlag == "TA") { if (TaFlag == "TaxB") { State = "应付"; } else if (TaFlag == "TaxS") { State = "应收"; } }
+                else if (VoucherFlag == "E") { State = "应付"; } else if (VoucherFlag == "DS" || VoucherFlag == "SA" || VoucherFlag == "YT" || VoucherFlag == "CT") { State = "未付"; }
+				else if (VAccountRFlag == "TS"){State = "已付";}
+                for (var i = 0; i < reLength; i++) {
+                    if (recordList[i].VoucherType == "费用支出类" || recordList[i].VoucherType == "收入类"||recordList[i].VoucherInvtype == "流动负债")
+                    { recordList[i].State = State; }
+                }
+
+            }
+            for (var i = 0; i < reLength; i++) {
+                if (VAccountRFlag == "R") { recordList[i].VoucherFlag = VAccountRFlag; record.VoucherFlag = VAccountRFlag }
+                if (VAccountRFlag == "P") { recordList[i].VoucherFlag = VAccountRFlag; record.VoucherFlag = VAccountRFlag }
+                if (assetCount > 0 && debtCount > 0) { recordList[i].VoucherFlag="TR";record.VoucherFlag = "TR"; }
+				if (VAccountRFlag == "TS") { recordList[i].VoucherFlag = VAccountRFlag; record.VoucherFlag = VAccountRFlag;recordList[i].State = State; }            
+                if (assetCount > 0 && debtCount > 0) { recordList[i].VoucherFlag="TR";record.VoucherFlag = "TR"; }
+            }
+            if (assetCount > 0 && debtCount > 0) {
+                State = "已付"; disAmount = 0;
+                sumAmount = table.rows[sumtr.length - 1].cells[5].innerText;
+                sumAmount = sumAmount.replace(/,/g, '');
+                amount = parseFloat(sumAmount);
+                voucherRecord.VoucherFlag = "TR";
+            }
+              VoucherState = State;
+              voucherRecord.State = VoucherState;
+              voucherRecord.DisAmount = disAmount.toString();
+              voucherRecord.Amount = amount.toString();
+              voucherRecord.Date = $("#Date").val();
+              voucherRecordList.push(voucherRecord);
+//              param1 = { PayMethodList: payList };
+              param2 = { RecordList: recordList, VoucherList: voucherRecordList, Date: $("#Date").val() };
+              //              param3 = { VoucherList: voucherRecordList };
+              //             if (typeof (Voucher) == "undefined") {
+
+
+              $.ajax({
+                  cache: true,
+                  type: "POST",
+                  url: "/VoucherQuery/UpdAccountRecord",
+                  async: false,
+                  contentType: 'application/json',
+                  dataType: 'html',
+                  data: JSON.stringify(param2),
+                  success: function (data) {
+                      var rs = JSON.parse(data);
+                      if (rs.Result == false) {
+                          alert("提交失败");
+
+                      }
+                      else {
+                          //                                         if (bankAmount != 0) {
+                          //                                             $.ajax({
+                          //                                                 cache: true,
+                          //                                                 type: "POST",
+                          //                                                 url: "/VoucherQuery/UpdPaymethod",
+                          //                                                 async: false,
+                          //                                                 contentType: 'application/json',
+                          //                                                 dataType: 'html',
+                          //                                                 data: JSON.stringify(param1),
+                          //                                                 success: function (data) {
+                          //                                                     var rs = JSON.parse(data);
+                          //                                                     if (rs.Result == false) {
+                          //                                                         alert("提交失败");
+
+                          //                                                     }
+                          //                                                     else {
+                          //                                                         alert("提交成功");
+                          //                                                         window.location.reload();
+                          //                                                     }
+                          //                                                 },
+                          //                                                 error: function (request) {
+                          //                                                     trueorfalse = false;
+                          //                                                 }
+                          //                                             });
+
+                          //                                         } else {
+
+                          //                                         }
+                          alert("提交成功");
+                          window.location.reload();
+                      }
+                  },
+                  error: function (request) {
+                      trueorfalse = false;
+                  }
+              });
+//             } else if (typeof (Voucher) != "undefined") {
+//               
+//                    ShowModel(VoucherFlag);
+//               
+//            }
+        }
+        $("#vouchSubmit").attr("disabled", false);
+    }
+
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    function ShowModel(obj) {
+        var url;
+        var columns = new Array();
+        columns.push({ field: 'ck', checkbox: true, title: '选择', width: '50' });
+        if (obj == "I") {
+            url = '/ReceivablesRecord/GetUnionList?customer=' + name + "&main=" + escape('主营业务收入') + "&nomain=" + escape('营业外收入') + "&other=" + escape('其他业务收入');
+            columns.push({ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee', align: 'center' });
+            columns.push({ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', align: 'center' });
+            columns.push({ field: 'InvType', title: '收入类别', align: 'center' });
+            columns.push({ field: 'DetailInvtype', title: '详细类别', align: 'center' });
+            columns.push({ field: 'Date', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate', align: 'center', formatter: DateHandleOther });
+            columns.push({ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Amount', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+           
+            
+
+        }
+        if (obj == "E") {
+            url = '/PaymentRecord/GetChoosePayablesList?state=' + escape('应付') + "&customer=" + name;
+            columns.push({ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee', align: 'center' });
+            columns.push({ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', align: 'center' });
+            columns.push({ field: 'InvType', title: '费用类别', align: 'center' });
+            columns.push({ field: 'IEGroup', title: '详细类别', align: 'center' });
+            columns.push({ field: 'Amount', title: '费用金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'AffirmDate', title: '费用确认日期', align: 'center', formatter: DateHandle });
+
+
+        } else if (obj == "DS") {
+            url = '/PaymentDeclareCostSpending/GetPaymentDeclareCostSpendingList?state=' + escape('未付') + "&Record=" + escape('未记录');
+            columns.push({ field: 'Date', title: '申报日期' });
+            columns.push({ field: 'RPerName', title: '收款方' });
+            columns.push({ field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Currency', title: '货币' });
+            columns.push({ field: "InvType", title: '收款类别' });
+            columns.push({ field: 'Remark', title: '备注' });
+            columns.push({ field: 'State', title: '状态', align: 'center' });
+
+        }else if(obj =="DC"){
+            url='/ReceivablesDeclareCustomer/ChooseReceivablesDeclareCustomerList?state=' + escape('未收') + "&flag=" + "R";
+            columns.push({ field: 'Date', title: '申报日期', formatter: DateHandle });
+            columns.push({ field: 'RPerName', title: '收款方' });
+            columns.push({ field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Currency', title: '货币' });
+            columns.push({ field: "InvType", title: '收款类别' });
+            columns.push({ field: 'Remark', title: '备注' });
+            columns.push({ field: 'State', title: '状态', align: 'center' });
+        }else if (obj == "btnSalary") {
+            url = '/WageCostsRecord/GetWageCostList?state=' + escape('未付');
+            columns.push({ field: 'Employee', title: '姓名', align: 'center' });
+            columns.push({ field: 'Date', title: '认定日期', align: 'center', formatter: DateHandle });
+            columns.push({ field: 'Amount', title: '总金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'W_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'W_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+        }
+        else if (obj == "tax") {
+            url = '/PaymentRecord/GetChoosePayablesList?state=' + escape('应付') + "&invtype=" + escape('税费');
+            columns.push({ field: 'IEGroup', title: '费用类别', align: 'center' });
+            columns.push({ field: 'Amount', title: '费用金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Remark', title: '备注' });
+           
+        }
+
+
+
+        $('#aTable').bootstrapTable({
+            url: url,
+            method: 'get',
+            cache: false,
+            pageSize: 5,
+            pageList: [5, 10, 25, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: true,
+            sortName: 'Date', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false,
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: columns
+        });
+        $('#amyModal').modal({ show: true, backdrop: 'static' });
+        $('#amyModal').draggable();
+        if(obj=="E"){
+            var h1 = document.getElementsByTagName("h4")[0];
+            h1.innerHTML = "应付账款";
+
+        }
+        $('#ShowB').attr('value',obj);
+                $(".boxed-layout").css("padding-right", "0px");
+
+     }
+
+    function REClick0(obj) {
+        $('#aTable').bootstrapTable('destroy');
+        var url;
+        var columns = new Array();
+        columns.push({ field: 'ck', checkbox: true, title: '选择', width: '50' });
+        if (obj == "I") {
+            url = '/ReceivablesRecord/GetUnionList?main=' + escape('主营业务收入') + "&nomain=" + escape('营业外收入') + "&other=" + escape('其他业务收入');
+            columns.push({ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee', align: 'center' });
+            columns.push({ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', align: 'center' });
+            columns.push({ field: 'InvType', title: '收入类别', align: 'center' });
+            columns.push({ field: 'DetailInvtype', title: '详细类别', align: 'center' });
+            columns.push({ field: 'Date', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate', align: 'center', formatter: DateHandleOther });
+            columns.push({ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Amount', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+
+
+
+        }
+        if (obj == "E") {
+            url = '/PaymentRecord/GetChoosePayablesList?state=' + escape('应付');
+            columns.push({ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payee', align: 'center' });
+            columns.push({ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', align: 'center' });
+            columns.push({ field: 'InvType', title: '费用类别', align: 'center' });
+            columns.push({ field: 'IEGroup', title: '详细类别', align: 'center' });
+            columns.push({ field: 'Amount', title: '费用金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'AffirmDate', title: '费用确认日期', align: 'center', formatter: DateHandle });
+
+
+        } else if (obj == "DS") {
+            url = '/PaymentDeclareCostSpending/GetPaymentDeclareCostSpendingList?state=' + escape('未付') + "&Record=" + escape('未记录');
+            columns.push({ field: 'Date', title: '申报日期' });
+            columns.push({ field: 'RPerName', title: '收款方' });
+            columns.push({ field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Currency', title: '货币' });
+            columns.push({ field: "InvType", title: '收款类别' });
+            columns.push({ field: 'Remark', title: '备注' });
+            columns.push({ field: 'State', title: '状态', align: 'center' });
+
+        } else if (obj == "DC") {
+            url = '/ReceivablesDeclareCustomer/ChooseReceivablesDeclareCustomerList?state=' + escape('未收') + "&flag=" + "R";
+            columns.push({ field: 'Date', title: '申报日期', formatter: DateHandle });
+            columns.push({ field: 'RPerName', title: '收款方' });
+            columns.push({ field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Currency', title: '货币' });
+            columns.push({ field: "InvType", title: '收款类别' });
+            columns.push({ field: 'Remark', title: '备注' });
+            columns.push({ field: 'State', title: '状态', align: 'center' });
+        } else if (obj == "btnSalary") {
+            url = '/WageCostsRecord/GetWageCostList?state=' + escape('未付');
+            columns.push({ field: 'Employee', title: '姓名', align: 'center' });
+            columns.push({ field: 'Date', title: '认定日期', align: 'center', formatter: DateHandle });
+            columns.push({ field: 'Amount', title: '总金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'W_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'W_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+        }
+        else if (obj == "tax") {
+            url = '/PaymentRecord/GetChoosePayablesList?state=' + escape('应付') + "&invtype=" + escape('税费');
+            columns.push({ field: 'IEGroup', title: '费用类别', align: 'center' });
+            columns.push({ field: 'Amount', title: '费用金额', align: 'center', formatter: DecimalFmter });
+            columns.push({ field: 'IE_GUID', title: '已销金额', formatter: LinkHandleUsedAmount, align: 'center' });
+            columns.push({ field: 'IE_GUID', title: '未销金额', formatter: LinkHandleResidualAmount, align: 'center' });
+            columns.push({ field: 'Remark', title: '备注' });
+
+        }
+
+
+
+        $('#aTable').bootstrapTable({
+            url: url,
+            method: 'get',
+            cache: false,
+            pageSize: 5,
+            pageList: [5, 10, 25, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: true,
+            sortName: 'Date', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false,
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: columns
+        });
+        $(".boxed-layout").css("padding-right", "0px");
+
+    }
+    var LinkHandleUsedAmount = function (value, row, index) {
+        if ((row.Amount - row.DisAmount) <= 0) {
+            var link1 = "<a class='' >  \ " + "" + "\</a>"
+        }
+        else if ((row.Amount - row.DisAmount) > 0) {
+            var link1 = "<a class='linkbtn' onclick='AmountUsed(\"" + value + "\")'><font color=blue>\ " + DecimalFmter(row.Amount - row.DisAmount) + "\</font></a>"
+        }
+        return link1;
+    };
+    var LinkHandleResidualAmount = function (value, row, index) {
+        if (row.DisAmount < 0) {
+            var link1 = "<a class='' >  \ " + '0 ' + "\</a>"
+        }
+        else if (row.DisAmount >= 0) {
+            var link1 = "<a class=''>  \ " + row.DisAmount + "\</a>"
+        }
+        return link1;
+    };
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined") {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+    var DateHandle = function (jsondate) {
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        } else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "/" + month + "/" + currentDate;
+    }
+    var DateHandleOther = function (jsondate) {
+        jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+        if (jsondate.indexOf("+") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+        } else if (jsondate.indexOf("-") > 0) {
+            jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+        }
+
+        var date = new Date(parseInt(jsondate, 10));
+        var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+        var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        return date.getFullYear() + "/" + month + "/" + currentDate;
+    }
+    //get table infomation
+
+    function CheckDate() {
+        if ($('#Date').val() == '') {
+            return false;
+        }
+        return true;
+    }
+    function NewGUID() {
+        var GUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                GUID = d.toString();
+            }
+        });
+        return GUID;
+    }
+
+    function selectclick1(selectclick1) {
+        alert("aa");
+    }
+
+    function tdclick(tdobject,num){  
+    var td=$(tdobject);  
+    td.attr("onclick", "");  
+    //1,取出当前td中的文本内容保存起来  
+    var text=td.text();  
+    //2,清空td里面的内容  
+    td.html(""); //也可以用td.empty();  
+    //3，建立一个文本框，也就是input的元素节点  
+    var input=$("<input>");  
+    //4，设置文本框的值是保存起来的文本内容  
+    input.attr("value", text);
+    input.attr("maxlength","20");
+    input.css("width", "100%");
+    if (num == 1) {
+        input.bind("blur", function () {
+            var inputnode = $(this);
+            var inputtext = inputnode.val();
+            var tdNode = inputnode.parent();
+            tdNode.html(inputtext);
+            tdNode.click(tdclick);
+            td.attr("onclick", "tdclick(this,1)");
+        });  
+    }
+    if (num == 2) {
+        input.bind("blur", function () {
+            var inputnode = $(this);
+            var inputtext = inputnode.val();
+            var tdNode = inputnode.parent();
+            tdNode.html(inputtext);
+            tdNode.click(tdclick);
+            td.attr("onclick", "tdclick(this,2)");
+            var table = document.getElementById("VoucherTable");
+            var sumtr = document.getElementsByTagName("tr");
+            var row = sumtr.length;
+            var sumAmount1 = 0;
+            var amount1 = 0;
+            var sumAmount2 = 0;
+            var amount2 = 0;
+            for (var i = 1; i < row - 1; i++) {
+                amount1 = table.rows[i].cells[4].innerHTML;
+                amount2 = table.rows[i].cells[5].innerHTML;
+                if (isNaN(amount1) || amount1 == "") {
+                    amount1 = 0
+                }
+                if (isNaN(amount2) || amount2 == "") {
+                    amount2 = 0
+                }
+
+                sumAmount1 += parseFloat(amount1);
+                sumAmount2 += parseFloat(amount2);
+            }
+
+            var a = document.getElementById("Sum1");
+            var b = document.getElementById("Sum2");
+            if (!isNaN(sumAmount1) && sumAmount1 != 0) {
+                a.innerHTML = Money(parseFloat(sumAmount1).toFixed(2));
+            } if (sumAmount1 == 0) {
+                a.innerHTML = "";
+            }
+            if (!isNaN(sumAmount2) && sumAmount2 != 0) {
+                b.innerHTML = Money(parseFloat(sumAmount2).toFixed(2));
+            }
+            if (sumAmount2 == 0) {
+                b.innerHTML = "";
+            }
+            var c = document.getElementById("Sum");
+            c.innerHTML = ChinaCost(parseFloat(sumAmount1).toFixed(2));
+        });
+       
+    }
+    input.keyup(function(event){  
+        var myEvent =event||window.event;  
+        var kcode=myEvent.keyCode;  
+        if(kcode==13){  
+            var inputnode=$(this);  
+            var inputtext=inputnode.val();  
+            var tdNode=inputnode.parent();  
+            tdNode.html(inputtext);  
+            tdNode.click(tdclick);  
+        }  
+    });  
+  
+    //5，将文本框加入到td中  
+    td.append(input);  
+    var t =input.val();  
+    input.val("").focus().val(t);  
+//              input.focus();  
+  
+    //6,清除点击事件  
+    td.unbind("click");
+}
+function ChinaCost(numberValue) {
+    if (!isNaN(numberValue) && numberValue !== null) {
+        var numberValue = new String(Math.round(numberValue * 100)); // 数字金额
+        var chineseValue = ""; // 转换后的汉字金额
+        var String1 = "零壹贰叁肆伍陆柒捌玖"; // 汉字数字
+        var String2 = "万仟佰拾亿仟佰拾万仟佰拾元角分"; // 对应单位
+        var len = numberValue.length; // numberValue 的字符串长度
+        var Ch1; // 数字的汉语读法
+        var Ch2; // 数字位的汉字读法
+        var nZero = 0; // 用来计算连续的零值的个数
+        var String3; // 指定位置的数值
+        if (len > 15) {
+            alert("超出计算范围");
+            return "";
+        }
+        if (numberValue == 0) {
+            chineseValue = "零元整";
+            return chineseValue;
+        }
+
+        String2 = String2.substr(String2.length - len, len); // 取出对应位数的STRING2的值
+        for (var i = 0; i < len; i++) {
+            String3 = parseInt(numberValue.substr(i, 1), 10); // 取出需转换的某一位的值
+            if (i != (len - 3) && i != (len - 7) && i != (len - 11) && i != (len - 15)) {
+                if (String3 == 0) {
+                    Ch1 = "";
+                    Ch2 = "";
+                    nZero = nZero + 1;
+                }
+                else if (String3 != 0 && nZero != 0) {
+                    Ch1 = "零" + String1.substr(String3, 1);
+                    Ch2 = String2.substr(i, 1);
+                    nZero = 0;
+                }
+                else {
+                    Ch1 = String1.substr(String3, 1);
+                    Ch2 = String2.substr(i, 1);
+                    nZero = 0;
+                }
+            }
+            else { // 该位是万亿，亿，万，元位等关键位
+                if (String3 != 0 && nZero != 0) {
+                    Ch1 = "零" + String1.substr(String3, 1);
+                    Ch2 = String2.substr(i, 1);
+                    nZero = 0;
+                }
+                else if (String3 != 0 && nZero == 0) {
+                    Ch1 = String1.substr(String3, 1);
+                    Ch2 = String2.substr(i, 1);
+                    nZero = 0;
+                }
+                else if (String3 == 0 && nZero >= 3) {
+                    Ch1 = "";
+                    Ch2 = "";
+                    nZero = nZero + 1;
+                }
+                else {
+                    Ch1 = "";
+                    Ch2 = String2.substr(i, 1);
+                    nZero = nZero + 1;
+                }
+                if (i == (len - 11) || i == (len - 3)) { // 如果该位是亿位或元位，则必须写上
+                    Ch2 = String2.substr(i, 1);
+                }
+            }
+            chineseValue = chineseValue + Ch1 + Ch2;
+        }
+
+        if (String3 == 0) { // 最后一位（分）为0时，加上“整”
+            chineseValue = chineseValue + "整";
+        }
+
+        return '合计：' + chineseValue;
+    }
+    else {
+        return numberValue;
+    }
+
+
+}
+function Money(price) {
+    if (price > 0) {
+        var priceString = price.toString();
+        var priceInt = parseInt(price);
+        var len = priceInt.toString().length;
+        var num = len / 3;
+        var remainder = len % 3;
+        var priceStr = '';
+        for (var i = 1; i <= len; i++) {
+            priceStr += priceString.charAt(i - 1);
+            if (i == (remainder) && len > remainder) priceStr += ',';
+            if ((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ',';
+        }
+        if (priceString.indexOf('.') < 0) {
+            priceStr = priceStr + '.00';
+        } else {
+            priceStr += priceString.substr(priceString.indexOf('.'));
+            if (priceString.length - priceString.indexOf('.') - 1 < 2) {
+                priceStr = priceStr + '0';
+            }
+        }
+        return priceStr;
+    } else {
+        return price;
+    }
+}
+
+function changeInv(obj1,obj, value,b) {
+    var objtr = $(obj).parent().parent();
+    var id = objtr.attr('id');
+    optgroupName = obj1.parentNode.label;
+    var tr = document.createElement("tr");
+    var detailType;
+    tr.id = id;
+    var lastRow = $("#VoucherTable tr:nth-last-child(2)");
+    if (id == lastRow.attr("id")) {
+        addtr();
+    }
+    var Choosename = obj1.childNodes[0].data;
+    //Choosename = Choosename.replace(/(^\s*)|(\s*$)/g, "");
+    Choosename = Choosename.replace($(obj1).attr("AccCode"), "");
+    if (b == 1) { 
+        if (optgroupName == "资产") {
+            if (Choosename.indexOf("银行存款") > -1) {
+                $('#' + tr.id + ' .main2').multiselect('dataprovider', bankaccount);
+                $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+            }
+            //if (Choosename.indexOf("应收账款") > 0 || Choosename.indexOf("应付账款") > 0 || Choosename.indexOf("库存现金") > 0 || Choosename.indexOf("预付账款") > 0 || Choosename.indexOf("预收账款") > 0) {
+            //    $('#' + tr.id + ' .main2').empty();
+            //    $('#' + tr.id + ' .main2').multiselect("rebuild");
+            //} if (Choosename.indexOf("银行存款") < 0 && Choosename.indexOf("应收账款") < 0 && Choosename.indexOf("应付账款") < 0 && Choosename.indexOf("库存现金") < 0 && Choosename.indexOf("预付账款") < 0 && Choosename.indexOf("预收账款") < 0) {
+            //    if (Choosename.indexOf("其他货币资金") > 0) {
+            //        sub = "其他货币资金";
+            //    }
+            //    if (Choosename.indexOf("短期投资") > 0) {
+            //        sub = "短期投资";
+            //    }
+            //    if (Choosename.indexOf("周转材料") > 0) {
+            //        sub = "周转材料";
+            //    }
+            //    if (Choosename.indexOf("工程物资") > 0) {
+            //        sub = "工程物资";
+            //    }
+            //    if (Choosename.indexOf("生产性生物资产") > 0) {
+            //        sub = "生产性生物资产";
+            //    }
+            //    if (Choosename.indexOf("待处理财产损益") > 0) {
+            //        sub = "待处理财产损益";
+            //    }
+            //    if (Choosename.indexOf("长期债券投资") > 0) {
+            //        sub = "长期债券投资";
+            //    }
+            //    $.ajax({
+            //        url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+            //        async: false,
+            //        dataType: "json",
+            //        success: function (d) {
+            //            SecSubject = d;
+            //            SecSubject.splice(0, 1)
+            //        }
+            //    });
+
+            //    $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+            //    $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+
+            //}
+        } else {
+        @*if (optgroupName == "负债") {
+        if (Choosename.indexOf("应付职工薪酬") < 0 && Choosename.indexOf("应交税费") < 0) {
+            $('#' + tr.id + ' .main2').empty();
+            $('#' + tr.id + ' .main2').multiselect("rebuild");
+        } else {
+            if (Choosename.indexOf("应付职工薪酬") > 0) {
+                sub = "应付职工薪酬";
+            }
+            if (Choosename.indexOf("应交税费") > 0) {
+                sub = "应交税费";
+            }
+            $.ajax({
+                url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    SecSubject = d;
+                    SecSubject.splice(0, 1)
+                }
+            });
+
+            $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+            $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+        }
+
+
+        //          if (Choosename == "税金") {
+        //              var id = '@Session["Taxpayer"]';
+        //              $.ajax({
+        //                  url: "/InternalAPI/GetTaxList?TaxPayer=" + id,
+        //                  async: false,
+        //                  dataType: "json",
+        //                  success: function (d) {
+
+        //                      detailType = d;
+        //                      detailType.splice(0, 1)
+        //                  }
+        //              });
+        //              $("#2 .main2").multiselect('dataprovider', detailType);
+        //              $("#2 .main2").val("").multiselect("refresh");
+        //          } else {
+        //              $("#2 .main2").multiselect('dataprovider', rper);
+        //              $("#2 .main2").val("").multiselect("refresh");
+        //          }
+    }
+
+    if (optgroupName == "所有者权益") {
+
+        if (Choosename.indexOf("盈余公积") < 0 && Choosename.indexOf("利润分配") < 0) {
+            $('#' + tr.id + ' .main2').empty();
+            $('#' + tr.id + ' .main2').multiselect("rebuild");
+        } else {
+            if (Choosename.indexOf("盈余公积") > 0) {
+                sub = "盈余公积";
+            }
+            if (Choosename.indexOf("利润分配") > 0) {
+                sub = "利润分配";
+            }
+            $.ajax({
+                url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    SecSubject = d;
+                    SecSubject.splice(0, 1)
+                }
+            });
+
+            $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+            $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+        }
+    }
+
+
+    if (optgroupName == "损益") {
+        if (Choosename.indexOf("主营业务收入") > 0 || Choosename.indexOf("投资收益") > 0 || Choosename.indexOf("主营业务成本") > 0 || Choosename.indexOf("所得税费用") > 0) {
+            $('#' + tr.id + ' .main2').empty();
+            $('#' + tr.id + ' .main2').multiselect("rebuild");
+        } else {
+            if (Choosename.indexOf("其他业务收入") > 0) {
+                sub = "其他业务收入";
+            }
+            if (Choosename.indexOf("其他业务成本") > 0) {
+                sub = "其他业务成本";
+            }
+            if (Choosename.indexOf("营业税金及附加") > 0) {
+                sub = "营业税金及附加";
+            }
+            if (Choosename.indexOf("销售费用") > 0) {
+                sub = "销售费用";
+            }
+            if (Choosename.indexOf("管理费用") > 0) {
+                sub = "管理费用";
+            }
+            if (Choosename.indexOf("财务费用") > 0) {
+                sub = "财务费用";
+            }
+            if (Choosename.indexOf("营业外支出") > 0) {
+                sub = "营业外支出";
+            }
+            $.ajax({
+                url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    SecSubject = d;
+                    SecSubject.splice(0, 1)
+                }
+            });
+
+            $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+            $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+                }
+            }*@
+            $.ajax({
+                url: "/InternalAPI/GetALLDetailSubject?Name=" + Choosename,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    SecSubject = d;
+                    //SecSubject.splice(0, 1)
+                }
+            });
+            if(SecSubject.length>0)
+            {
+                $('#' + tr.id + ' .main2').empty();
+                $.each(SecSubject, function () {
+                    $('#' + tr.id + ' .main2').append($("<option value='" + this.DA_GUID + "' AccCode='" + this.AccCode + "'>" + this.Name + "\</option>"));
+                });
+                $('#' + tr.id + ' .main2').multiselect("destroy").multiselect({
+                    buttonWidth: '100%',
+                    maxHeight: 310,
+                    enableFiltering: true,
+                    includeFilterNewBtn: false,
+                    nonSelectedText: ''
+
+                });
+                $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+            }else
+            {
+                $('#' + tr.id + ' .main2').empty();
+                $('#' + tr.id + ' .main2').multiselect("rebuild");
+            }
+        }
+    }if(b=2){
+        //if (Choosename.indexOf("增值税") > 0) {
+        //    sub = Choosename.replace(/(\d+||s+)/g, "");
+        //    $.ajax({
+        //        url: "/InternalAPI/GetThSubject?Name=" + sub,
+        //        async: false,
+        //        dataType: "json",
+        //        success: function (d) {
+        //            SecSubject = d;
+        //            SecSubject.splice(0, 1)
+        //        }
+        //    });
+        //    $('#' + tr.id + ' .main3').multiselect('dataprovider', SecSubject);
+        //    $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        //} else {
+        //    $('#' + tr.id + ' .main3').multiselect('dataprovider', rper);
+        //    $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        //}
+        //    }
+        $.ajax({
+            url: "/InternalAPI/GetALLThSubject?parentAccGuid=" + $(obj).val(),
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                SecSubject = d;
+                SecSubject.splice(0, 1)
+            }
+        });
+        if(SecSubject.length>0)
+        {
+            $('#' + tr.id + ' .main3').multiselect('dataprovider', SecSubject);
+            $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        }else
+        {
+            if ($('#' + tr.id + ' .main1  option:selected').text().indexOf("银行存款") > -1) {
+                $('#' + tr.id + ' .main3').empty();
+                $('#' + tr.id + ' .main3').multiselect("rebuild");
+            } else {
+                $('#' + tr.id + ' .main3').multiselect('dataprovider', allRper);
+                $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+            }
+        }
+    }
+}
+var sub;
+var IELA_GUID;
+var RPLA_GUID;
+
+function GetOptgroup(obj, aa, b) {
+    var objtr = $(aa).parent().parent();
+    var id = objtr.attr('id');
+    var tr = document.createElement("tr");
+    tr.id = id;
+    var lastRow = $("#VoucherTable tr:nth-last-child(2)");
+    if (id == lastRow.attr("id")) {
+        addtr();
+    }
+    optgroupName = obj.parentNode.label;
+    var SecSubject;
+    var Choosename = obj.childNodes[0].data
+    //  var Choosename = $('#2 .main1 option:selected').val();
+    //Choosename = Choosename.replace(/(^\s*)|(\s*$)/g, "");
+    Choosename = Choosename.replace($(obj).attr("AccCode"), "");
+    if (b == 1) {
+        if (optgroupName == "资产") {
+            if (Choosename.indexOf("银行存款") > -1) {
+                $('#' + tr.id + ' .main2').multiselect('dataprovider', bankaccount);
+                $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+            }
+            //if (Choosename.indexOf("应收账款") > 0 || Choosename.indexOf("应付账款") > 0 || Choosename.indexOf("库存现金") > 0 || Choosename.indexOf("预付账款") > 0 || Choosename.indexOf("预收账款") > 0 || Choosename.indexOf("备用金") > 0) {
+            //    $('#' + tr.id + ' .main2').empty();
+            //    $('#' + tr.id + ' .main2').multiselect("rebuild");
+            //    //              $("#2 .main2").val("").multiselect("refresh");
+            //} if (Choosename.indexOf("银行存款") < 0 && Choosename.indexOf("应收账款") < 0 && Choosename.indexOf("应付账款") < 0 && Choosename.indexOf("库存现金") < 0 && Choosename.indexOf("预付账款") < 0 && Choosename.indexOf("预收账款") < 0 && Choosename.indexOf("备用金") < 0) {
+            //    if (Choosename.indexOf("其他货币资金") > 0) {
+            //        sub = "其他货币资金";
+            //    }
+            //    if (Choosename.indexOf("短期投资") > 0) {
+            //        sub = "短期投资";
+            //    }
+            //    if (Choosename.indexOf("周转材料") > 0) {
+            //        sub = "周转材料";
+            //    }
+            //    if (Choosename.indexOf("工程物资") > 0) {
+            //        sub = "工程物资";
+            //    }
+            //    if (Choosename.indexOf("生产性生物资产") > 0) {
+            //        sub = "生产性生物资产";
+            //    }
+            //    if (Choosename.indexOf("待处理财产损益") > 0) {
+            //        sub = "待处理财产损益";
+            //    }
+            //    if (Choosename.indexOf("长期债券投资") > 0) {
+            //        sub = "长期债券投资";
+            //    }
+            //    $.ajax({
+            //        url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+            //        async: false,
+            //        dataType: "json",
+            //        success: function (d) {
+            //            SecSubject = d;
+            //            SecSubject.splice(0, 1)
+            //        }
+            //    });
+
+            //    $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+            //    $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+
+            //}
+        } else {
+
+        //if (optgroupName == "负债") {
+        //    if (Choosename.indexOf("应付职工薪酬") < 0 && Choosename.indexOf("应交税费") < 0) {
+        //        $('#' + tr.id + ' .main2').empty();
+        //        $('#' + tr.id + ' .main2').multiselect("rebuild");
+        //    } else {
+        //        if (Choosename.indexOf("应付职工薪酬") > 0) {
+        //            sub = "应付职工薪酬";
+        //        }
+        //        if (Choosename.indexOf("应交税费") > 0) {
+        //            sub = "应交税费";
+        //        }
+        //        $.ajax({
+        //            url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+        //            async: false,
+        //            dataType: "json",
+        //            success: function (d) {
+        //                SecSubject = d;
+        //                SecSubject.splice(0, 1)
+        //            }
+        //        });
+
+        //        $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+        //        $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+        //    }
+
+
+
+        //          if (Choosename == "税金") {
+        //              var id = '@Session["Taxpayer"]';
+        //              $.ajax({
+        //                  url: "/InternalAPI/GetTaxList?TaxPayer=" + id,
+        //                  async: false,
+        //                  dataType: "json",
+        //                  success: function (d) {
+
+        //                      detailType = d;
+        //                      detailType.splice(0, 1)
+        //                  }
+        //              });
+        //              $("#2 .main2").multiselect('dataprovider', detailType);
+        //              $("#2 .main2").val("").multiselect("refresh");
+        //          } else {
+        //              $("#2 .main2").multiselect('dataprovider', rper);
+        //              $("#2 .main2").val("").multiselect("refresh");
+        //          }
+        //}
+
+        //if (optgroupName == "所有者权益") {
+
+        //    if (Choosename.indexOf("盈余公积") < 0 && Choosename.indexOf("利润分配") < 0) {
+        //        $('#' + tr.id + ' .main2').empty();
+        //        $('#' + tr.id + ' .main2').multiselect("rebuild");
+        //    } else {
+        //        if (Choosename.indexOf("盈余公积") > 0) {
+        //            sub = "盈余公积";
+        //        }
+        //        if (Choosename.indexOf("利润分配") > 0) {
+        //            sub = "利润分配";
+        //        }
+        //        $.ajax({
+        //            url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+        //            async: false,
+        //            dataType: "json",
+        //            success: function (d) {
+        //                SecSubject = d;
+        //                SecSubject.splice(0, 1)
+        //            }
+        //        });
+
+        //        $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+        //        $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+        //    }
+        //}
+
+
+        //if (optgroupName == "损益") {
+        //    if (Choosename.indexOf("主营业务收入") > 0 || Choosename.indexOf("投资收益") > 0 || Choosename.indexOf("主营业务成本") > 0 || Choosename.indexOf("所得税费用") > 0) {
+        //        $('#' + tr.id + ' .main2').empty();
+        //        $('#' + tr.id + ' .main2').multiselect("rebuild");
+        //    } else {
+        //        if (Choosename.indexOf("其他业务收入") > 0) {
+        //            sub = "其他业务收入";
+        //        }
+        //        if (Choosename.indexOf("其他业务成本") > 0) {
+        //            sub = "其他业务成本";
+        //        }
+        //        if (Choosename.indexOf("营业税金及附加") > 0) {
+        //            sub = "营业税金及附加";
+        //        }
+        //        if (Choosename.indexOf("销售费用") > 0) {
+        //            sub = "销售费用";
+        //        }
+        //        if (Choosename.indexOf("管理费用") > 0) {
+        //            sub = "管理费用";
+        //        }
+        //        if (Choosename.indexOf("财务费用") > 0) {
+        //            sub = "财务费用";
+        //        }
+        //        if (Choosename.indexOf("营业外支出") > 0) {
+        //            sub = "营业外支出";
+        //        } if (Choosename.indexOf("营业外收入") > 0) {
+        //            sub = "营业外收入";
+        //        }
+        //        $.ajax({
+        //            url: "/InternalAPI/GetDetailSubject?Name=" + sub,
+        //            async: false,
+        //            dataType: "json",
+        //            success: function (d) {
+        //                SecSubject = d;
+        //                SecSubject.splice(0, 1)
+        //            }
+        //        });
+
+        //        $('#' + tr.id + ' .main2').multiselect('dataprovider', SecSubject);
+        //        $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+        //    }
+        //}
+            $.ajax({
+                url: "/InternalAPI/GetALLDetailSubject?Name=" + Choosename,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    SecSubject = d;
+                    //SecSubject.splice(0, 1)
+                }
+            });
+
+            $('#' + tr.id + ' .main2').empty();
+            if (SecSubject.length > 0) {
+                $.each(SecSubject, function () {
+                    $('#' + tr.id + ' .main2').append($("<option value='" + this.DA_GUID + "' AccCode='" + this.AccCode + "'>" + this.Name + "\</option>"));
+                });
+                $('#' + tr.id + ' .main2').multiselect("destroy").multiselect({
+                    buttonWidth: '100%',
+                    maxHeight: 310,
+                    enableFiltering: true,
+                    includeFilterNewBtn: false,
+                    nonSelectedText: ''
+
+                });
+                $('#' + tr.id + ' .main2').val("").multiselect("refresh");
+            } else {
+                $('#' + tr.id + ' .main2').empty();
+                $('#' + tr.id + ' .main2').multiselect("rebuild");
+            }
+        }
+    } if (b == 2) {
+        //if (Choosename.indexOf("增值税") > 0 || Choosename.indexOf("政府补助") > 0) {
+        //    sub = Choosename.replace(/(\d+||s+)/g, "");
+        //    $.ajax({
+        //        url: "/InternalAPI/GetThSubject?Name=" + sub,
+        //        async: false,
+        //        dataType: "json",
+        //        success: function (d) {
+        //            SecSubject = d;
+        //            SecSubject.splice(0, 1)
+        //        }
+        //    });
+        //    $('#' + tr.id + ' .main3').multiselect('dataprovider', SecSubject);
+        //    $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        //} else {
+        //    $('#' + tr.id + ' .main3').multiselect('dataprovider', rper);
+        //    $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        //        }
+        //    }
+        $.ajax({
+            url: "/InternalAPI/GetALLThSubject?parentAccGuid=" + $(aa).val(),
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                SecSubject = d;
+                SecSubject.splice(0, 1)
+            }
+        });
+        if (SecSubject.length > 0) {
+            $('#' + tr.id + ' .main3').multiselect('dataprovider', SecSubject);
+            $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+        } else {
+            if ($('#' + tr.id + ' .main1  option:selected').text().indexOf("银行存款")>-1) {
+                $('#' + tr.id + ' .main3').empty();
+                $('#' + tr.id + ' .main3').multiselect("rebuild");
+            } else {
+                $('#' + tr.id + ' .main3').multiselect('dataprovider', allRper);
+                $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+            }
+        }
+    }
+}
+function addtr() {
+    var table = $("#VoucherTable");
+    var tr = $("<tr>" +
+        "<td  onclick='tdclick(this,1)' style='text-align:center;width:18% '>" + "</td>" +
+        "<td  style='text-align:center;;width:18% '>" + "</td>" +
+         "<td style='text-align:center;;width:18% '>" + "</td>" +
+         "<td style='text-align:center;;width:18% '>" + "</td>" +
+          "<td  onclick='tdclick(this,2)' style='text-align:center;;width:10% '>" + "</td>" +
+           "<td  onclick='tdclick(this,2)' style='text-align:center;;width:10% '>" + "</td>" +
+
+        "<td style='text-align:center;;width:8% ' onclick='deletetr(this)'><button type='button'  class='btn btn-xs btn-link' style='color: #08C;' >" + "删除" + "</button></td></tr>");
+    var newRowId = NewGUID();
+    tr.attr("id", newRowId);
+    $(tr).insertBefore($("#aa"));
+    var table = document.getElementById("VoucherTable");
+    var b = table.rows.length - 2;
+    table.rows[b].cells[1].innerHTML = "<select style='text-align:center;width:100%;height:30px ' class='main1' onchange='changeInv(this.options[this.selectedIndex],this,value,1)'></select>";
+    table.rows[b].cells[2].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main2' onchange='changeInv(this.options[this.selectedIndex],this,value,2)'></select>";
+    table.rows[b].cells[3].innerHTML = "<select style='text-align:center;width:100%;height:25px ' class='main3'></select>";
+    var tr = document.createElement("tr");
+    tr.id = newRowId;
+    
+    $(function () {
+        var $select = $('#' + tr.id + ' .main1');
+        $.each(opt, function (key, value) {
+            var group = $('<optgroup label="' + key + '" />');
+            $.each(value, function () {
+                var option = $("<option value='" + this.LA_GUID + "' AccCode='" + this.AccCode + "'>" + this.name + "\</option>");
+                group.append(option);
+//                $('<option />').html(this.name).appendTo(group);
+            });
+            group.appendTo($select);
+        });
+
+        $select.val("");
+    });
+    $('#' + tr.id + ' .main1').multiselect({
+        buttonWidth: '100%',
+        maxHeight: 310,
+        enableFiltering: true,
+        includeFilterNewBtn: false,
+        enableCollapsibleOptGroups: true,
+        enableClickableOptGroups: true,
+        nonSelectedText: ''
+
+    });
+    $('#' + tr.id + ' .main2').multiselect({
+        buttonWidth: '100%',
+        maxHeight: 310,
+        enableFiltering: true,
+        includeFilterNewBtn: false,
+        nonSelectedText: ''
+
+    });
+    $('#' + tr.id + ' .main3').multiselect({
+        buttonWidth: '100%',
+        maxHeight: 310,
+        enableFiltering: true,
+        includeFilterNewBtn: false,
+        nonSelectedText: ''
+
+    });
+    $('#' + tr.id + ' .main3').multiselect('dataprovider', allRper);
+    $('#' + tr.id + ' .main3').val("").multiselect("refresh");
+            
+    }
+
+function deletetr(tdobject) {
+    var td = $(tdobject);
+    td.parents("tr").remove();
+    var table = document.getElementById("VoucherTable");
+    var sumtr = document.getElementsByTagName("tr");
+    var row = sumtr.length;
+    var sumAmount1 = 0;
+    var amount1 = 0;
+    var sumAmount2 = 0;
+    var amount2 = 0;
+    for (var i = 1; i < row - 1; i++) {
+        amount1 = table.rows[i].cells[3].innerHTML;
+        amount2 = table.rows[i].cells[4].innerHTML;
+        if (isNaN(amount1) || amount1 == "") {
+            amount1 = 0
+        }
+        if (isNaN(amount2) || amount2 == "") {
+            amount2 = 0
+        }
+        sumAmount1 += parseFloat(amount1);
+        sumAmount2 += parseFloat(amount2);
+                             }
+
+    var a = document.getElementById("Sum1");
+    var b = document.getElementById("Sum2");
+    if (!isNaN(sumAmount1) && sumAmount1 != 0) {
+        a.innerHTML = Money(parseFloat(sumAmount1).toFixed(2));
+    } if (sumAmount1 == 0) {
+        a.innerHTML = "";
+    }
+    if (!isNaN(sumAmount2) && sumAmount2 != 0) {
+        b.innerHTML = Money(parseFloat(sumAmount2).toFixed(2));
+    } if (sumAmount2 == 0) {
+        b.innerHTML = "";
+    }
+    var c = document.getElementById("Sum");
+    c.innerHTML = ChinaCost(parseFloat(sumAmount1).toFixed(2));
+  
+  }  
+</script>
+

@@ -1,0 +1,318 @@
+﻿html,body {
+ 	font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+ 	color: #50575B;
+ 	font-weight: 400;
+	font-size: 14px;
+	background-color: #FFF;
+	margin: 0px;
+	padding: 0px;
+	line-height: 20px;
+    height: 700px;
+}
+#Loginheader 
+{
+	display: block;
+	height: 70px;
+	width: 1200px;
+}
+#Loginmain 
+{
+	height: 500px;
+	width: 1200px;
+	background-color: #F9F9F9;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center bottom;
+	min-height: 300px;
+	padding: 20px;
+	}
+#Loginfooter 
+{
+	height: 50px;
+	width: 1240px;
+	background-color: #293941;
+	color: #768187;
+	padding: 32px 0px 64px;
+	}
+#Loginimage {
+	margin-left:10px;
+	background-image: url("../../Content/Image/login-dark.jpg");
+	width:280px;
+	height:50px;
+	margin-bottom:0px;
+	}
+.table1{
+	width:100%;
+	height:100%;
+	}
+.table2{
+	width:100%;
+	height:100%;
+	}
+#span1 {
+	margin-top:0px;
+	}
+.title-h1{
+	margin-left:30px;
+	font-size: 28px;
+	line-height: 40px;
+	font-weight: 200;
+	text-rendering: optimizelegibility;
+	}
+.title-h2{
+	margin-left:30px;
+	margin-top: 0px;
+	color: #597B8C;
+	font-size: 18px;
+	line-height: 32px;
+	font-weight: 400;
+	text-rendering: optimizelegibility;
+	}
+#span2 {
+	width: 380px;
+	float: left;
+	min-height: 1px;
+	margin-left: 30px;
+	}
+.input[name="LoginName"] {
+    width: 100%;
+    height: 45px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+	}
+.input[type="password"]{
+	width: 100%;
+	height: 45px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+	}
+#ValidateCode{
+	width: 83%;
+	height: 45px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+	}
+.Login-button{
+	width: 100%;
+	margin-top: 0px;
+	background: #3682B9 none repeat scroll 0% 0%;
+	color: #FFF;
+	padding: 8px 25px;
+	text-align: center;
+	box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.3) inset;
+	min-width: 100px;
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 4px 0px;
+	text-decoration: none;
+	vertical-align: middle;
+	border-radius: 4px;
+	border: 1px solid transparent;
+	cursor: pointer;
+	outline: medium none;
+	font-size: 15px;
+	line-height: 24px;
+}
+.text-print{
+	margin-top: 10px;
+	font-size: 12px;
+	color: #B7BDC0;
+	line-height: 16px;
+	margin: 0px 0px 10px;
+	}
+.text-link{
+	text-decoration: none;
+	color: #24C6C1;
+	cursor: pointer;
+	font-size: 12px;
+	line-height: 16px;
+	}
+.Login-form{
+	background-color: #F0F0F0;
+	margin-right: 0px;
+	margin-top: 30px;
+	padding: 30px 30px 20px;
+	margin: 0px 0px 20px;
+	}
+#span3 {
+	width: 540px;
+	float: left;
+	min-height: 1px;
+	margin-left: 20px;
+	font-size: 14px;
+	line-height: 20px;
+}
+.copyright-text {
+        color: #768187;
+        margin: 30px 0px;
+        text-align: center;
+        font-size: 13px;
+        line-height: 16px;
+}
+ video{
+        background-image: url(../../Content/Image/browser.png);
+        background-repeat:no-repeat ;
+        background-attachment: scroll;
+        background-position: 0 0 ;
+        background-color:transparent;
+        width:660px; 
+        padding-top:30px;
+        padding-left:10px;
+        padding-right:10px;
+        padding-bottom:10px;
+        background-size: cover; 
+        display: inline-block;
+        }
+
+#imgValidateCode 
+{
+}
+#RegForm {
+
+}
+#Framework {
+    top: 0;
+    left: 0;
+    position: absolute;
+    z-index: 10;
+}
+#LoginMask 
+{
+    position: absolute;
+    width:100%;
+    height: 100%;
+    background-color:#a9a9a9;
+    left:0px;
+    top:0px;
+    z-index:1000;
+    filter:alpha(opacity=60); /*IE滤镜，透明度50%*/
+    -moz-opacity:0.6; /*Firefox私有，透明度50%*/
+    opacity:0.6;/*其他，透明度50%*/
+    display: none;
+}
+#CenterPoint {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    width: 0;
+    height: 0;
+}
+#RegisterForm 
+{
+    background-color: #ffffff;
+    position: absolute;
+    margin: -180px -150px ;
+    width: 300px;
+    height: 360px;
+    display: none;
+    z-index:2000;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 50px;
+    border: 1px solid #CCC;
+}
+#CloseButton 
+{
+    top: 5px;
+    right: 5px;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    z-index:3000;
+    background-image: url(../../Content/Image/close.png);
+}
+#RegCompanyName {
+    width: 100%;
+    height: 45px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+}
+#RegEmail {
+    	width: 100%;
+	height: 45px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+}
+#Regpassword {
+    	width: 100%;
+	height: 45px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+}
+#ChkRegpassword {
+    	width: 100%;
+	height: 45px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	padding: 6px;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+}
+        

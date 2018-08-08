@@ -1,0 +1,194 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Balance
+<div>
+    <form id="Initial_Form">
+        <table>
+            <input type="hidden" class="easyui-validatebox"  name="C_GUID"/>
+            <input type="hidden" class="easyui-validatebox" name="Inital_GUID" id="Inital_GUID" />
+            <tr>
+                <td>期初日期：<input class="easyui-datebox" name="Date" data-options="required:true" /></td>
+                <td>货币：<input id="Currency" name="Currency" data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true' /></td>
+            </tr>
+            <tr>
+                <td>银行账户余额</td>
+            </tr>
+            <tr>
+                <td>银行简称：<input id="BankAccount1" name="BankAccount1"  data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true' /></td>
+                <td>余额：<input id="BankAccount1Money" name="BankAccount1Money" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>银行简称：<input id="BankAccount2" name="BankAccount2"  data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true' /></td>
+                <td>余额：<input id="BankAccount2Money" name="BankAccount2Money" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>备用现金余额：</td>
+                <td><input name="MonetaryFunds" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>短期投资余额：</td>
+                <td><input name="ShorttermInvestments" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>备用现金余额：</td>
+                <td><input name="MonetaryFunds" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>短期投资余额：</td>
+                <td><input name="ShorttermInvestments" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>应收票据余额：</td>
+                <td><input name="NotesReceivable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>应收补贴余额：</td>
+                <td><input name="SubsidiesReceivable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>应收股利余额：</td>
+                <td><input name="DividendReceivable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>存货余额：</td>
+                <td><input name="Inventories" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>一年内到期的长期债券投资余额：</td>
+                <td><input name="LongtermDebtOneYear" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>其他流动资产余额：</td>
+                <td><input name="OtherCcurrentAssets" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>长期投资余额：</td>
+                <td><input name="LongtermInvestments" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>固定资产余额：</td>
+                <td><input name="FixedAssetsNBV" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>在建工程余额：</td>
+                <td><input name="ConstructionInProgress" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>无形资产余额：</td>
+                <td><input name="IntangibleAssets" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>延递资产余额：</td>
+                <td><input name="Deferred" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+
+            <tr>
+                <td>短期借款余额：</td>
+                <td><input name="ShorttermLoans" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>应付票据余额：</td>
+                <td><input name="NotesPayable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>应付账款余额：</td>
+                <td><input name="AccountsPayable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+                <td>预收账款余额：</td>
+                <td><input name="AdvancesFromCustomers" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>应付工资余额：</td>
+                <td><input name="AccruedPayroll" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+                <td>应交税金：</td>
+                <td><input name="TaxesPayable" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','" /></td>
+            </tr>
+            <tr>
+                <td>一年内到期的长期负债余额：</td>
+                <td><input name="LongtermLiabiltiesDueWithinaYear" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+                <td>其他流动负债余额：</td>
+                <td><input name="OtherCurrentLiabilities" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+            </tr>
+            <tr>
+                <td>长期借款余额：</td>
+                <td><input name="LongtermBorrowings" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+                <td>长期应付款余额：</td>
+                <td><input name="LongtermPayables" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+            </tr>
+            <tr>
+                <td>其他长期负债余额：</td>
+                <td><input name="OtherLongtermLliabilities" class="easyui-numberbox" data-options="required:true,precision:2,groupSeparator:','"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><a class="easyui-linkbutton" onclick="Clear()">清空</a><a class="easyui-linkbutton" onclick="Submit()">@General.Resource.Common.Save</a></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var CommonCurrency;
+    var BankAccount;
+    $(function () {
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d;}
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetUserBank",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                BankAccount = d;
+            }
+        });
+
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency
+        });
+
+
+        $("#BankAccount1").combobox({
+            editable: false,
+            required: true,
+            textField: "text",
+            valueField: "value",
+            data: BankAccount
+         });
+
+         $("#BankAccount2").combobox({
+             editable: false,
+             required: true,
+             textField: "text",
+             valueField: "value",
+             data: BankAccount
+         });
+     });
+
+     function Submit() {
+         $("#Initial_Form").form('submit', {
+             url: "/InitialBalanceManagement/UpdInitialBalanceRecord",
+             onSubmit: function () {
+                 //表单验证
+                 return $("#Initial_Form").form('validate');
+             },
+             success: function (data) {
+                 $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                 if ($.parseJSON(data).Result) {
+                     $("#Initial_Form").form('clear');
+                 }
+             }
+         });
+     }
+
+     function NewRP_GUID() {
+         var RPGUID;
+         $.ajax({
+             url: "/ReceivablesRecord/NewGuid",
+             async: false,
+             dataType: "text",
+             success: function (d) {
+                 RPGUID = d.toString();
+             }
+         });
+         return RPGUID;
+     }
+
+     function Clear() {
+         $("#Initial_Form").form('clear');
+         $('#Inital_GUID').val(NewRP_GUID());
+     }
+</script>

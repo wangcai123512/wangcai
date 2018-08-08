@@ -1,0 +1,190 @@
+﻿@using System.Web.Security
+@{
+    ViewBag.Title = "TaxProvisionRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="Choose_dv1">
+<input type="radio" name="IEGroup" id="radio1" value="ac23eded-9c74-4781-8d14-797a5bccdc79" checked="checked" />
+ <label for="radio1">营业税及附加</label><br/>
+<input type="radio" name="IEGroup" id="radio2" value="234218e9-87c5-4854-814a-7d5671bf1fd9" />
+<label for="radio2">消费税</label>  <br/>
+<input type="radio" name="IEGroup" id="radio3" value="8e777b91-f3f9-4907-ba1a-2e0842967500" />
+<label for="radio3">增值税</label> <br/>
+<input type="radio" name="IEGroup" id="radio4" value="d136bf9c-c3a3-4f33-ab1e-820526dcbc24" />
+<label for="radio4">企业所得税 </label> <br/>
+<a class="easyui-linkbutton" onclick="NextE()">下一页</a>
+<a class="easyui-linkbutton" onclick="">回到上页</a>
+</div>
+<div id="Choose_dv2" style="display:none">
+<form id="TaxProvision_Form">
+    <input type="hidden" name="IE_GUID" id="IE_GUID" value="@ViewData["IE_GUID"]"/>
+    <input type="hidden" name="State" id="State" value="应付"/>
+    <input type="hidden" id="hidRPer"/>
+    <input type="hidden" id="flag"/>
+    <input type="hidden" name="InvType" id="InvType" value="税费计提"/>
+    <input type="hidden" name="IEGroup" id="IEGroup"/>
+<span style="font-size:15px;font-weight:900" id="Type"></span>
+    <table>
+        <tr>
+            <td>税费计提日期:</td>
+            <td><input class="easyui-datebox" id="AffirmDate" name="AffirmDate"/></td>
+            <td>@FMS.Resource.Finance.Finance.ExpenseDescription:</td>
+            <td><input class="easyui-validatebox" id="IEDescription" name="IEDescription"/> </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.InvNo:</td>
+            <td>
+                <input class="easyui-validatebox" id="InvNo" name="InvNo"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Taxation@FMS.Resource.Finance.Finance.Amount:</td>
+            <td>
+                <input id="TaxationAmount" name="TaxationAmount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+            </td>
+        </tr>
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+            <td>
+                <input id="Currency" name="Currency"/>
+            </td>
+            <td>@General.Resource.Common.Remark :</td>
+            <td>
+                <input class="easyui-validatebox" id="Remark" name="Remark"/>
+            </td>
+        </tr>
+    </table>
+    	    <table>
+	        <tr>
+	            <td colspan="4">
+	                <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+	                <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <div id="fileQueue" class="fileQueue"></div>
+	                <div id="div_files"></div>
+	            </td>
+	        </tr>
+	    </table>
+</form>
+<a id="TaxPsubmit" class="easyui-linkbutton" onclick="TaxPsubmit()">@General.Resource.Common.Save</a>
+<a class="easyui-linkbutton" onclick="Back();">回到上页</a>
+</div>
+  <div id="Partner"></div>
+<script language="javascript" type="text/javascript">
+	$(function () {
+		var StandardCoin;
+		var CommonCurrency;
+
+		$.ajax({
+			url: "/InternalAPI/GetUserCurrency",
+			async: false,
+			dataType: "json",
+			success: function (d) { CommonCurrency = d; }
+        });
+
+		$.ajax({
+			url: "/InternalAPI/GetCompanySetting",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				StandardCoin = d.StandardCoin;
+			}
+		});
+
+		$("#TaxProvision_Form #Currency").combobox({
+			editable: false,
+			required: true,
+			data: CommonCurrency,
+			onLoadSuccess: function (data) {
+				$("#TaxProvision_Form #Currency").combobox("setValue", StandardCoin);
+			}
+		});
+
+		$("#TaxProvision_Form").form({
+			onLoadSuccess:function(data){
+				$("#TaxProvision_Form #Bank").combobox("select",data.B_GUID);
+			}
+		});	   
+
+
+	   //添加界面的附件管理
+		var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+		var ASPSESSID = "@Session.SessionID";
+		$('#TaxProvision_Form #file_upload').uploadify({
+			width:105,
+			height: 20,
+			swf : '/Content/uploadify/uploadify.swf',    //FLash文件路径
+			buttonText: '上传发/凭证',               //按钮文本
+			uploader: '/TaxProvisionRecord/Upload',       //处理文件上传Action
+			queueID: 'fileQueue',                        //队列的ID
+			queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+			auto: false,                                 //选择文件后是否自动上传，默认为true
+			multi: true,                                 //是否为多选，默认为true
+			removeCompleted: true,                       //是否完成后移除序列，默认为true
+			fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+			fileTypeDesc: 'Image Files',                 //文件描述
+			fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+			onQueueComplete: function (event, data) {                 //所有队列完成后事件
+				//ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+				FileFlag = true;
+                 $.messager.alert("提示", "发票附件上传完毕！"); 
+			},
+			onUploadStart: function (file) {
+				$("#TaxProvision_Form #file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#IE_GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+			},
+			onUploadError: function (event, queueId, fileObj, errorObj) {
+				console.log(errorObj);
+				FileFlag = false;
+			}
+		}); 	  
+	});
+
+function NextE() {
+    var v;
+    var type = $("input[name='IEGroup']:checked").val();
+    if (type == "ac23eded-9c74-4781-8d14-797a5bccdc79") {
+        v = "营业税及附加";
+    }
+    if (type == "234218e9-87c5-4854-814a-7d5671bf1fd9") {
+        v = "消费税";
+    }
+    if (type == "8e777b91-f3f9-4907-ba1a-2e0842967500") {
+        v = "增值税";
+    }
+    if (type == "d136bf9c-c3a3-4f33-ab1e-820526dcbc24") {
+        v = "企业所得税";
+    }
+    $("#TaxProvision_Form #Type").text(v);
+		$("#TaxProvision_Form #IEGroup").val($("input[name='IEGroup']:checked").val());
+		$("#Choose_dv1").hide();
+		$("#Choose_dv2").show();
+	}
+	function Back() {
+		 $("#Choose_dv2").hide();
+		$("#Choose_dv1").show();
+	   
+	}
+
+   function TaxPsubmit() {
+    $('#TaxProvision_Form #file_upload').uploadify('upload', '*');
+		$("#TaxProvision_Form").form('submit', {
+		    url: "/TaxProvisionRecord/UpdTaxProvisionRecord",
+			onSubmit: function () {
+                 return $("#TaxProvision_Form").form('validate');
+			},
+			success: function (data) {
+				$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+				if ($.parseJSON(data).Result) {
+					$("#TaxProvision_Form").form('clear');
+					 $("#Choose_dv2").hide();
+					  $("#Choose_dv1").show();
+					 
+				}
+			}
+		});
+	}
+</script>
+
+

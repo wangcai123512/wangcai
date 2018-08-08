@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LoginLayoutNew_V3.cshtml";
+}
+<input type="hidden" name="CheckLoginName" id="CheckLoginName" value="@ViewData["CheckLoginName"]"/>
+<div id="RegForm"></div>
+<table class="table1">
+    <tr>
+        <td width="380" height="133">
+            <div id="span1">
+                <h1 class="title-h1">Easy &amp; free financial software</h1>
+                <h2 class="title-h2"> ·Automatically generate financial statements.<br> ·Real time understanding income, cash, and assets.</h2>
+            </div>
+        </td>
+        <td width="660" rowspan="2">
+            <div id="span3">
+                <video loop="true" src="https://wave-vero-assets.s3.amazonaws.com/videos/homepage_video.mp4" autoplay="true" poster="/sitestatic/public/img/dashboard_screen_shot.png"></video>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="span2" >
+                <form id="LoginInfo" class="Login-form" method="post">
+                    <span id="ErrorMsg" style=" color:Red"></span>
+                    <input id="LoginName" type="text" class="input" name="LoginName" placeholder="Email" data-options="required:true" onmouseover="this.style.border='solid 1px #3FF'" onmouseout="this.style.border='solid 1px #CCC'"/><br>
+                    <input type="password" class="input" name="password" placeholder="Password" data-options="required:true" onmouseover="this.style.border='solid 1px #3FF'" onmouseout="this.style.border='solid 1px #CCC'"/><br>
+                    <input id="ValidateCode"  name="ValidateCode" type="text" class="input" placeholder="ValidateCode" data-options="required:true" onmouseover="this.style.border='solid 1px #3FF'" onmouseout="this.style.border='solid 1px #CCC'" />
+                    <img id="imgValidateCode" src="/Common/GetValidateCode" onclick="ChangeValidateCode(this)" style="cursor: pointer;" />                          
+                    <button id="Login-button" class="Login-button" onmouseover="this.style.background='#4082A9'" onmouseout="this.style.background='#3682B9'" onclick="Login()">
+                        Sign in
+                    </button>
+                    <p class="text-print">If you have not previously registered with our production ,<a href="#" class="text-link " id="BtnRegister"  name="Register"  onclick="Register()">you will click me</a> .</p>
+                </form>
+            </div>
+        </td>
+    </tr>
+</table>
+ @using (Html.BeginForm("ForceLogin", "Login", FormMethod.Post, new { id = "ForceForm"}))
+    {
+         <input id="UserName" type="hidden" name="username" />
+    }
+<script type="text/javascript" language="javascript">
+    javascript: window.history.forward(1);
+    $(function() {
+        $("#LoginName").focus();
+        
+        $("#RegForm").dialog({
+            href: "/Common/Register",
+            title: "@General.Resource.Common.Register",
+            width: 400,
+            height: 350,
+            closed: true,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () { SubmitForm(); }
+            }],
+            onClose: function () { document.getElementById("LoginMask").style.display = "none"; },
+        });
+        $("#LoginInfo").form({
+            url: "/Common/Login",
+            onSubmit: function() {
+                if ($("#LoginInfo").form("validate")) {
+                    $("#ErrorMsg").text("");
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            success: function(data) {
+                if (JSON.parse(data).Result) {
+                    window.location.href = "/Company/ChooseCompany";
+                } else {
+                    $("#ErrorMsg").text(JSON.parse(data).Msg);
+                    $("#ValidateCode").val("");
+                    $("#Password").val("");
+                    $("#imgValidateCode").click();
+                }
+            }
+        });
+    });
+    function ChangeValidateCode(obj) {
+        obj.src = "/Common/GetValidateCode?time=" + (new Date()).getTime();
+    }
+
+    function Login() {
+        $("#Login-button").focus();
+        $("#LoginInfo").submit();
+    }
+
+    function Register() {
+        $("#RegForm").dialog("refresh").dialog("open");
+//        document.getElementById("LoginMask").style.display="block"; 
+//        document.getElementById("RegisterForm").style.display="block"; 
+    }
+
+//    function RegisterSubmitForm() {
+//         $("#SignupForm").form('submit', {
+//            url: "/Common/Register",
+//            onSubmit: function () { return $("#SignupForm").form("validate"); },
+//            success: function (data) {
+//                //$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+//                if ($.parseJSON(data).Result) {
+//                    $("#RegForm").dialog("close");
+//                    document.getElementById("LoginMask").style.display = "none"; 
+//                }
+//            }
+//        });
+//    }
+
+    function RegisterClose() {
+        document.getElementById("LoginMask").style.display="none"; 
+        document.getElementById("RegisterForm").style.display="none"; 
+    }
+    function SubmitForm() {
+        $("#RegInfo").form('submit', {
+            url: "/Common/Register",
+            onSubmit: function () { return $("#RegInfo").form("validate"); },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $("#RegForm").dialog("close");
+                    document.getElementById("LoginMask").style.display = "none"; 
+                }
+            }
+        });
+    }
+    var confirmMsg = function (r) {
+        if (r) {
+            $("#UserName").val($("#LoginName").val());
+            $("#ForceForm").submit();
+        }
+    }
+</script>

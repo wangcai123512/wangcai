@@ -1,0 +1,5 @@
+D:\fms\FMSNEW\FMS.Model\bin\Debug\FMS.Model.dll
+D:\fms\FMSNEW\FMS.Model\bin\Debug\FMS.Model.pdb
+D:\fms\FMSNEW\FMS.Model\obj\Debug\FMS.Model.csprojResolveAssemblyReference.cache
+D:\fms\FMSNEW\FMS.Model\obj\Debug\FMS.Model.dll
+D:\fms\FMSNEW\FMS.Model\obj\Debug\FMS.Model.pdb

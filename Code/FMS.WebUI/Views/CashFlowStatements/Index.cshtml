@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="CashFlowStatements"></table>
+<script type="text/javascript">
+    var curRepID = null;
+
+    function RepDateFmter(val, row) {
+        return row.Year + '.' + row.Month;
+    }
+
+    function LinkFmter(val) {
+        return "<a onclick='ShowDialog(\"" + val + "\")' >@General.Resource.Common.Details</a> ";
+    }
+
+    function InitPerviewDialog() {
+        $("#CashFlowStatements").after("<div id='WinPerviewCashFlowStatement'></div>");
+        $("#WinPerviewCashFlowStatement").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.Preview@FMS.Resource.FinanceReport.FinanceReport.Report",
+            buttons: [{
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate',
+                handler: function () { SaveCashFlowStatement(); }
+            }],
+            onClose: function () {
+                $("#WinPerviewCashFlowStatement").dialog("destroy");
+            }
+        });
+    }
+
+    function InitViewDialog() {
+        $("#CashFlowStatements").after("<div id='WinCashFlowStatement'></div>");
+        $("#WinCashFlowStatement").dialog({
+            maximized: true,
+            title: "@FMS.Resource.FinanceReport.FinanceReport.IncomeStatement",
+            onClose: function () {
+                $("#WinCashFlowStatement").dialog("destroy");
+            }
+        });
+    }
+
+    $(function () {
+        $("#CashFlowStatements").datagrid({
+            url: '/CashFlowStatements/GetCashFlowStatements',
+            singleSelect: true,
+            fitColumns: true,
+            pagination: true,
+            columns: [[
+                { field: 'RepNo', title: '@FMS.Resource.FinanceReport.FinanceReport.RepNo' },
+                { field: 'Year', title: '@FMS.Resource.FinanceReport.FinanceReport.RepDate', formatter: RepDateFmter },
+                { field: 'Rep_GUID', title: '', formatter: LinkFmter }
+                ]],
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: '@FMS.Resource.FinanceReport.FinanceReport.Generate@FMS.Resource.FinanceReport.FinanceReport.Report',
+                handler: function () { ShowDialog(''); }
+            }]
+        });
+    });
+
+    function ShowDialog(id) {
+        curRepID = id;
+        if (curRepID.length == 0) {
+            InitPerviewDialog();
+            $("#WinPerviewCashFlowStatement").dialog("refresh", "/CashFlowStatements/CashFlowStatement");
+        }
+        else {
+            InitViewDialog();
+            $("#WinCashFlowStatement").dialog("refresh", "/CashFlowStatements/CashFlowStatement/" + id);
+        }
+    }
+
+    function SaveCashFlowStatement() {
+        $.ajax({
+            url: '/CashFlowStatements/UpdCashFlowStatement',
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                if (data.Result) {
+                    $("#WinPerviewIncomeStatement").dialog("close");
+                    $.messager.alert("Msg", data.Msg, "info");
+                    $("#CashFlowStatements").datagrid("reload");
+                }
+                else {
+                    $.messager.alert("Msg", data.Msg, "error");
+                }
+            },
+            error: errorHandle
+        });
+    }
+
+</script>
+
+
+

@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="RoleDetails" >   
+</div>
+    <table id="RoleList"></table>
+    <script>
+
+        var LinkFormatter = function (value, row, index) 
+        {
+            var Para = '"' + value + '"';
+            var Para2 = '"/LocalRoleManagement/GetRolePermission/' + value + '"';
+            return "<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> " +
+        "<a onclick='PageChange(" + Para2 + ")'>@Common.Resource.RolePermission.SettingRolePermission</a> " +
+        "<a onclick='DelRole(" + Para + ")' >@General.Resource.Common.Delete</a>";
+        };
+
+    $(function(){
+        $('#RoleList').datagrid({
+            url: "/LocalRoleManagement/GetRoles",
+            rownumbers:true,
+            singleSelect:true,
+            columns: [[
+                        { field: 'Name', title: '@Common.Resource.RolePermission.RoleName'},
+                        { field: 'Guid', formatter: LinkFormatter}
+                     ]],
+            toolbar: [{
+		                iconCls: 'icon-add',
+                        text: '@Common.Resource.RolePermission.NewRole',
+		                handler: function(){ShowDetails();}
+	                 }]
+        });
+
+        $("#RoleDetails").dialog({
+            href: "/LocalRoleManagement/GetRole",
+            collapsible:false,
+            minimizable:false,
+            maximizable:false,
+            closed: true,
+            title:"@Common.Resource.RolePermission.RoleInfo",
+            width: 300,
+            height: 120,
+            onLoad: txtVaild,
+            buttons:[{
+				text:'@General.Resource.Common.Save',
+				handler:function(){SubmitForm();}
+			}]
+        });
+    });
+        
+    function ShowDetails(id) {
+        $("#RoleDetails").dialog("center");
+        $("#RoleDetails").dialog("open");
+        if (id != null) {
+            $("#RoleDetails").dialog("refresh", "/LocalRoleManagement/GetRole/" + id);
+        }
+        else {
+            $("#RoleDetails").dialog("refresh", "/LocalRoleManagement/GetRole");
+        }
+    }
+
+    function DelRole(id) {
+        $.ajax({
+            url: "/LocalRoleManagement/DelRole/" + id,
+            type: "POST",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#RoleList').datagrid("reload");
+                }
+            },
+            error: function () {
+                $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info'); 
+            }
+        });
+    }
+
+    var successHandle = function (data) {
+        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+        if ($.parseJSON(data).Result) {
+            $("#RoleDetails").dialog("close");
+            $('#RoleList').datagrid("reload");
+        }
+    };
+
+        function SubmitForm() {
+            $("form").form('submit', {
+                url: "/LocalRoleManagement/UpdRole",
+                onSubmit: function () { return $("form").form("validate"); },
+                success: successHandle
+            });
+        }
+    </script>

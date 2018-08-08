@@ -1,0 +1,79 @@
+﻿body
+{
+    margin:0px;
+    }
+#footer
+{
+    clear:left;
+    float:left;
+    width:100%;
+    text-align:right;
+    
+    }
+#footer a
+{
+    color:#7c7c7c; 
+    font-size:11px; 
+    }
+#head
+{
+    width:100%;
+    /*height:120px;*/
+    height:103px;
+    }
+#head img
+{
+    border-width:0px;
+    width:211px; 
+    height:57px; 
+    padding-bottom:2px; 
+    float:left; 
+    cursor:pointer;
+    }
+#main
+{
+     min-width:820px;
+     float:left;
+    }
+#nav
+{
+    width:230px;
+    height:auto;
+    float:left;
+    margin-bottom:20px;
+    }
+#loginInfo 
+{
+    float:right;
+    background-color:#eeeeee;
+    height:15px;
+    padding-top:0px;
+    width:100%;
+}
+#languageswitch
+{
+    float:right;
+    padding-left:80px;
+    padding-right:5px;
+    height:57px;
+}
+.Exit
+{
+    font-family:Arial;
+    float:right;
+    margin-right:50px;
+    line-height:45px;
+    background-image:url("../images/Btn.png");
+    background-position:center;
+    background-repeat:no-repeat;
+    display:block;
+    WIDTH: 50px;
+    color:#FFFFFF;
+    font-size:14px;
+    font-weight:bolder;
+    } 
+    
+.panelHead
+{
+height:4px;
+}

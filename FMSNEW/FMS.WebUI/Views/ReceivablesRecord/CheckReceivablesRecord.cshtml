@@ -1,0 +1,51 @@
+﻿@{
+	ViewBag.Title = "ReceivablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_RecPayRecord
+<table>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Payer:</td>
+		<td>@Model.R_PerName</td>
+		<td>@FMS.Resource.Finance.Finance.Date:</td>
+		<td>@Model.Date.ToShortDateString()</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.InvType:</td>
+		<td>@Model.TypeName</td>
+		<td>@FMS.Resource.Finance.Finance.InvNo:</td>
+		<td>@Model.InvNo</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.DebitLedgerAccount:</td>
+		<td>@Model.DebitLedgerAccountName</td>
+		<td>@FMS.Resource.Finance.Finance.CreditLedgerAccount:</td>
+		<td>@Model.CreditLedgerAccountName</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.DebitDetailsAccount :</td>
+		<td>@Model.DebitDetailsAccountName</td>
+		<td>@FMS.Resource.Finance.Finance.CreditDetailsAccount :</td>
+		<td>@Model.CreditDetailsAccountName</td>
+	</tr>
+<tr>
+        <td>@FMS.Resource.Finance.Finance.Currency</td>
+        <td>@Model.Currency</td>
+		<td>@FMS.Resource.Finance.Finance.Amount:</td>
+		<td>@Model.Amount.ToString("n02")</td>
+	</tr>
+    <tr>
+     <td>@FMS.Resource.Finance.Finance.Subject</td>
+        <td>@Model.CFPItemName</td>
+		<td colspan=2>@Model.CFItemName</td>
+    </tr>
+    <tr>
+    <td>@General.Resource.Common.Remark :</td>
+		<td>@Model.Remark</td>
+    </tr>
+</table>
+
+	
+
+

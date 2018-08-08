@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript">
+   
+    $(document).ready(function () {
+        var bankaccount;
+        $.ajax({
+            url: "/InternalAPI/GetBankAccountss",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                for (var i = 0; i < d.length; i++) {
+                    d[i]["value"] = d[i]["value"];
+
+                }
+                bankaccount = d;
+            }
+        });
+        //First Account
+        $('#AccountCash').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            selectAllText: '全部',
+            selectAllValue: 'select-all-value',
+            includeFilterNewBtn: false,
+            nonSelectedText: '全部',
+            includeSelectAllOption: true,
+        });
+        $("#AccountCash").multiselect('dataprovider', bankaccount);
+        $("#AccountCash").val("").multiselect("refresh");
+    });
+</script>
+
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_ReportLeftMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline"> 编辑我的报告</span></div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                        <form id="CashFlowsRecord">
+                                            <div class="col-md-12">
+                                                <div class="col-md-5" style="margin-bottom: 0px">
+
+                                                </div>
+                                                <div class="col-md-7" style="margin-bottom: 0px">
+                                                    <b style="text-align:center">报告频率</b>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="col-md-4" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">账号</span>
+                                                            <select id="AccountCash" name="AccountCash" class="AccountCashClass" multiple="multiple"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin: 0px 15px">
+                                                </div>
+                                                <div class="col-md-7" style="margin-bottom: 0px">
+                                                        <div class="form-group" style="margin-top: 0px">
+                                                            <div class="input-group input-group-sm" style="margin: 0">
+                                                                <div class="col-sm-12 col-xs-12" id="APushFform">
+                                                                    <div class="col-sm-4 col-xs-4">
+                                                                        <input name='push_frequency' id="day" type='checkbox' onchange="updcheckfrequency(this.id)">
+                                                                        <b>每日</b>
+                                                                    </div>
+                                                                    <div class="col-sm-4 col-xs-4">
+                                                                        <input name='push_frequency' id="week" type='checkbox' onchange="updcheckfrequency(this.id)">
+                                                                        <b>每周</b>
+                                                                    </div>
+                                                                    <div class="col-sm-4 col-xs-4">
+                                                                        <input name='push_frequency' id="month" type='checkbox' onchange="updcheckfrequency(this.id)">
+                                                                        <b>每月</b>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                 </div>
+                                                </div>
+                                               <div class="col-sm-12 col-xs-12" id="APushform">
+                                                    <div class="col-sm-6 col-xs-6">
+                                                    <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                        <div class="col-sm-3 col-xs-3">
+                                                            <b>推送选择:</b>
+                                                        </div>
+                                                        <div class="col-sm-8 col-xs-8">
+                                                            <input name='attention_state' id="WeChat" type='checkbox' onchange="updchecktype(this.id)">
+                                                            <b style="width:10%">微信</b>
+                                                            <input type="text" id="WeChatText" name="push_account" style="width:70%">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                        <div class="col-sm-3 col-xs-3">
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-9" style="margin-left:95px">
+                                                            <input name='push_account' type='checkbox' id="Email" onchange="updchecktype(this.id)">
+                                                            <b>Email</b>
+                                                            <input type="text" id="EmailText" name="push_account" style="width:70%">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-3">
+                                                        </div>
+                                                        <div class="col-sm-9 col-xs-9" style="margin-left:95px">
+                                                            <input name='push_account' type='checkbox' id="Sms" onchange="updchecktype(this.id)">
+                                                            <b>短信</b>
+                                                            <input type="text" id="SmsText" name="push_account" style="width:70%">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               </div>
+                                                  
+                                                   <!--<button type="button" class="btn btn-primary" onclick="UpdMyReport()">
+                                                       提交
+                                                   </button>-->
+                                        </form>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

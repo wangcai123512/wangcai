@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "LedgerAccount";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_GeneralLedgerAccount
+<form id ="formLedgerAccount">
+<input type="hidden" name="lA_GUID" value="@Model.LA_GUID" />
+<input type="hidden" name="Useable" value="@Model.Useable" />
+    <table class="Props">
+    <tr>
+        <td>@FMS.Resource.Account.Account.AccCode</td>
+        <td><input name="AccCode" class="easyui-numberbox" value="@Model.AccCode" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td><input name="Name" class="easyui-validatebox" value="@Model.Name" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>@FMS.Resource.Account.Account.LedgerAccount</td>
+        <td><input name="AccGroup" class="easyui-combobox" value="@Model.AccGroup"
+        data-options="panelHeight:'auto',required:true,method:'get',url:'@Url.Content("~/Json/GeneralLedgerAccountGroup.json")',textField:'Name',valueField:'Code'"/></td>
+    </tr>
+</table >
+</form>
+

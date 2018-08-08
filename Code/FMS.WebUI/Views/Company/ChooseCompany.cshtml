@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "ChooseCompany";
+    Layout = "~/Views/Shared/_Layout_V3.cshtml";
+}
+@using FMS.Resource.CompanySetting
+<div id="CompanyInfo">
+</div>
+<div id="UserInfo">
+</div>
+<div id="CompanySetting">
+</div>
+<table id="CompanyList">
+</table>
+<table id="UserList">
+</table>
+<script>
+    LinkHandle = function (val, row, ind) {
+        return "<a href='#' onclick='checkCompanySetting(\"" + val + "\")'>@General.Resource.Common.Enter</a> " +
+		"<a href='#' onclick='openCompanyInfo(\"" + val + "\")' >@General.Resource.Common.Edit@CompanySettingInfo.Company@CompanySettingInfo.Info</a> " +
+		"<a href='#' onclick='openCompanySetting(\"" + val + "\")' >@General.Resource.Common.Edit@CompanySettingInfo.Company@CompanySettingInfo.Setting</a> ";
+    }
+
+    UserLinkHandle = function (val, row, ind) {
+        return "<a href='#' onclick='openUserInfo(\"" + val + "\")'>@General.Resource.Common.Edit</a> " +
+         "<a href='#' onclick='DelUser(\"" + val + "\")'>@General.Resource.Common.Delete</a>"
+    }
+
+    $(function () {
+        //此代码会引起js错误，原因是导航页面初始化时，页面被销毁
+        $("#Framework").layout("remove", "west");
+        //编辑公司信息页面
+        $("#CompanyInfo").dialog({
+            title: "@CompanySettingInfo.Company@CompanySettingInfo.Info",
+            width: 400,
+            height: 300,
+            closed: true,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () {
+                    SubmitForm();
+                }
+            }]
+        });
+        $("#UserInfo").dialog({
+            title: "@Common.Resource.RolePermission.UserInfo",
+            width: 400,
+            height: 300,
+            closed: true,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () {
+                    UserSubmitForm();
+                }
+            }]
+        });
+        $("#CompanySetting").dialog({
+            title: "@CompanySettingInfo.Company@CompanySettingInfo.Setting",
+            width: 400,
+            height: 300,
+            closed: true,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () {
+                    SettingSubmitForm();
+                }
+            }]
+        });
+        $("#CompanyList").treegrid({
+            url: "/Company/GetCompanys",
+            columns: [[
+				{ field: 'Name', title: '@CompanySettingInfo.Company@General.Resource.Common.Name' },
+				{ field: 'C_GUID', title: '', formatter: LinkHandle }
+			]],
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: "@General.Resource.Common.Add@CompanySettingInfo.Company",
+                handler: function () {
+                    $("#CompanyInfo").dialog("refresh", "/Company/CompanyInfo").dialog("open");
+                }
+            }],
+            idField: "C_GUID",
+            treeField: "Name"
+        });
+
+
+
+
+
+        //用户列表
+        $("#UserList").datagrid({
+            url: "/Company/GetUserList",
+            columns: [[
+				{ field: 'UserName', title: '@General.Resource.Common.UserName' },
+				{ field: 'LoginName', title: '@Common.Resource.RolePermission.LoginName' },
+                { field: 'U_GUID', title: '', formatter: UserLinkHandle }
+			]],
+            singleSelect: true,
+            toolbar: [{
+                iconCls: 'icon-add',
+                text: "@General.Resource.Common.Add@General.Resource.Common.UserName",
+                handler: function () {
+                    $("#UserInfo").dialog("refresh", "/Company/UserInfo").dialog("open");
+                }
+            }]
+        });
+    });
+
+    //删除用户信息
+    function DelUser(id) {
+        $.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/Company/DelUser/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#UserList').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+
+
+    //提交公司信息表单
+    function SubmitForm() {
+        $("#CompanyInfoForm").form('submit', {
+            url: "/Company/UpdCompany",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#CompanyInfo').dialog("close");
+                    $('#CompanyList').treegrid("reload");
+                }
+            },
+            error: function () {
+                $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+            }
+        });
+    }
+
+    //提交公司设置表单
+    function SettingSubmitForm() {
+        $("#CompanySettingForm").form('submit', {
+            url: "/Company/UpdSetting",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#CompanySetting').dialog("close");
+                }
+            },
+            error: function () {
+                $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+            }
+        });
+    }
+
+    //提交用户信息表单
+    function UserSubmitForm() {
+        $("#UserInfoForm").form('submit', {
+            url: "/Company/UpdUserInfo",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                if ($.parseJSON(data).Result) {
+                    $('#UserInfo').dialog("close");
+                    $('#UserList').datagrid("reload");
+                }
+            },
+            error: function () {
+                $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+            }
+        });
+    }
+
+    //检查公司设置
+    function checkCompanySetting(id) {
+        $.ajax({
+            type: 'Post',
+            url: '/Company/checkCompanySetting/' + id,
+            success: function (data) {
+                if (data == "True") {
+                    window.location = "/Common/Pending?cGuid=" + id;
+                }
+                if (data == "False") {
+                    $.messager.alert("Msg","@CompanySettingInfo.SetCompanySetting","warning")
+                }
+            }
+        });
+    }
+
+    function openCompanyInfo(id) {
+        $("#CompanyInfo").dialog("refresh", "/Company/CompanyInfo/" + id).dialog("open");
+    }
+
+    function openUserInfo(id) {
+        $("#UserInfo").dialog("refresh", "/Company/UserInfo/" + id).dialog("open");
+    }
+
+    function openCompanySetting(id) {
+        $("#CompanySetting").dialog("refresh", "/Company/CompanySetting/" + id).dialog("open");
+    }
+</script>

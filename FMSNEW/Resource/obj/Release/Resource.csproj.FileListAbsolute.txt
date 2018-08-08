@@ -1,0 +1,9 @@
+D:\fms\FMSNEW\Resource\bin\Release\General.Resource.dll
+D:\fms\FMSNEW\Resource\bin\Release\General.Resource.pdb
+D:\fms\FMSNEW\Resource\bin\Release\en-US\General.Resource.resources.dll
+D:\fms\FMSNEW\Resource\obj\Release\General.Resource.Common.resources
+D:\fms\FMSNEW\Resource\obj\Release\General.Resource.Common.en-US.resources
+D:\fms\FMSNEW\Resource\obj\Release\Resource.csproj.GenerateResource.Cache
+D:\fms\FMSNEW\Resource\obj\Release\en-US\General.Resource.resources.dll
+D:\fms\FMSNEW\Resource\obj\Release\General.Resource.dll
+D:\fms\FMSNEW\Resource\obj\Release\General.Resource.pdb

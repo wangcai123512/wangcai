@@ -1,0 +1,181 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<div id="toolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+		<a class="easyui-linkbutton" onclick="Export()">数据导出</a>
+	</div>
+	<div>
+		<form id="conditionForm">
+		<table>
+			<tr>
+				<td>收入确认日期:</td>
+				<td><input class="easyui-datebox" id="conDateBegin" name="dateBegin" data-options="width:97,panelHeight:'auto'" />至<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:97,panelHeight:'auto'"/></td>
+			</tr>
+			<tr>
+				<td>客&nbsp;&nbsp;&nbsp;&nbsp;户:</td>
+				<td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+			</tr>
+			<tr>
+				<td>状&nbsp;&nbsp;&nbsp;&nbsp;态:</td>
+				<td>
+					<select class="easyui-combobox" id="conFlag" name="state" data-options="width:207,panelHeight:'auto'" >
+						<option value=""></option>
+						<option value="应收">应收</option>
+						<option value="已收">已收</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>收入类别:</td>
+				<td>
+					<select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+						<option value=""></option>
+						<option value="主营业务收入">主营业务收入</option>
+					    <option value="非主营业务收入">非主营业务收入</option>
+                        <option value="营业外收入">营业外收入</option>
+						<option value="投资收入">投资收入</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<table id="IR_List"></table>
+<script language="javascript" type="text/javascript">
+	var LinkHandle = function (value) {
+	    var link1 = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Edit</a> ";
+	    var link2 = " <a class='linkbtn' onclick='delClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+		return link1+link2;
+	};
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+    var FJHandle = function(value, row, index) {
+	    if (value == ""||value==null) {
+	        return "";
+	    } else {
+	        var v = "../Content/EasyUI/themes/icons/hxz.png";
+	        //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="'+v+'" />';
+	    }
+	};
+
+	$(function () {
+	    $("#IR_List").datagrid({
+	        onLoadSuccess:compute,
+            checkOnSelect:false,
+            selectOnCheck: false,
+            singleSelect:true,
+	        url: '/IncomeQuery/GetIncomeList',
+	        columns: [[
+				{ field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate',formatter: DateHandle,remoteSort:true },
+				{ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Client' },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.SumAmount', align: 'right', formatter: DecimalFmter },
+				{ field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+				{ field: "State", title: "@General.Resource.Common.Flag"},
+                { field: "InvType", title: "@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Group"},
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.ClosingDate', formatter: DateHandle },
+				{ field: 'Remark', title: '@General.Resource.Common.Remark ' },
+                { field: 'A_GUID', title: '附件',align: 'center',formatter: FJHandle },
+				{ field: 'IE_GUID', title: '', formatter: LinkHandle }
+			]],
+	        pagination: true,
+	        rownumbers: true,
+	        toolbar: "#toolbar"
+	    });
+	});
+
+	function AddClick(id) {
+		InitDialog();
+		$('#WinIR').dialog("refresh", "/IncomeQuery/IncomeRecord/" + id);
+}
+    function delClick(id) {
+        $.messager.confirm('确认', '确认删除?', function (r) {
+            if (r) {
+                $.ajax({
+                    url: "/IncomeQuery/DelIERecord/" + id,
+                    type: "POST",
+                    success: function (data) {
+                        $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+                        if ($.parseJSON(data).Result) {
+                            $('#IR_List').datagrid("reload");
+                        }
+                    },
+                    error: function () {
+                        $.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+                    }
+                });
+            }
+        });
+    }
+
+	function InitDialog() {
+		$("#IR_List").after('<div id="WinIR"></div>');
+		$("#WinIR").dialog({
+			title: ' ',
+			collapsible: false,
+			minimizable: false,
+			width: 800,
+			height:350,
+			onClose: function () { $("#WinIR").dialog("destroy"); },
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { SubmitForm(); }
+			}]
+		});
+	}
+
+	function SubmitForm() {
+		$("#Income_Form").form('submit', {
+			url: "/IncomeQuery/UpdIncomeRecord",
+			onSubmit: function () {
+				if ($("#Income_Form").form("validate")) 
+				{
+					    $('#file_upload').uploadify('upload', '*');
+                    //while (FileFlag != null) {return Boolean(FileFlag);}
+                    //$("#imageview").datagrid("reload");
+				}
+			},
+			success: function (data) {
+				$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+				if ($.parseJSON(data).Result) {
+					$('#WinIR').dialog("close");
+					$("#IR_List").datagrid("reload");
+				}
+			}
+		});
+    }
+	function Search() {
+		$("#IR_List").datagrid("load",$("#conditionForm").serializeObject());
+	}
+
+	function Export() {
+		$("#conditionForm").form("submit",{url:'/IncomeQuery/ExportXls'});
+	}
+	
+    function compute() {
+        var rows = $('#IR_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#IR_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

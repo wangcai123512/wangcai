@@ -1,0 +1,47 @@
+﻿<style type="text/css">
+.tree-icon 
+.tree-folder 
+.tree-file
+{
+    width:0;
+    }
+</style>
+
+<ul id="tree" style="float: left; height: auto; clear:left; "></ul>
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        getTree();
+    });
+    function getTree() {
+        $.ajax({
+            url: "/Common/GenerateNavigatorTreeJson?block=0",
+            type: "POST",
+            async: false,
+            dataType: "JSON",
+            ContentType: "application/json",
+            success: function (data) {
+                $('#tree').treeview({
+                    color: "#428bca",
+                    showTags: true,
+                    icon: "glyphicons glyphicons-beer",
+                    // selectedIcon: "glyphicons glyphicons-beer",
+                    color: "#000000",
+                    backColor: "#FFFFFF",
+                    href: "#node-1",
+                    selectable: true,
+                    state: {
+                        checked: false,
+                        disabled: true,
+                        expanded: true,
+                        selected: true
+                    },
+                    data: data
+                });
+            },
+            error: function (event, XMLHttpRequest, ajaxOptions, thrownError) {
+                alert(event);
+            }
+        })
+    }
+</script>

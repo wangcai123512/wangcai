@@ -1,0 +1,55 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="AssetsList"></table>
+
+<script>
+	var DateFormatter = function (value) {
+		var result = ChangeDateFormat(value);
+		if (result == '1-01-01') {
+			return "";
+		}
+		else {
+			return result;
+		}
+	}
+	var StatusFormatter = function(value)
+	{
+		if (value == "Sell") {
+			return "@FMS.Resource.FixedAssets.FixedAssets.Sell";
+		}
+		else if (value == "Scrap")
+		{
+			return "@FMS.Resource.FixedAssets.FixedAssets.Scrap";
+		}
+		else {
+			return "@FMS.Resource.FixedAssets.FixedAssets.Using";
+		}
+	}
+
+
+	$(function () {
+		$('#AssetsList').datagrid({
+			url: "/FixedAssetsQuery/GetAssetses",
+			rownumbers: true,
+			singleSelect: true,
+			pagination: true,
+			columns: [[
+					{ field: 'No', title: '@FMS.Resource.FixedAssets.FixedAssets.No' },
+					{ field: 'Name', title: '@General.Resource.Common.Name' },
+					{ field: 'AssetsCost', title: '@FMS.Resource.FixedAssets.FixedAssets.AssetsCost', align: 'right', formatter: DecimalFmter },
+					{ field: 'PurchaseDate', title: '@FMS.Resource.FixedAssets.FixedAssets.PurchaseDate', formatter: function (value, row, index) { return ChangeDateFormat(value); } },
+					{ field: 'RegisterDate', title: '@FMS.Resource.FixedAssets.FixedAssets.RegisterDate', formatter: DateFormatter },
+					{ field: "ScrapDate", title: '@FMS.Resource.FixedAssets.FixedAssets.ScrapDate', formatter: DateFormatter },
+					{ field: "ScrapType", title: '@FMS.Resource.FixedAssets.FixedAssets.ScrapType', formatter: StatusFormatter },
+					{ field: "CurrentValue", title: '@FMS.Resource.FixedAssets.FixedAssets.CurrentValue', align: 'right', formatter: DecimalFmter }
+					]]
+		});
+	});
+</script>
+
+
+
+

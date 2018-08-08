@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = "CashFlowStatement";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+
+<div id="main" style="margin-top: 100px; background-color: #FFF;">
+    @Html.Partial("_ReportLeftMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div style="margin-top: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">现金流量表</span></div>
+
+        <div class="col-md-12" style="margin: auto">
+            @if (!ViewBag.IsView)
+            {
+                <input id="hidType" type="hidden" value="@ViewBag.Type" />
+
+                <input id="hidRepDate" type="hidden" value="@ViewBag.RepDate" />
+                <button type="button" class="btn btn-primary pull-left button-radius" onclick="Create('/CashFlowStatements/UpdCashFlowStatement','/CashFlowStatements/Index')">
+                    创建报表
+                </button>
+            }
+
+            <button onclick="javascript: window.location = '/CashFlowStatements/Index'" class="btn btn-primary pull-right button-radius">
+                返回上页
+            </button>
+
+            <input type="hidden" value="@ViewBag.RepId" id="repId">
+
+            <table style="margin-bottom: 20px; width:100%">
+                <tr style="width:100%">
+                    <td style="width:30%; text-align:left"><span style="font-size: 20px; text-align:left;">公司: @Session["CompanyName"]</span></td>
+                    <td style="width:40%; text-align:center"><span style="font-size: 20px; text-align:left;">@FMS.Resource.FinanceReport.FinanceReport.RepDate: @ViewBag.RepTitle</span></td>
+                    <td style="width:30%; text-align:right"><span style="font-size: 20px; text-align:left;">单位:元</span></td>
+                </tr>
+            </table>
+
+            <table id="CashFlowStatement" class="table table-striped table-bordered table-condensed"></table>
+
+            <div>
+                <div class="col-md-5">企业负责人：测试人</div>
+                <div class="col-md-4">财务负责人：测试财务人</div>
+                <div class="col-md-3">制表人：测试制表人人</div>
+            </div>
+
+        </div>
+
+    </section>
+</div>
+
+<style type="text/css">
+    .SumCell {
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .ItemTitle {
+        font-weight: 600;
+    }
+</style>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+        $('#CashFlowStatement').bootstrapTable({
+            url: "/CashFlowStatements/GetCashFlowStatement?id=" + $('#repId').val(),
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: false,
+            clickToSelect: false,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            //detailView:true,
+            columns: [[
+                { field: 'name', title: '项目', width: "40%", formatter: "ItemCss" },
+                { field: 'row_no', title: '行次', width: "5%" },
+                { field: 'amount', title: '本月金额', width: "10%", formatter: DecimalFmter },
+                /*{ field: 'additional', title: '补充资料', width: "40%", formatter: "ItemCss" },
+                { field: 'row_no_add', title: '行次', width: "5%" },*/
+                { field: 'amount_add', title: '本年累计金额', width: "10%", formatter: DecimalFmter },
+            ]],
+            pagination: false,
+            rownumbers: true,
+            queryParams: queryParams
+        });
+    });
+ 
+    var ItemCss = function (value, row, index) {
+
+        if (value.indexOf("小计") >= 0) {
+
+            return '<p class="SumCell">' + value + '</p>'
+        } else if (value.indexOf("产生的现金") >= 0 || value.indexOf("将净利润调节为") >= 0
+            || value.indexOf("不涉及现金收支") >= 0 || value.indexOf("现金及现金等价") >= 0
+            || value.indexOf("汇率变动对现金的影响") >= 0 || value.indexOf("现金及现金等价物净") >= 0) {
+            return '<p class="ItemTitle">' + value + '</p>'
+        } else {
+            return value;
+        }
+    };
+
+
+</script>

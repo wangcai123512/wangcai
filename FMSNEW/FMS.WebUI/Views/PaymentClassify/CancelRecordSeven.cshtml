@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "CancelRecordSeven";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<input type="hidden" name="GUID" id="GUID" value="@ViewData["GUID"]"/>
+
+<div id="CancelRecordSeven_div" style="margin-top: -6px; width: 100%; height: 100%">
+    <div style="width: 100%; height: 20%"><table id="CancelRecordOne_List"></table>
+    </div>
+    <div style="margin-top: 20px">
+        <input type="radio" name="TypeDtss" id="radio131" value="分配股利、利润"/>
+	    <label for="radio1">分配股利、利润</label></br>
+
+	    <input type="radio" name="TypeDtss" id="radio132" onclick="check()" value="偿付利息"/>
+	    <label for="radio2">偿付利息：从财务费用列表获取</label></br>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    } 
+	};
+
+	$(function () {
+	    var rpguid = $('#GUID').val();
+	    $("#CancelRecordOne_List").datagrid({
+	        url: '/PaymentClassify/GetPaymentRecord?id=' + rpguid,
+	        columns: [[
+	            { field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payee' },
+	            { field: 'Date', title: '付款日期', formatter: ChangeDateFormat },
+	            { field: 'SumAmount', title: '付款金额', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' }
+					]]
+	    });
+    });
+
+    function check() {
+        $("#CancelRecordSeven_div").after("<div id='Wincheck'></div>");
+        $("#Wincheck").dialog({
+            title: ' ',
+            width: 800,
+            height: 497,
+            onClose: function () {
+                $("#Wincheck").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { checkNextPage(); } }]
+        });
+
+        $('#Wincheck').dialog("refresh", "/PaymentClassify/CancelRecordSevens/");
+    }
+    function checkNextPage() {
+        var items = $('#CancelExpenseRecord_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            $('#IE_GUID').val(item.IE_GUID);
+        });
+        $("#Wincheck").dialog("destroy");
+    }
+</script>
+

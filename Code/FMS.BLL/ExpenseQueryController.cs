@@ -1,0 +1,314 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BaseController;
+using System.Web.Mvc;
+using FMS.DAL;
+using FMS.Model;
+using System.Web.Script.Serialization;
+using System.Web;
+using System.IO;
+using Utilitie;
+
+namespace FMS.BLL
+{
+    /// <summary>
+    /// 查询费用
+    /// </summary>
+    public class ExpenseQueryController : UserController
+    {
+        public ExpenseQueryController()
+            : base("Expenditure_Query")
+        {}
+
+        /// <summary>
+        /// 列表页
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 费用记录页
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult ExpenseRecord(string id)
+        {
+            return View(new IESvc().GetIE(id, Session["CurrentCompany"].ToString()));
+        }
+
+        /// <summary>
+        /// 商业伙伴信息页
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult BusinessPartner()
+        {
+            return View(new T_BusinessPartner() { BP_GUID = Guid.NewGuid().ToString() });
+        }
+
+        /// <summary>
+        /// 附件信息页
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult Attachment(string id)
+        {
+            return View(new AttachmentSvc().GetAttachmentById(id));
+        }
+
+        /// <summary>
+        /// 更新费用纪录
+        /// </summary>
+        /// <param name="head">费用主数据</param>
+        /// <param name="list">费用明细数据</param>
+        /// <returns></returns>
+        public string UpdExpenseRecord(T_IERecord form)
+        {
+            bool result = false;
+            string msg = string.Empty;
+            form.C_GUID = Session["CurrentCompany"].ToString();
+            form.Creator = base.userData.LoginFullName;
+            form.CreateDate = DateTime.Now;
+            result = new IESvc().UpdExpenseRecord(form);
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+
+        /// <summary>
+        /// 上传文件
+        /// </summary>
+        /// <param name="fileData">上传文件</param>
+        /// <param name="guid"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        //[AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Upload(HttpPostedFileBase fileData, string guid, string folder)
+        {
+            if (fileData != null)
+            {
+                try
+                {
+                    ControllerContext.HttpContext.Request.ContentEncoding = Encoding.GetEncoding("UTF-8");
+                    ControllerContext.HttpContext.Response.ContentEncoding = Encoding.GetEncoding("UTF-8");
+                    ControllerContext.HttpContext.Response.Charset = "UTF-8";
+
+                    //写入数据流
+                    Stream fileStream = fileData.InputStream;
+                    byte[] fileDataStream = new byte[fileData.ContentLength];
+                    fileStream.Read(fileDataStream, 0, fileData.ContentLength);
+                    //写入数据
+                    T_Attachment entity = new T_Attachment();
+                    entity.A_GUID = Guid.NewGuid().ToString();
+                    entity.FileName = fileData.FileName;
+                    entity.FileType = fileData.ContentType;
+                    entity.FR_GUID = guid;
+                    entity.FlieData = fileDataStream;
+                    entity.FileRemark = "";
+
+
+                    bool rResult = new AttachmentSvc().AddAttachment(entity);
+                    return Content(rResult.ToString());
+                }
+                catch (Exception ex)
+                {
+                    return Content("false");
+                }
+            }
+            else
+            {
+                return Content("false");
+            }
+        }
+
+        /// <summary>
+        /// 下载附件
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public FileResult DownLoadFile(string id)
+        {
+            AttachmentSvc attSv = new AttachmentSvc();
+            var entity = attSv.GetAttachmentById(id);
+            //从数据库查找
+            return File(entity.FlieData, entity.FileType, entity.FileName);
+        }
+
+        /// <summary>
+        /// 更新商业伙伴信息
+        /// </summary>
+        /// <param name="partner">商业伙伴对象</param>
+        /// <returns></returns>
+        public string UpdPartner(T_BusinessPartner partner)
+        {
+            partner.C_GUID = Session["CurrentCompany"].ToString();
+            bool result = new IESvc().UpdPartner(partner);
+            string msg = string.Empty;
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+
+        /// <summary>
+        /// 删除记录的所有附件
+        /// </summary>
+        /// <param name="id">收款纪录标识</param>
+        /// <returns></returns>
+        public string DelAttachment(string id)
+        {
+            bool result = new AttachmentSvc().DelAttachment(id);
+            string msg = string.Empty;
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+
+        /// <summary>
+        /// 删除收入费用记录
+        /// </summary>
+        /// <param name="id">收款纪录标识</param>
+        /// <returns></returns>
+        public string DelExpenseRecord(string id)
+        {
+            bool result = new IESvc().DelIERecord(id, "E");
+            string msg = string.Empty;
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+
+        /// <summary>
+        /// 获取费用列表数据
+        /// </summary>
+        /// <param name="page">页索引</param>
+        /// <param name="rows">页大小</param>
+        /// <returns></returns>
+        public string GetExpenseList(string page, string rows, string dateBegin, string dateEnd, string customer, string state, string incomeGrp, string IncomeGrpDts)
+        {
+            int count = 0;
+            StringBuilder strJson = new StringBuilder();
+            string strFormatter = "{{\"total\":\"{0}\",\"rows\":{1}}}";
+            List<T_IERecord> recs = new IESvc().GetAllExpenseList(Session["CurrentCompany"].ToString(), int.Parse(page), int.Parse(rows), out count, dateBegin, dateEnd, customer, state, incomeGrp, IncomeGrpDts);
+            strJson.AppendFormat(strFormatter, count, new JavaScriptSerializer().Serialize(recs));
+            return strJson.ToString();
+        }
+
+        /// <summary>
+        /// 获取费用明细数据
+        /// </summary>
+        /// <param name="id">费用标识</param>
+        /// <returns></returns>
+        public JsonResult GetExpenseDetails(string id)
+        {
+            return Json(new IESvc().GetIEDetails(id, Session["CurrentCompany"].ToString()));
+        }
+
+        /// <summary>
+        /// 将收入列表以Excel形式导出
+        /// </summary>
+        /// <returns></returns>
+        public FileResult ExportXls(string dateBegin, string dateEnd, string customer, string status, string incomeGrp, string IncomeGrpDts)
+        {
+            int count = 0;
+            List<T_IERecord> ds = new IESvc().GetAllExpenseList(Session["CurrentCompany"].ToString(), -1, -1, out count,
+                    dateBegin, dateEnd, customer, status, incomeGrp, IncomeGrpDts);
+            Dictionary<string, string> cfg = new Dictionary<string, string>();
+            cfg.Add("AffirmDate", "费用确认日期");
+            cfg.Add("RPerName", "供应商");
+            cfg.Add("InvNo", "发票/业务单据号");
+            cfg.Add("SumAmount", "总金额");
+            cfg.Add("Currency", "货币");
+            cfg.Add("State", "状态");
+            cfg.Add("InvType", "费用类别");
+            cfg.Add("Date", "付款截止日");
+            cfg.Add("Remark", "备注");
+
+            return File(new GenerateXls().GenXls<T_IERecord>("E",ds, cfg), "application/vnd.ms-excel", "费用列表.xls");
+        }
+
+        /// <summary>
+        /// 获取记录附件
+        /// </summary>
+        /// <param name="id">FR_GUID 记录标识</param>
+        /// <returns></returns>
+        public JsonResult GetAttachment(string id)
+        {
+            return Json(new AttachmentSvc().GetAttachment(id));
+        }
+
+        /// <summary>
+        /// 一一删除记录的每个附件
+        /// </summary>
+        /// <param name="id">A_GUID纪录标识</param>
+        /// <returns></returns>
+        public string DelEveryAttachment(string id)
+        {
+            bool result = new AttachmentSvc().DelEveryAttachment(id);
+            string msg = string.Empty;
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+
+        /// <summary>
+        /// 更新附件备注
+        /// </summary>
+        /// <param name="attachenmt"></param>
+        /// <returns></returns>
+        public string UpdAttachment(T_Attachment attachenmt)
+        {
+            string msg = string.Empty;
+            bool result = new AttachmentSvc().UpdAttachment(attachenmt.A_GUID, attachenmt.FileName,attachenmt.FileRemark);
+            if (result)
+            {
+                msg = General.Resource.Common.Success;
+            }
+            else
+            {
+                msg = General.Resource.Common.Failed;
+            }
+            return string.Format("{{\"Result\":{0},\"Msg\":\"{1}\"}}"
+                , result.ToString().ToLower(), msg);
+        }
+    }
+ }

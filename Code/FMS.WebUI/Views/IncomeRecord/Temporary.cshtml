@@ -1,0 +1,412 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "Temporary";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<div id="Choose_dv1">
+	<input type="radio" name="Type" id="radio1" value="主营业务收入" checked="checked" />
+	<label for="radio1">记录营业收入：主营业务</label><br/>
+	<input type="radio" name="Type" id="radio2" value="非主营业务收入" />
+	<label for="radio2">记录营业收入：非主营业务</label>  <br/>
+	<input type="radio" name="Type" id="radio3" value="营业外收入" />
+    <label for="radio3">记录营业外收入</label> <br/>
+    <input type="radio" name="Type" id="radio4" value="投资收入" />
+    <label for="radio4">记录投资收入</label> <br/>
+	<a class="easyui-linkbutton" onclick="NextIE()">下一页</a>
+	<a class="easyui-linkbutton" onclick="">回到上页</a>
+</div>
+<div id="Choose_dv2" style="display:none">
+	<form id="Income_Form">
+	    <input type="hidden" name="IE_GUID" id="IE_GUID" value="@ViewData["IE_GUID"]"/>
+        <input type="hidden" name="Profit_GUID" id="Profit_GUID" />
+        <input type="hidden" name="State" id="State" value="应收" />
+	    <input type="hidden" name="InvType" id="InvType"/>
+	    <input type="hidden" id="hidRPer"/>
+        <input type="hidden" id="flag"/>
+		<span style="font-size:15px;font-weight:900" id="Type"></span>
+	    <table>
+	        <tr> <a id="a11" class="easyui-linkbutton" onclick="GetDeclareCustomer()">从预收客户款列表获取</a></tr>
+	        <tr>
+	            <td>@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate:</td>
+	            <td><input class="easyui-datebox" id="AffirmDate" name="AffirmDate" data-options="required:true"/></td>
+	            <td>@FMS.Resource.Finance.Finance.Client:</td>
+	            <td>
+	                <input class="easyui-combobox" id="RPer" name="RPer"
+	                       data-options='editable:false,url:"/InternalAPI/GetPayer",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200,required:true,onLoadSuccess:function(data){ $("#RPer").combobox("setValue",$("#hidRPer").val());}'/>
+	            </td>
+	            <td colspan="2">
+	                <a class="easyui-linkbutton" onclick="CreatPartner();">新客户登记</a>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>@FMS.Resource.Finance.Finance.ClosingDate:</td>
+	            <td>
+	                <input class="easyui-datebox" id="Date" name="Date"/></td>
+	            <td>@FMS.Resource.Finance.Finance.InvNo:
+	            </td>
+	            <td>
+	                <input class="easyui-validatebox" id="InvNo" name="InvNo"/>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Amount:</td>
+	            <td>
+	                <input id="Amount" name="Amount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+	            </td>
+	            <td>@FMS.Resource.Finance.Finance.Taxation@FMS.Resource.Finance.Finance.Amount:</td>
+	            <td>
+	                <input id="TaxationAmount" name="TaxationAmount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+	            </td>
+	            <td>@FMS.Resource.Finance.Finance.TaxationType:</td>
+	            <td>
+	                <input id="TaxationType" name="TaxationType"/>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>@FMS.Resource.Finance.Finance.SumAmount:</td>
+	            <td>
+	                <input id="SumAmount" name="SumAmount" onclick="checkAmount()" class="easyui-numberbox" data-options="required:true, precision:2,groupSeparator:','"/>
+	            </td>
+	            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+	            <td>
+	                <input id="Currency" name="Currency"/>
+	            </td>
+	            <td>@General.Resource.Common.Remark :</td>
+	            <td>
+	                <input class="easyui-validatebox" id="Remark" name="Remark"/>
+	            </td>
+	        </tr>
+	    </table>
+	    <table>
+	        <tr>
+	            
+	            <td colspan="4">
+	                <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+	                <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <div id="fileQueue" class="fileQueue"></div>
+	                <div id="div_files"></div>
+	            </td>
+	        </tr>
+	    </table>
+</form>
+	<a id="IsubmitI" class="easyui-linkbutton" onclick="IESubmitForm()">@General.Resource.Common.Save</a>
+	<a class="easyui-linkbutton" onclick="Back();">回到上页</a>
+</div>
+<div id="Partner"></div>
+<script language="javascript" type="text/javascript">
+	var StandardCoin;
+	var CommonCurrency;
+	var Tax;
+	$(function () {      
+		$.ajax({
+			url: "/InternalAPI/GetUserCurrency",
+			async: false,
+			dataType: "json",
+			success: function (d) { CommonCurrency = d; }
+		});
+		$.ajax({
+			url: "/InternalAPI/GetCompanySetting",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				StandardCoin = d.StandardCoin;
+			}
+		});
+		$.ajax({
+			url: "/InternalAPI/GetTax",
+			async: false,
+			dataType: "json",
+			success: function (d) {
+				Tax=d;
+			}
+		});
+		$("#Income_Form #Currency").combobox({
+			editable: false,
+			required: true,
+			data: CommonCurrency,
+			onLoadSuccess: function (data) {
+					$("#Income_Form #Currency").combobox("setValue", StandardCoin);
+			}
+		});
+		$("#Income_Form #TaxationType").combobox({
+				valueField:'T_GUID',
+				textField:'Name',
+				editable: false,
+				required: true,
+				data:Tax,
+			});
+	   
+		$("#Partner").dialog({
+			collapsible: false,
+			minimizable: false,
+			maximizable: false,
+			closed: true,
+			title: "@FMS.Resource.BusinessPartner.BusinessPartner.Customer",
+			width: 400,
+			height: 200,
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: function () { Save(); }
+			}]
+		});
+
+//		$("#winRec").dialog({
+//			collapsible: false,
+//			minimizable: false,
+//			maximizable: false,
+//			closed: true,
+//			title: "@FMS.Resource.Finance.Finance.Receive",
+//			width: 600,
+//			height: 400,
+//			onLoad:function()
+//			{
+//                var obj = $("#Income_Form").serializeObject();
+//                console.log(obj);
+//				$("#ReceivablesRecord").form("load",$("#Income_Form").serializeObjects());
+//			    $("#a1").hide();
+//			    $("#a2").hide();
+//			    $("#a3").hide();
+//			    $("#a4").hide();
+//			}
+//		});
+	   //添加界面的附件管理
+		var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+		var ASPSESSID = "@Session.SessionID";
+		$('#Income_Form #file_upload').uploadify({
+			width:105,
+			height: 22,
+			swf : '/Content/uploadify/uploadify.swf',    //FLash文件路径
+			buttonText: '上传发票/凭证',               //按钮文本
+			uploader: '/IncomeRecord/Upload',       //处理文件上传Action
+			queueID: 'fileQueue',                        //队列的ID
+			queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+			auto: false,                                 //选择文件后是否自动上传，默认为true
+			multi: true,                                 //是否为多选，默认为true
+			removeCompleted: true,                       //是否完成后移除序列，默认为true
+			fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+			fileTypeDesc: 'Image Files',                 //文件描述
+			fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+			onQueueComplete: function (event, data) {                 //所有队列完成后事件
+				//ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+				FileFlag = true;
+                $.messager.alert("提示", "发票/凭证上传完毕！"); 
+			},
+			onUploadStart: function (file) {
+			    var i = 10;
+				$("#Income_Form #file_upload").uploadify("settings", 'formData', { 'folder': '政策法规','remark': '政策法规', 'guid': $("#IE_GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+			},
+			onUploadError: function (event, queueId, fileObj, errorObj) {
+				console.log(errorObj);
+				FileFlag = false;
+			}
+		}); 	  
+});
+
+	function NextIE() {
+		$("#Income_Form #Type").text($("input[name='Type']:checked").val());
+		$("#Income_Form #InvType").val($("input[name='Type']:checked").val());
+	    var url;
+        if ($("input[name='Type']:checked").val() == "主营业务收入") {
+            $('#Profit_GUID').val("D27CA8F5-A98C-41E4-8E49-E0BE34E93035");
+        }
+        if ($("input[name='Type']:checked").val() == "非主营业务收入") {
+            $('#Profit_GUID').val("28C49483-7FD7-4741-B154-B36EF52469D2");
+        }
+        if ($("input[name='Type']:checked").val() == "营业外收入") {
+            $('#Profit_GUID').val("65BC8EDB-949A-4EF2-BCCD-AB5FE10DC88E");
+        }
+        if ($("input[name='Type']:checked").val() == "投资收入") {
+            $('#Profit_GUID').val("BF3D6765-8D67-484D-8783-A7F82796EF95");
+        }
+        if ($("input[name='Type']:checked").val()=="工资本成本") {
+            url = "/WageCostsRecord/WageCostsRecord";
+            PageChange(url);
+
+        }else if ($("input[name='Type']:checked").val()=="税费计提") {
+            url = "/TaxProvisionRecord/TaxProvisionRecord";
+            PageChange(url);
+        } else {
+            $("#Choose_dv1").hide();
+		    $("#Choose_dv2").show();
+        }
+	}
+	function Back() {
+		 $("#Choose_dv2").hide();
+		$("#Choose_dv1").show();
+	   
+	}
+	function CreatPartner()
+	{
+		$("#Partner").dialog("center");
+		$("#Partner").dialog("open");       
+		$("#Partner").dialog("refresh", "/IncomeRecord/BusinessPartner");
+	}
+
+    function InitDialog() {
+		$('<div id="winRec"></div>').dialog({
+			collapsible: false,
+			minimizable: false,
+			maximizable: false,
+			closed: true,
+			title: "@FMS.Resource.Finance.Finance.Receive",
+			width: 800,
+			height: 400,
+            onClose: function () { $("#winRec").dialog("destroy"); },
+			onLoad:function()
+			{
+                $("#ReceivableRecordTable").datagrid('hideColumn', 'RPer');
+                $("#ReceivableRecordTable").datagrid('showColumn', 'RPerName');
+                $("#hidCurrency").val($('#Currency').combobox('getValue'));
+                var ieguid=$("#IE_GUID").val();
+                var rper=$('#RPer').combobox('getValue');
+			    var name = $('#RPer').combobox('getText');
+                var money=$("#SumAmount").val();
+                $('#ReceivableRecordTable').datagrid('appendRow', {
+                        RP_GUID: NewRP_GUID(),
+                        IE_GUID: ieguid,
+                        RPer: rper,
+                        RPerName: name,
+                        Money: money,
+                        AddStyle: "收入计入收款"
+                    });
+			}
+		});
+	}
+
+   function NewRP_GUID() {
+            var RPGUID;
+            $.ajax({
+                url: "/ReceivablesRecord/NewGuid",
+                async: false,
+                dataType: "text",
+                success: function(d) {
+                    RPGUID = d.toString();
+                }
+            });
+            return RPGUID;
+        }
+    //记录收入的实际收款******该功能已隐藏
+	function CreateRec()
+	{
+        InitDialog();
+		$("#winRec").dialog("center").dialog("open")
+		.dialog("refresh","/ReceivablesRecord/ReceivablesRecord");
+	}
+
+//	function DelAttachment() {
+//                $.ajax({
+//                    url: "/IncomeRecord/DelAttachment/" + $("#IE_GUID").val(),
+//                    type: "POST",
+//                    success: function (data) {
+//                        if ($.parseJSON(data).Result) {
+//                         $.messager.alert('开始上传附件');
+//                            $('#Income_Form #file_upload').uploadify('upload', '*');
+//							while (FileFlag != null) {
+//								return Boolean(FileFlag);
+//							 }
+//                        }
+//                    },
+//                    error: function () {
+//                        $.messager.alert('上传附件出错！');
+//                    }
+//                });	
+//           }   
+	function IESubmitForm() {
+        $('#Income_Form #file_upload').uploadify('upload', '*');
+		$("#Income_Form").form('submit', {
+			url: "/IncomeRecord/UpdIncomeRecord",
+            onSubmit: function () {
+                //表单验证
+                return $("#Income_Form").form('validate');
+            },
+			success: function (data) {
+				$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+				if ($.parseJSON(data).Result) {
+                    if ($("#flag").val() == "收入计入收款") {
+                            $.ajax({
+                                url: '/ReceivablesClassify/UpdState?id=' + $("#IE_GUID").val(),
+                                type: "POST"
+                            });
+                    }
+                if ($("#flag").val() == "从预收客户款列表获取") {
+                           //更改状态
+                            $.ajax({
+                                url: '/ReceivablesClassify/UpdState?id=' + $("#IE_GUID").val(),
+                                type: "POST"
+                            });
+                            $.ajax({
+                                url: '/ReceivablesDeclareCustomer/UpdState?id=' + $("#IE_GUID").val() + '&state=' + "关闭",
+                                type: "POST"
+                            });
+                    }
+					$("#Income_Form").form('clear');
+						$("#Choose_dv2").hide();
+						$("#Choose_dv1").show(); 
+				}
+			}
+		});
+	}
+
+	function Save() {
+		$("#BusinessPartner").form('submit', {
+			url: "/IncomeRecord/UpdPartner",
+			onSubmit: function () { return $("#BusinessPartner").form("validate"); },
+			success: successHandle
+		});
+	}
+
+	var successHandle = function (data) {
+		$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+		if ($.parseJSON(data).Result) {
+			$("#Partner").dialog("close");
+			$('#Income_Form #RPer').combobox("reload");
+		}
+	};
+	
+	function checkAmount() {
+	    var amount = document.getElementById('Amount').value == '' ? 0 : document.getElementById('Amount').value;
+	    var taxationamount = document.getElementById('TaxationAmount').value == '' ? 0 : document.getElementById('TaxationAmount').value;
+	    amount = amount.replace(",", "");
+	    taxationamount=taxationamount.replace(",", "");
+	    document.getElementById('SumAmount').value = Money(parseFloat(amount) + parseFloat(taxationamount));
+	}
+	
+	function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+
+	function GetDeclareCustomer() {
+            $("#Income_Form").after("<div id='WinReceivablesDeclareCustomer'></div>");
+            $("#WinReceivablesDeclareCustomer").dialog({
+                title: ' ',
+                width: 800,
+                height: 378,
+                onClose: function () {
+                    $("#WinReceivablesDeclareCustomer").dialog("destroy");
+                },
+                buttons: [{ text: '提交', handler: function () { NextPage(); } }]
+            });
+
+            $('#WinReceivablesDeclareCustomer').dialog("refresh", "/IncomeRecord/GetReceivablesDeclareCustomer/");
+	}
+
+	function NextPage() {
+	       var items = $('#ChooseReceivablesDeclareCustomer_List').datagrid('getChecked');
+            $.each(items, function (index, item) {
+                $('#RPer').combobox('setValue', item.RPer);
+                $('#Currency').combobox('setValue', item.Currency);
+                 $('#SumAmount').val(item.Amount);
+                $('#IE_GUID').val(item.GUID);
+                $('#flag').val("从预收客户款列表获取");
+            });
+            $("#WinReceivablesDeclareCustomer").dialog("destroy");
+	}
+</script>
+
+

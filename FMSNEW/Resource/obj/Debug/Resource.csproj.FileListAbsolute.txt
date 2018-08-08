@@ -1,0 +1,10 @@
+D:\fms\FMSNEW\Resource\bin\Debug\General.Resource.dll
+D:\fms\FMSNEW\Resource\bin\Debug\General.Resource.pdb
+D:\fms\FMSNEW\Resource\bin\Debug\en-US\General.Resource.resources.dll
+D:\fms\FMSNEW\Resource\obj\Debug\General.Resource.Common.resources
+D:\fms\FMSNEW\Resource\obj\Debug\General.Resource.Common.en-US.resources
+D:\fms\FMSNEW\Resource\obj\Debug\Resource.csproj.GenerateResource.Cache
+D:\fms\FMSNEW\Resource\obj\Debug\en-US\General.Resource.resources.dll
+D:\fms\FMSNEW\Resource\obj\Debug\General.Resource.dll
+D:\fms\FMSNEW\Resource\obj\Debug\General.Resource.pdb
+D:\fms\FMSNEW\Resource\obj\Debug\Resource.csprojResolveAssemblyReference.cache

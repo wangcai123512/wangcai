@@ -1,0 +1,43 @@
+﻿@{
+	ViewBag.Title = "ExpenseRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_IERecord
+<table >
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.Payee:</td>
+		<td>@Model.RPerName</td>
+		<td>@FMS.Resource.Finance.Finance.Date:</td>
+		<td> @Model.Date.ToShortDateString()</td>
+	</tr>
+	<tr>
+		<td>@FMS.Resource.Finance.Finance.InvType:</td>
+		<td>@Model.TypeName</td>
+		<td>@FMS.Resource.Finance.Finance.InvNo:</td>
+		<td>@Model.InvNo</td>           
+	</tr>
+		
+</table> 
+
+<table id="ExpenseDetailsList" ></table>
+
+<script language="javascript" type="text/javascript">
+	$(function () {
+		$("#ExpenseDetailsList").datagrid({
+		    url: "/ExpenseQuery/GetExpenseDetails/@Model.IE_GUID",
+			columns: [[
+				{ field: 'DebitLedgerAccountName', title: '@FMS.Resource.Finance.Finance.DebitLedgerAccount',width:120 },
+				{ field: 'DebitDetailsAccountName', title: '@FMS.Resource.Finance.Finance.DebitDetailsAccount', width: 250 },
+				{ field: 'CreditLedgerAccountName', title: '@FMS.Resource.Finance.Finance.CreditLedgerAccount', width: 120 },
+				{ field: 'CreditDetailsAccountName', title: '@FMS.Resource.Finance.Finance.CreditDetailsAccount', width: 250 },
+				{ field: 'Money', title: '@FMS.Resource.Finance.Finance.Money', width: 100, align: 'right', formatter: DecimalFmter }
+			]],
+			rownumbers: true,
+			singleSelect: true
+		});
+	});
+</script>
+
+
+

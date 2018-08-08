@@ -1,0 +1,362 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}        
+
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav">
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的公司：<a onclick="javascript:window.location = '/CompanyInformationSet/Index'" href="javascript:window.location = '/CompanyInformationSet/Index'"><span class="sidebar-title" style="font-size: 14px; color: #023A85"><b>@Session["CompanyName"]</b></span></a></span></li>
+                <li><span class="sidebar-title" style="font-size: 14px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;财务统计货币：<a onclick="javascript:window.location = '/Company/ChangeCompanySetting'" href="javascript:window.location = '/Company/ChangeCompanySetting'"><span class="sidebar-title" style="font-size: 14px;color: #023A85"><b>@Session["Currency"]</b></span></a></span></li>
+                <li id="UserInfo"> <a onclick="javascript: window.location = '/UserInfo/Index'" href="javascript:window.location = '/UserInfo/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">我的属性</span></a></li>
+                <li> <a onclick="javascript:window.location = '/Company/ChooseAndAddCompany'" href="javascript:window.location = '/Company/ChooseAndAddCompany'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">新增或切换公司</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideFour"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">财务数据设置</span></a>
+                    <ul id="sideFour" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/InitialBalanceManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">科目余额初始化</span></a></li>
+                        <li><a onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">税种与税率设置</span></a></li>
+                        <li><a onclick="javascript:window.location = '/CurrencyAndExchangeRateManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">货币与汇率设置</span></a></li>
+                        @*<li><a onclick="javascript:window.location = '/DetailManagement/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">费用类别设置</span></a></li>*@
+                        <li><a onclick="javascript:window.location = '/BusinessUnitSetting/Index'" href="#"><span class="sidebar-title" style="font-size: 14px">业务单元设置</span></a></li>
+                    </ul>
+                </li>
+
+
+                <li> <a onclick="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'" href="javascript:window.location = '/GeneralLedgerAccount/GeneralLedger'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">设置会计科目</span></a></li>
+                <li>
+                    <a class="accordion-toggle" href="#sideVoucher"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">科目查询</span></a>
+                    <ul id="sideVoucher" class="nav sub-nav">
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/Search'" href="javascript:window.location = '/InitialBalanceManagement/Search'"><span class="sidebar-title" style="font-size: 14px">科目流水查询</span></a></li>
+                        <li><a onclick="javascript: window.location = '/InitialBalanceManagement/BalanceSearch'" href="javascript:window.location = '/InitialBalanceManagement/BalanceSearch'"><span class="sidebar-title" style="font-size: 14px">科目余额查询</span></a></li>
+                        @*<li><a href="#"><span class="sidebar-title" style="font-size: 14px">科目余额</span></a></li>*@
+                    </ul>
+                </li>
+                <li>
+                    <a class="accordion-toggle" href="#sidecompany"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司登记</span></a>
+                    <ul id="sidecompany" class="nav sub-nav">
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/BusinessPartner'" href="javascript:window.location = '/BusinessPartnerSetting/BusinessPartner'"><span class="sidebar-title" style="font-size: 14px">往来公司登记</span></a></li>
+                        <li> <a onclick="javascript: window.location = '/BusinessPartnerSetting/Index'" href="javascript:window.location = '/BusinessPartnerSetting/Index'"><span class="sidebar-title" style="font-size: 14px">往来公司查询</span></a></li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户管理</span></a>
+                    <ul id="sideTwo" class="nav sub-nav">
+                        <li><a onclick="javascript:window.location = '/UserManagement/AddUser'" href="#"><span class="sidebar-title" style="font-size: 14px">增加新用户</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/UserList'" href="#"><span class="sidebar-title" style="font-size: 14px">变更用户权限</span></a></li>
+                        <li><a onclick="javascript:window.location = '/UserManagement/ExchangeManager'" href="#"><span class="sidebar-title" style="font-size: 14px">变更管理者</span></a></li>
+                        <li><a onclick="javascript:window.location = '/Company/EditUser'" href="#"><span class="sidebar-title" style="font-size: 14px">修改密码</span></a></li>
+                    </ul>
+                </li>
+
+                <li> <a onclick="Undone()" href=""><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">寻求会计帮助</span></a></li>
+            </ul>
+        </div>
+    </aside>
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content" style="padding-bottom: 150px;">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">我的属性</span></div>
+                    <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我在此公司的昵称： <a onclick="javascript:window.location = '/Company/EditNickName'" href="#"><span class="sidebar-title" style="font-size: 14px; color: #074592; text-decoration: underline"><b>@Session["NickName"]</b></span></a></span>
+                    </div>
+                    <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的权限：<b>@Session["GroupName"]</b></span>
+                    </div>
+                    <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的默认语言：
+                                                                                                                                        <select id="Languages" style="background-color: #DCDCDC;border:none;" onchange="changeLanguage()">
+                                                                                                                                            <option value="中文">中文简体</option>
+                                                                                                                                            <option value="English">English</option>
+                                                                                                                                        </select></span>
+                    </div>
+                     <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手机号：<p id="phone" style="display:inline;font-weight:bold">@Session["TelName"]</p></span><a id="tel" onclick="ShowModel(1)" style="display: inline;font-size: 18px;color: #08C;cursor:pointer">添加</a>
+                    </div>
+                     <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱：<p id="mail" style="display:inline;font-weight:bold">@Session["LoginName"]</p></span><a id="email" onclick="ShowModel(2)" style="display: inline; font-size: 18px; color: #08C; cursor: pointer">添加</a>
+                    </div>
+                    <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码操作：<b><a onclick="javascript:window.location = '/Company/EditUser'" href="#" style="text-decoration: underline; color: #074592; ">修改密码</a></b></span>
+                    </div>
+                    <div class="col-md-12">
+                        <span class="sidebar-title" style="font-size: 18px;  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;我的头像：<b><a onclick="ImagUpload()" href="#" style="text-decoration: underline; color: #074592; ">上传</a></b></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+<div class="modal fade" id="amyModal" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 500px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                </h4>
+            </div>
+            <div class="modal-body">
+                @*<iframe id="editform" width="100%" height="50%" frameborder="0"></iframe>*@
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                      <form id="User_Form">
+                    <input type="hidden" name="number" value="" id="number"/>
+                        <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;手&nbsp;机/Email&nbsp;&nbsp;&nbsp;</span>
+                            <input style="display:none" type="text" id="TelName" name="TelName" class="form-control" placeholder="注册验证码将发到这个手机！" />
+                            <input style="display:none" type="text" id="EmialName" name="EmialName" class="form-control" placeholder="注册验证码将发到这个邮箱！" />
+                            <span class="input-group-addon" style="color: #000000">
+                                <input type="button" id="sendBtn" name="sendBtn" onclick="SendValidCode()" value="发送验证码" /></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group " style="margin: 0">
+                            <span class="input-group-addon" style="color: #000000">&nbsp;注&nbsp;册&nbsp;验&nbsp;证&nbsp;码&nbsp;</span>
+                            <input type="text" id="ValidateCode" name="ValidateCode" class="form-control" placeholder="" />
+                        </div>
+                    </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="Submit()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
+<div class="modal fade" id="Image" tabindex="-1" role="dialog" aria-labelledby="amyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" style="width: 500px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                </h4>
+            </div>
+            <div class="modal-body">
+                @*<iframe id="editform" width="100%" height="50%" frameborder="0"></iframe>*@
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                      <form id="Imag_Form">
+                       <div id="clipArea"></div>
+                       <input type="file" id="file" />
+                       <button id="clipBtn">截取</button>
+                       <div id="view"></div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="Submit()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script language="javascript" type="text/javascript">
+    var InterValObj; //timer变量，控制时间
+    var count = 60; //间隔函数，1秒执行
+    var curCount;//当前剩余秒数
+    var code = ""; //验证码    
+    var codeLength = 6; //验证码长度
+
+
+    $("#clipArea").photoClip({
+        size: 260,
+        outputSize: 640,
+        //adaptive: ['60%', '80%'],
+        file: '#file',
+        view: '#view',
+        ok: '#clipBtn',
+        //img: 'img/mm.jpg',
+        loadStart: function () {
+            console.log('开始读取照片');
+        },
+        loadComplete: function () {
+            console.log('照片读取完成');
+        },
+        clipFinish: function (dataURL) {
+            console.log(dataURL);
+        },
+        loadError: function (msg) {
+            alert(msg);
+        }
+    });
+    $(document).ready(function () {
+        if ('@Session["TelName"]' !== '') {
+            document.getElementById("tel").style.display = "none";
+            document.getElementById("EmialName").style.display = "block";
+        }
+        if ('@Session["LoginName"]' !== '') {
+            document.getElementById("email").style.display = "none";
+            document.getElementById("TelName").style.display = "block";
+        }
+        
+
+        $("#amyModal").on("hidden.bs.modal", function () {
+            $(this).removeData("bs.modal");
+            $('#User_Form')[0].reset();
+        });  
+    });
+
+    function ShowModel(value) {
+        $('#amyModal').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+        $('#number').val(value);
+    
+    }
+
+    function SendValidCode() {
+        var num = $('#number').val();
+        var loginName;
+        if (num == 1) {
+            loginName = $('#TelName').val();
+            if (CheckPhone(loginName)) {
+                $.ajax({
+                    url: "/Common/AddValidCodeThenSend?loginName=" + loginName,
+                    cache: true,
+                    type: "POST",
+                    success: function (data) {
+                        curCount = count;
+                        $("#sendBtn").attr("disabled", "true");
+                        $("#sendBtn").val(+curCount + "秒再获取");
+                        InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+                        $('#sendBtn').val(data);
+                    }
+                });
+            } else {
+                alert('请输入正确的手机号码');
+            }
+        } else {
+            loginName = $('#EmialName').val();
+            if (CheckEmail(loginName)) {
+                $.ajax({
+                    url: "/Common/AddValidCodeThenSend?loginName=" + loginName,
+                    cache: true,
+                    type: "POST",
+                    success: function (data) {
+                        $('#sendBtn').val(data);
+                    }
+                });
+            } else {
+                alert('请输入正确的邮箱');
+            }
+        }
+        
+    }
+    //timer处理函数
+    function SetRemainTime() {
+        if (curCount == 0) {
+            window.clearInterval(InterValObj);//停止计时器
+            $("#sendBtn").removeAttr("disabled");//启用按钮
+            $("#sendBtn").val("重新发送验证码");
+            code = ""; //清除验证码。如果不清除，过时间后，输入收到的验证码依然有效    
+        }
+        else {
+            curCount--;
+            $("#sendBtn").val(+curCount + "秒再获取");
+        }
+    }
+    function ImagUpload() {
+        $('#Image').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+    }
+
+    function Submit() {
+        var num = $('#number').val();
+        var name;
+        if(num == 1){
+        name = '@Session["LoginName"]';
+        }
+        else{
+            name = '@Session["TelName"]'
+        }
+        if (!CheckInput()) {
+            alert('请输入完整信息!');
+        } else {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/Common/AddUserInfo?Name=" + name,
+            data: $('#User_Form').serialize(),
+            async: false,
+            onSubmit: function () {
+                return $("#User_Form").form('validate');
+            },
+            error: function (data) {
+                alert(data);
+            },
+            success: function (data) {
+                if (data == '添加成功') {
+                    alert('添加成功');
+
+                    var loginName;
+                    if (num == 1) {
+                        loginName = $('#TelName').val();
+                        document.getElementById("tel").style.display = "none";
+                        var a = document.getElementById("phone");
+                        a.innerText = loginName;
+                    } else {
+                        loginName = $('#EmialName').val();
+                        document.getElementById("email").style.display = "none";
+                        var b = document.getElementById("mail");
+                        b.innerText = loginName;
+                    }
+                    $('#amyModal').modal('hide');
+                } else {
+                    alert(data);
+                }
+            }
+        });
+        }
+    }
+    function CheckInput() {
+        var num = $('#number').val();
+        if(num == 1){
+        if ($('#TelName').val() == '' || $('#ValidateCode').val() == '') {
+            return false;
+        }
+    }
+        if(num == 2){
+        if ($('#LoginName').val() == '' || $('#ValidateCode').val() == '') {
+            return false;
+        }
+        }
+        return true;
+    }
+
+    function CheckEmail(input) {
+        var re = /^\w+([-+.]\w+)*@@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        return re.exec(input);
+    }
+    function CheckPhone(input) {
+        var re = /^1[\d]{10}$/;
+        return re.exec(input);
+    }
+</script>
+ 

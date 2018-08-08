@@ -1,0 +1,518 @@
+﻿@{
+	ViewBag.Title = "PaymentRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/Content/Uploadify/jquery.uploadify.min.js")"></script>
+<link href="../../Content/Uploadify/uploadify.css" rel="stylesheet" type="text/css" />
+@model FMS.Model.T_RecPayRecord
+
+<table style="width: 700px; height: auto;">
+    <tr>
+        <td>
+            <a id="a3" class="easyui-linkbutton" onclick="ChoosePayable()">从应付账款中获取</a>
+            <a id="a4" class="easyui-linkbutton" onclick="GetDeclareCostSpending()">从申请成本外支出列表获取</a>
+            <a id="a4" class="easyui-linkbutton" onclick="GetWC()">从工资列表获取</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a id="a2" class="easyui-linkbutton" onclick="ShowImport()">付款记录Excel导入</a>
+            <a id="a1" class="easyui-linkbutton" href='/PaymentRecord/DownLoadFile?fileID=d79bfbf1-a603-42f0-852f-e1d247b7b14d'>下载记录付款Excel模板</a>
+        </td>
+    </tr>
+</table>
+<form id="PaymentRecord_form">
+<table id="PaymentRecordTable" class="easyui-datagrid" title="" style="width:700px;height:auto"
+       data-options="
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#tb',
+                url: 'datagrid_data1.json',
+                method: 'get',
+                onBeforeLoad: function () {
+                    append();
+                },
+                onClickCell: onClickCell
+            ">
+        <thead>
+            <tr>
+                <th data-options="field:'RP_GUID',width:80,hidden:true">RP_GUID</th>
+                <th data-options="field:'IE_GUID',width:80,hidden:true">IE_GUID</th>
+                <th data-options="field:'RPer',width:80,hidden:false,
+                        formatter:function(value,row){
+                            return row.Name;
+                        },
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                url:'/InternalAPI/GetPayee',
+                                textField:'Name',
+                                valueField:'BP_GUID'
+                            }}">收款单位</th>
+                <th data-options="field:'RPerName',width:80,hidden:true">收款单位</th>
+                <th data-options="field:'Money',width:80,formatter: DecimalFmter,editor:{type:'numberbox',options:{precision:1,required: true}}">付款金额</th>
+                <th data-options="field:'Date',width:100,editor:{type:'datebox',options:{}}">付款日期</th>
+                <th data-options="field:'Remark',width:150,editor:'text'">备注</th>
+                <th data-options="field:'AddStyle',width:80">新增方式</th>
+                <th data-options="field:'Action',width:100,formatter:ActionFormatter">操作</th>
+            </tr>
+        </thead>
+    </table>
+
+<div id="tb" style="height: auto">
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">新增</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤销</a>
+</div>
+<div>
+    <table id="PRTable" style="width: 700px; height: 50px">
+        <tr>
+            <td>@FMS.Resource.Finance.Finance.PayAccount</td>
+            <td>
+                <input id="PRBank" name="B_GUID"/>
+            </td>
+            <td>
+                <input id="PRBankAccount" name="BA_GUID"/>
+            </td>
+            <td>@FMS.Resource.Finance.Finance.Currency:</td>
+            <td>
+                <input id="PRCurrency" name="Currency"/>
+            </td>
+            <td><a class="easyui-linkbutton"  onclick="PRSubmitForm()">@General.Resource.Common.Save</a></td>
+        </tr>
+    </table>
+</div>
+</form>
+<script type="text/javascript">
+    var ActionFormatter = function (value, row, index) {
+        var a = " <a class='linkbtn' onclick='Up(\"" + row.RP_GUID + "\")'>上传凭证</a> ";
+        return a;
+    }
+    function Up(rpguid) {
+        $("<div id='UpPayablesRecordFile'></div>").dialog({
+            title: '上传付款凭证 ',
+            width: 250,
+            height: 500,
+            onLoad: function () {
+                $("#GUID").val(rpguid);
+            },
+            onClose: function () {
+                $("#UpPayablesRecordFile").dialog("destroy");
+            },
+            buttons: [{ text: '上传', handler: function () { $('#UpPRFileform #file_upload').uploadify('upload', '*'); } }]
+        });
+        $('#UpPayablesRecordFile').dialog("refresh", "/PaymentRecord/UpPRFile");
+    }
+
+    var CommonCurrency;
+    var BankAccount;
+    var StandardCoin;
+    $(function () {
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetBankAccounts",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                var obj = new Object();
+                obj.ID = "0";
+                obj.Name = "现金";
+                obj.children = new Array();
+                d.push(obj);
+                BankAccount = d;
+            }
+        });
+
+        $("#PRTable #PRCurrency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#PRTable #PRCurrency").combobox("setValue", StandardCoin);
+            }
+        });
+
+        $("#PRTable #PRBank").combobox({
+            editable: false,
+            required: true,
+            data: BankAccount,
+            textField: "Name",
+            valueField: "ID",
+            onSelect: function (rec) {
+                $("#PRTable #PRBankAccount").combobox("loadData", rec.children);
+            },
+            onChange: function (newV, oldV) {
+                if (newV != oldV) {
+                    $("#PRTable #PRBankAccount").combobox("clear");
+                }
+            }
+        });
+
+        $("#PRTable #PRBankAccount").combobox({
+            editable: false,
+            required: true,
+            textField: "Name",
+            valueField: "ID"
+        });
+    });
+    function NewRP_GUID() {
+        var RPGUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                RPGUID = d.toString();
+            }
+        });
+        return RPGUID;
+    }
+
+    var editIndex = undefined;
+    function endEditing() {
+        if (editIndex == undefined) { return true }
+        if ($('#PaymentRecordTable').datagrid('validateRow', editIndex)) {
+            var ed = $('#PaymentRecordTable').datagrid('getEditor', { index: editIndex, field: 'RPer' });
+            var name = $(ed.target).combobox('getText');
+            $('#PaymentRecordTable').datagrid('getRows')[editIndex]['Name'] = name;
+            $('#PaymentRecordTable').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#PaymentRecordTable').datagrid('selectRow', index)
+                            .datagrid('beginEdit', index);
+                var ed = $('#PaymentRecordTable').datagrid('getEditor', { index: index, field: field });
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#PaymentRecordTable').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    var myDate = new Date();
+    function append() {
+        if (endEditing()) {
+            $('#PaymentRecordTable').datagrid('appendRow', { RP_GUID: NewRP_GUID(), AddStyle: "直接新增", Date: myDate.getTime() });
+            editIndex = $('#PaymentRecordTable').datagrid('getRows').length - 1;
+            $('#PaymentRecordTable').datagrid('selectRow', editIndex)
+                        .datagrid('beginEdit', editIndex);  
+        }
+    }
+    function removeit() {
+        if (editIndex == undefined) { return }
+        $('#PaymentRecordTable').datagrid('cancelEdit', editIndex)
+                    .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+    function accept() {
+        if (endEditing()) {
+            $('#PaymentRecordTable').datagrid('acceptChanges');
+        }
+    }
+    function reject() {
+        $('#PaymentRecordTable').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges() {
+        var rows = $('#PaymentRecordTable').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+    $.extend(
+        $('#PaymentRecordTable').datagrid.defaults.editors, {
+            datebox: {
+                init: function (container, options) {
+                    var input = $('<input type="text">').appendTo(container);
+                    input.datebox(options);
+                    return input;
+                },
+                destroy: function (target) {
+                    $(target).datebox('destroy');
+                },
+                getValue: function (target) {
+                    return $(target).datebox('getValue');
+                },
+                setValue: function (target, value) {
+                    $(target).datebox('setValue', formatDatebox(value));
+                },
+                resize: function (target, width) {
+                    $(target).datebox('resize', width);
+                }
+            }
+        });
+    function formatDatebox(value) {
+        if (value == null || value == '') {
+            return '';
+        }
+        var dt = parseToDate(value); //关键代码，将那个长字符串的日期值转换成正常的JS日期格式 
+        return dt.format("yyyy-MM-dd"); //这里用到一个javascript的Date类型的拓展方法，这个是自己添加的拓展方法，在后面的步骤3定义  
+    }
+
+    function parseToDate(value) {
+        if (value == null || value == '') {
+            return undefined;
+        }
+
+        var dt;
+        if (value instanceof Date) {
+            dt = value;
+        }
+        else {
+
+            if (!isNaN(value)) {
+                dt = new Date(value);
+            }
+            else if (value.indexOf('/Date') > -1) {
+                value = value.replace(/\/Date(−?\d+)\//, '$1');
+                dt = new Date();
+                dt.setTime(value);
+            } else if (value.indexOf('/') > -1) {
+                dt = new Date(Date.parse(value.replace(/-/g, '/')));
+            } else {
+                dt = new Date(value);
+            }
+        }
+        return dt;
+    }
+
+    function PRSubmitForm() {
+        accept();
+        var rows = $('#PaymentRecordTable').datagrid('getRows');
+        $.each(rows, function (index, item) {
+            var rpguid = item.RP_GUID;
+            var rper = item.RPer;
+            var date = item.Date;
+            var money = item.Money;
+            var remark = item.Remark;
+            var currencys = $("#PRCurrency").combobox('getValue');
+            var banks = $("#PRBank").combobox('getValue');
+            var bankaccounts = $("#PRBankAccount").combobox('getValue');
+            var ieguids;
+            if (item.IE_GUID == "" || item.IE_GUID == null) {
+                ieguids = null;
+            } else {
+                ieguids = item.IE_GUID;
+            }
+            var addstyle = item.AddStyle;
+            $.ajax({
+                url: '/PaymentRecord/UpdPaymentRecordDts?id=' + rpguid + '&name=' + rper + '&date=' + date + '&money=' + money + '&remark=' + remark + '&currency=' + currencys + '&bank=' + banks + '&bankaccount=' + bankaccounts + '&ieguid=' + ieguids + '&addstyle=' + addstyle,
+                type: "POST",
+                beforeSend: function () {
+                    //表单验证
+                    return $("#PaymentRecord_form").form('validate');
+                },
+                success: function (data) {
+                    //成功则改变收入存款状态=销账
+                    if (addstyle == "费用获取" || addstyle == "工资表获取") {
+                        $.ajax({
+                            url: '/PaymentClassify/UpdState?id=' + ieguids,
+                            type: "POST"
+                        });
+                    }
+                    if (addstyle == "预付供应商" || addstyle == "支付押金和暂支借款" || addstyle == "投资支出" || addstyle == "直接物料采购" || addstyle == "间接物料采购" || addstyle == "资产采购") {
+                        $.ajax({
+                            url: '/PaymentRecord/UpdState?id=' + ieguids,
+                            type: "POST"
+                        });
+                    }
+                    //成功则刷新表
+                    if ($.parseJSON(data).Result) {
+                        $('#PaymentRecordTable').datagrid('loadData', { total: 0, rows: [] });
+                    }
+                },
+                error: errorHandle
+            });
+
+        });
+        $("#PaymentRecordTable").datagrid('hideColumn', 'RPerName');
+        $("#PaymentRecordTable").datagrid('showColumn', 'RPer');
+    }
+
+    function ChoosePayable() {
+        if ($("#WinPayablesRecord").length > 0) {
+            $("#WinPayablesRecord").dialog("close");
+        }
+        $("#PaymentRecordTable").after("<div id='WinPayablesRecord'></div>");
+        $("#WinPayablesRecord").dialog({
+            title: ' ',
+            width: 800,
+            height: 378,
+            onClose: function () {
+                $("#WinPayablesRecord").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { NextPage(); } }]
+        });
+
+        $('#WinPayablesRecord').dialog("refresh", "/PaymentRecord/ChoosePayablesRecord/");
+    }
+
+    function NextPage() {
+        removeit();
+        var items = $('#ChoosePayablesRecord_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            var rper = item.Payer;
+            var rpername = item.RPerName;
+            var money = item.Money;
+            var ieguid = item.R_GUID;
+            var myDate = new Date();
+            if (endEditing()) {
+                $('#PaymentRecordTable').datagrid('appendRow', {
+                    RP_GUID: NewRP_GUID(),
+                    IE_GUID: ieguid,
+                    RPer: rper,
+                    RPerName: rpername,
+                    Money: money,
+                    Date: formatDatebox(myDate.getTime()),
+                    AddStyle: "费用获取"
+                });
+            }
+        });
+        $("#PaymentRecordTable").datagrid('hideColumn', 'RPer');
+        $("#PaymentRecordTable").datagrid('showColumn', 'RPerName');
+        $("#WinPayablesRecord").dialog("destroy");
+    }
+
+    //显示导入界面
+    function ShowImport() {
+        $("#PaymentRecordTable").after("<div id='ImportRecord'></div>");
+        $("#ImportRecord").dialog({
+            title: '收款信息批量导入',
+            padding: 100,
+            width: 300,
+            height: 110,
+            onClose: function () {
+                $("#ImportRecord").dialog("destroy");
+            },
+            buttons: [{
+                text: '导入',
+                handler: function () { excel(); }
+            }]
+        });
+        $('#ImportRecord').dialog("refresh", "/PaymentRecord/ImportRecord/");
+    }
+
+    //利用表单导入EXCEL
+    function excel() {
+        $("#upexcel").form("submit", {
+            url: '/PaymentRecord/Upexcel',
+            onSubmit: function () {
+                return $(this).form("validate"); //提交前验证
+            },
+            success: function (data) {
+                $.messager.alert('Excel批量用户导入', data, 'info');
+                $("#ImportRecord").dialog("destroy");
+            }
+        }
+            );
+    }
+
+    function GetDeclareCostSpending() {
+        $("#PaymentRecordTable").after("<div id='WinPaymentDeclareCostSpending'></div>");
+        $("#WinPaymentDeclareCostSpending").dialog({
+            title: ' ',
+            width: 800,
+            height: 378,
+            onClose: function () {
+                $("#WinPaymentDeclareCostSpending").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { GetDeclareCostSpendingNextPage(); } }]
+        });
+
+        $('#WinPaymentDeclareCostSpending').dialog("refresh", "/PaymentRecord/GetPaymentDeclareCostSpending/");
+    }
+
+    function GetDeclareCostSpendingNextPage() {
+        removeit();
+        var items = $('#ChoosePaymentDeclareCostSpending_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            var rper = item.RPer;
+            var rpername = item.RPerName;
+            var money = item.Amount;
+            var ieguid = item.GUID;
+            var myDate = new Date();
+            var style = item.InvType;
+            if (endEditing()) {
+                $('#PaymentRecordTable').datagrid('appendRow', {
+                    RP_GUID: NewRP_GUID(),
+                    IE_GUID: ieguid,
+                    RPer: rper,
+                    RPerName: rpername,
+                    Money: money,
+                    Date: formatDatebox(myDate.getTime()),
+                    AddStyle: style
+                });
+            }
+        });
+        $("#PaymentRecordTable").datagrid('hideColumn', 'RPer');
+        $("#PaymentRecordTable").datagrid('showColumn', 'RPerName');
+        $("#WinPaymentDeclareCostSpending").dialog("destroy");
+    }
+
+    function GetWC() {
+        if ($("#WinWCRecord").length > 0) {
+            $("#WinWCRecord").dialog("close");
+        }
+        $("#PaymentRecordTable").after("<div id='WinWCRecord'></div>");
+        $("#WinWCRecord").dialog({
+            title: ' ',
+            width: 800,
+            height: 378,
+            onClose: function () {
+                $("#WinWCRecord").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { GetWCNextPage(); } }]
+        });
+
+        $('#WinWCRecord').dialog("refresh", "/PaymentRecord/ChooseWCRecord/");
+    }
+
+    function GetWCNextPage() {
+        removeit();
+        var items = $('#ChooseWCRecord_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            var rper = item.Payer;
+            var rpername = item.RPerName;
+            var money = item.Money;
+            var ieguid = item.R_GUID;
+            var remark = item.Remark;
+            var myDate = new Date();
+            if (endEditing()) {
+                $('#PaymentRecordTable').datagrid('appendRow', {
+                    RP_GUID: NewRP_GUID(),
+                    IE_GUID: ieguid,
+                    RPer: rper,
+                    RPerName: rpername,
+                    Money: money,
+                    Remark: remark,
+                    Date: formatDatebox(myDate.getTime()),
+                    AddStyle: "工资表获取"
+                });
+            }
+        });
+        $("#PaymentRecordTable").datagrid('hideColumn', 'RPer');
+        $("#PaymentRecordTable").datagrid('showColumn', 'RPerName');
+        $("#WinWCRecord").dialog("destroy");
+    }
+
+</script>

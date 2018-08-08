@@ -1,0 +1,152 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/Content/EasyUI/View/datagrid-groupview.js")"></script>
+
+<div id="LedgerAccount"></div>
+
+<a href="#" class="easyui-linkbutton" onclick="ShowLedgerAcc()">@General.Resource.Common.Add</a>
+
+<table id="LedgerAccounts"></table>
+
+<a href="#" class="easyui-linkbutton" onclick="UpdUsingLedgerAcc()">@General.Resource.Common.Save</a>
+<script type="text/javascript">
+    var group = null;
+    var LinkHandle = function (value, row) {
+        var Para = '"' + value + '"';
+        var link = "";  //"<a onclick='ShowLedgerAcc(" + Para + ")' >@General.Resource.Common.Edit</a> ";
+        if (!row.IsLocked) {
+            link = "<a onclick='DelLedgerAcc(" + Para + ")' >@General.Resource.Common.Delete</a>";
+        }
+        return link;
+    }
+    $(function () {
+        $.ajax({
+            url: "/Json/GeneralLedgerAccountGroup.json",
+            async: false,
+            success: function (data) { group = $.parseJSON(data); },
+            error: errorHandle
+        });
+
+        $("#LedgerAccount").dialog({
+            collapsible: false,
+            minimizable: false,
+            maximizable: false,
+            closed: true,
+            title: " ",
+            width: 450,
+            //height: 200,
+            onLoad: txtVaild,
+            buttons: [{
+                text: '@General.Resource.Common.Save',
+                handler: function () { UpdLedgerAcc(); }
+            }]
+        });
+
+        $("#LedgerAccounts").datagrid({
+            columns: [[
+                { field: 'Useable', checkbox: true },
+                { field: 'AccCode', title: '' },
+                { field: 'Name', title: '', width: 200 },
+                { field: 'LA_GUID', formatter: LinkHandle }
+            ]],
+            //height:450,
+            width:800,
+            singleSelect:true,
+            selectOnCheck:false,
+            checkOnSelect: false,
+            showHeader: false,
+            collapsible: true,
+            url: "/GeneralLedgerAccount/GetLedgerAccount",
+            view: groupview,
+            groupField: 'AccGroup',
+            groupFormatter: function (value, rows) {
+                return GetGroup(Number(value));
+            },
+            onLoadSuccess: function (data) {
+                InitChecked(data);
+                CollapseAllGroup();
+            }
+        });
+    });
+
+    function GetGroup(flag) {
+        var result = null;
+        $(group).each(function (i, n) {
+            if (n.Code == flag) {
+                result = n.Name;
+            }
+        });
+        return result;
+    }
+
+    function UpdUsingLedgerAcc() {
+        var codes = "";
+        $($("#LedgerAccounts").datagrid("getChecked")).each(function (i, n) {
+            codes += n.LA_GUID + ",";
+        });
+//        $.post("/GeneralLedgerAccount/UpdUsingLedgerAcc", "accCodes=" + codes,
+//        function (data) {
+//            $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+        //        });
+        alert(codes);
+        $.ajax({
+            url: '/GeneralLedgerAccount/UpdUsingLedgerAcc?accCodes='+codes,
+            type: "POST",
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+            }
+        });
+    }
+
+    function ShowLedgerAcc(id) {
+        if (id == null) {
+            $("#LedgerAccount").dialog("refresh","/GeneralLedgerAccount/LedgerAccount");
+        }
+        else {
+            $("#LedgerAccount").dialog("refresh","/GeneralLedgerAccount/LedgerAccount/"+id);
+        }
+        $("#LedgerAccount").dialog("open");
+    }
+
+    var successHandle = function (data){ 
+                if ($.parseJSON(data).Result) {
+                    $("#LedgerAccount").dialog("close");
+                    $("#LedgerAccounts").datagrid("reload");
+                }
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info' );
+            };
+
+    function DelLedgerAcc(id) {
+        $.ajax({
+            url:"/GeneralLedgerAccount/DelLedgerAcc/"+id,
+            success:successHandle,
+            error:errorHandle
+        });
+    }
+
+    function UpdLedgerAcc() {
+        $("#formLedgerAccount").form('submit', {
+            url: "/GeneralLedgerAccount/UpdLedgerAcc",
+            onSubmit: function () { return $("#formAccCodes").form('validate'); },
+            success: successHandle,
+            error:errorHandle
+        });
+    }
+
+    function CollapseAllGroup()
+    {
+        for (var i = 0; i < 7; i++) {
+            $("#LedgerAccounts").datagrid("collapseGroup", i);
+        }
+    }
+
+    function InitChecked(data) {
+        $.each(data.rows, function (i, n) {
+            if (n.Useable) {
+                $("#LedgerAccounts").datagrid("checkRow", i);
+            }
+        });
+    }
+</script>

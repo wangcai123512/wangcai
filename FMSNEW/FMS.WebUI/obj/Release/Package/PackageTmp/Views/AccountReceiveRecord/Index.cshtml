@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/AccountReceiveRecord/index.js")"></script>
+<div id="main" style="margin-top: 100px;">
+    <input type="hidden" id="code" name="code" value="@ViewData["Code"]">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li> <a onclick="javascript:window.location = '/ReportManagement/Index'" href="/ReportManagement/Index"><span class="glyphicons glyphicons-chevron-right"></span><span class="sidebar-title">报告中心</span></a> </li>
+                <li>
+                    <a onclick="javascript: window.location = '/AccountReceiveRecord/Index'" href="/AccountReceiveRecord/Index">
+                        <span class="glyphicons glyphicons-chevron-right"></span> <span class="sidebar-title">应收款</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content">
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">应收款</span></div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="TotalAmountReceivables">
+                                        <div class="col-md-3" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">客户</span>
+                                                    <select id="CustomerFirst" name="Account" class="multiselect" multiple="multiple"  ></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px">
+                                            应收款总金额
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto;">
+                                            <button onclick="TotalAmountRQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px;margin-left:25px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="TotalAmountOverdueReceivables">
+                                        <div class="col-md-3" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">客户</span>
+                                                    <select id="CustomerSecond" name="Account" class="multiselect" multiple="multiple"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px">
+                                            逾期应收款总金额
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto;">
+                                            <button onclick="TotalAmountOverdueRQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px;margin-left:28px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="TodayAmountOverdueReceivables">
+                                        <div class="col-md-3" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">客户</span>
+                                                    <select id="CustomerThird" name="Account" class="multiselect" multiple="multiple"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px;width:50px;margin-top:5px">
+                                            逾期
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control " required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 50px; margin-top: 5px;">
+                                            天至
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" style="margin-bottom: 0px; margin-top: 5px;">
+                                            天的应收款总金额
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto;">
+                                            <button onclick="TodayAmountOverdueRQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--应收款总金额 model--->
+    <div class="modal fade" id="TotalAmountReceivablesModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content">
+                <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="amyModalLabel">
+                        应收款总金额
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 0px">
+                            <table>
+                                <tr>
+                                    <td style=" width:800px">
+                                        <table id="AllAmountReceivablesList" style="font-size: 12px"></table>
+                                        <table id="TotalAmountReceivablesList" style="font-size: 12px; margin-top: -30px"></table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!--逾期应收款总金额 model--->
+    <div class="modal fade" id="TotalAmountOverdueRModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content">
+                <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="amyModalLabel">
+                        逾期应收款总金额
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 0px">
+                            <table>
+                                <tr>
+                                    <td style=" width:800px">
+                                        <table id="AllAmountOverdueRList" style="font-size: 12px"></table>
+                                        <table id="TotalAmountOverdueRList" style="font-size: 12px; margin-top: -30px"></table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <!--逾期n到m天的应收款总金额 model--->
+    <div class="modal fade" id="TodayAmountOverdueRModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content">
+                <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="amyModalLabel">
+                        应收款总金额
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom: 0px">
+                            <table>
+                                <tr>
+                                    <td style=" width:800px">
+                                        <table id="AllTodayAmountOverdueRList" style="font-size: 12px;"></table>
+                                        <table id="TotalTodayAmountOverdueRList" style="font-size: 12px;margin-top:-30px;" ></table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        关闭
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+    </div>
+</div>

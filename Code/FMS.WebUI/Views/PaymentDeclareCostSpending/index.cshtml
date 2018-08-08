@@ -1,0 +1,180 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_DeclareCostSpending
+
+<div id="PaymentDeclareCostSpending_div">
+    <form id="PaymentDeclareCostSpending_Form">
+       @* 隐藏属性*@
+        <input type="hidden" name="GUID" id="GUID" value="@ViewData["GUID"]"/>
+        <input type="hidden" name="State" id="State" value="未付"/>
+        <table>
+            <tr>
+                <td>申请日期:</td>
+                <td><input class="easyui-datebox" id="Date" name="Date" value="@ViewData["Date"]" data-options="required:true"/></td>
+                <td>收款单位:</td>
+                <td>
+                    <input class="easyui-combobox" id="RPer" name="RPer"data-options='editable:false,url:"/InternalAPI/GetPayee",textField:"Name",valueField:"BP_GUID",panelHeight:"auto",panelMaxHeight:200,required:true'/>
+                </td>
+            </tr>
+            <tr>
+                <td>申请金额:</td>
+                <td>
+                    <input id="Amount" name="Amount" class="easyui-numberbox" onkeyup="checkAmount()" data-options="required:true, precision:2,groupSeparator:','"/>
+                </td>
+                <td>货币:</td>
+                <td>
+                    <input id="Currency" name="Currency" data-options='editable:false,panelHeight:"auto",panelMaxHeight:200,required:true'/>
+                </td>
+            </tr>
+            <tr>
+                <td>支出类别:</td>
+                <td>
+                    <select class="easyui-combobox" id="InvType" name="InvType" data-options="width:150,panelHeight:'auto',required:true">
+				        <option value=""></option>
+				        <option value="预付供应商">预付供应商</option>
+                        <option value="支付押金和暂支借款">支付押金和暂支借款</option>
+                        <option value="投资支出">投资支出</option>
+                        <option value="直接物料采购">直接物料采购</option>
+                        <option value="间接物料采购">间接物料采购</option>
+                        <option value="资产采购">资产采购</option>
+				    </select>
+                </td>
+                <td>备注:</td>
+                <td>
+                    <input class="easyui-validatebox" id="Remark" name="Remark"/>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+                    <input id="file_upload" name="file_upload" type="file" multiple="multiple"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="fileQueue" class="fileQueue"></div>
+                    <div id="div_files"></div>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <a id="UpdPaymentDeclareCostSpending_Submit" class="easyui-linkbutton" onclick="UpdPaymentDeclareCostSpending_Submit()">@General.Resource.Common.Save</a>
+    <table id="UpdPaymentDeclareCostSpending_List"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var CommonCurrency;
+    var StandardCoin;
+    var FJHandle = function (value, row, index) {
+        if (value == "" || value == null) {
+            return "";
+        } else {
+            var v = "../Content/EasyUI/themes/icons/hxz.png";
+            //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="' + v + '" />';
+        }
+    };
+    $(function () {
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) { CommonCurrency = d; }
+        });
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#Currency").combobox("setValue", StandardCoin);
+            }
+        });
+
+        $("#UpdPaymentDeclareCostSpending_List").datagrid({
+            url: '/PaymentDeclareCostSpending/GetPaymentDeclareCostSpendingList',
+            checkOnSelect: false,
+            selectOnCheck: false,
+            singleSelect: true,
+            columns: [[
+                    { field: 'Date', title: '申请日期', formatter: ChangeDateFormat },
+                    { field: 'RPerName', title: '收款单位' },
+                    { field: 'Amount', title: '申请金额', align: 'right', formatter: DecimalFmter },
+                    { field: 'Currency', title: '货币' },
+                    { field: "InvType", title: '支出类别' },
+                    { field: 'Remark', title: '备注' },
+                    { field: 'RPer', title: '', hidden: true },
+                    { field: 'AGUID', title: '附件', align: 'center', formatter: FJHandle },
+                    { field: 'State', title: '状态', align: 'center'}
+                ]
+            ],
+            pagination: true,
+            rownumbers: true
+        });
+
+
+        //添加界面的附件管理
+        var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+        var ASPSESSID = "@Session.SessionID";
+        $('#PaymentDeclareCostSpending_div #file_upload').uploadify({
+            width: 105,
+            height: 20,
+            swf: '/Content/uploadify/uploadify.swf',    //FLash文件路径
+            buttonText: '上传合同/凭证',               //按钮文本
+            uploader: '/PaymentDeclareCostSpending/Upload',       //处理文件上传Action
+            queueID: 'fileQueue',                        //队列的ID
+            queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+            auto: false,                                 //选择文件后是否自动上传，默认为true
+            multi: true,                                 //是否为多选，默认为true
+            removeCompleted: true,                       //是否完成后移除序列，默认为true
+            fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+            fileTypeDesc: 'Image Files',                 //文件描述
+            fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+            onQueueComplete: function (event, data) {                 //所有队列完成后事件
+                //ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+                FileFlag = true;
+            },
+            onUploadStart: function (file) {
+                $("#PaymentDeclareCostSpending_div #file_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+            },
+            onUploadError: function (event, queueId, fileObj, errorObj) {
+                console.log(errorObj);
+                FileFlag = false;
+            }
+        }); 
+    });
+
+
+    function UpdPaymentDeclareCostSpending_Submit() {
+        $('#PaymentDeclareCostSpending_div #file_upload').uploadify('upload', '*');
+        $("#PaymentDeclareCostSpending_Form").form('submit', {
+            url: "/PaymentDeclareCostSpending/UpdPaymentDeclareCostSpending",
+            onSubmit: function () {
+                return $("#PaymentDeclareCostSpending_Form").form('validate');
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () {
+                    $('#UpdPaymentDeclareCostSpending_List').datagrid("reload");
+                });
+                if ($.parseJSON(data).Result) {
+                    $("#PaymentDeclareCostSpending_Form").form('clear');
+                }
+            }
+        });        
+    }
+</script>
+
+

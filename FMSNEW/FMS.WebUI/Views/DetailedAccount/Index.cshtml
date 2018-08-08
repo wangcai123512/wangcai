@@ -1,0 +1,121 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<a class="icon-add" onclick="addBank();">新增银行</a>
+<table id="DetailsAccs"></table>
+<div id="DetailsAcc"></div>
+
+<script type="text/javascript" language="javascript">
+	var curID = null;
+	var LinkFormatter = function (value, row) {
+		var Para = '"' + value + '"';
+		var Para2 = '""';
+		if (row.IsRoot) {
+			return "<a onclick='ShowDetails(" + Para2 + "," + Para + ")' >@General.Resource.Common.Add@FMS.Resource.Account.Account.SubAcc</a> ";
+		} else {
+			return "<a onclick='ShowDetails(" + Para2 + "," + Para + ")' >@General.Resource.Common.Add@FMS.Resource.Account.Account.SubAcc</a> " +
+						"<a onclick='ShowDetails(" + Para + ")' >@General.Resource.Common.Edit</a> ";
+			//"<a onclick='DelDetailsAcc(" + Para + ")' >@General.Resource.Common.Delete</a>";
+		}
+	};
+
+	$(function () {
+	    $("#DetailsAccs").treegrid({
+	        //height: 430,
+			url: "/DetailedAccount/GetDetails",
+			idField: "DA_GUID",
+			treeField: "AccCode",
+			columns: [[
+						{ field: "AccCode", title: "@FMS.Resource.Account.Account.AccCode" },
+						{ field: "Name", title: '@General.Resource.Common.Name' },
+						{ field: "DA_GUID", title: '', formatter: LinkFormatter }
+						]],
+			onLoadSuccess: function (data) {
+			    if (curID != null) {
+			        $('#DetailsAccs').treegrid("expandTo", curID)
+			        .treegrid("expandAll", curID);
+			    }
+			}
+		});
+
+		$("#DetailsAcc").dialog({
+			collapsible: false,
+			minimizable: false,
+			maximizable: false,
+			closed: true,
+			title: "@FMS.Resource.Account.Account.DetailedAcc",
+			width: 400,
+			height: 200,
+			buttons: [{
+				text: '@General.Resource.Common.Save',
+				handler: SubmitForm
+			}]
+		});
+	});
+	
+	function ShowDetails(id, pid) {
+		$("#DetailsAcc").dialog("center");
+		$("#DetailsAcc").dialog("open");
+		if (id.length > 0) {
+		        $("#DetailsAcc").dialog("refresh", "/DetailedAccount/DetailedAccount/" + id);
+		}
+		else {
+		    if (pid == "547E5A1A-1C20-4249-92C8-67FFFFBD38E7" || pid == "DC83D8A5-31F6-4DFE-B093-87F90A234E53" || pid == "51BFDD3E-2253-4FBF-A946-19C18C25C6FC" || pid == "F85560AA-4951-4214-AF7F-5B890C9524B2") {
+        	    $("#DetailsAcc").dialog("refresh", "/DetailedAccount/DetailedAccount?pid=" + pid + "&flag=" + "1");
+		    } else {
+			    $("#DetailsAcc").dialog("refresh", "/DetailedAccount/DetailedAccount?pid=" + pid);
+            }
+		}
+	}
+
+	var successHandle = function (data) {
+		$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+		if ($.parseJSON(data).Result) {
+			$("#DetailsAcc").dialog("close");
+			$('#DetailsAccs').treegrid("reload");
+		}
+	};
+
+function SubmitForm() {
+    var flag = $('#DtlAccForm #flag').val();
+    var c;
+    if (flag == "1") {
+        c = $('#Name').combobox('getText');
+    }
+		$("#DtlAccForm").form('submit', {
+			url: "/DetailedAccount/UpdDetailedAccount?flag="+flag+"&cname="+c,
+			onSubmit: function () {
+				curID = $('#DetailsAccs').treegrid("getSelected").DA_GUID;
+				return $("form").form("validate");
+			},
+			success: successHandle
+		});
+	}
+
+	function DelDetailsAcc(id) {
+		if ($("#DetailsAccs").treegrid("getChildren", id).length > 0) {
+			$.messager.alert('Message', '@General.Resource.Common.Failed@General.Resource.Common.Exist@FMS.Resource.Account.Account.SubAcc', 'info');
+		}
+		else {
+			$.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+				if (r) {
+					$.ajax({
+						url: "/DetailedAccount/DelDetailedAccount/" + id,
+						type: "POST",
+						success: function (data) {
+							$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+							if ($.parseJSON(data).Result) {
+								$('#DetailsAccs').treegrid("reload");
+							}
+						},
+						error: function () {
+							$.messager.alert('Message', '@General.Resource.Common.NoResponse', 'info');
+						}
+					});
+				}
+			});
+		}
+	}
+
+</script>

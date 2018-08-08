@@ -1,0 +1,339 @@
+﻿@{
+    ViewBag.Title = "BackStageManage";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script language="javascript" type="text/javascript">
+  $(document).ready(function () {
+       var list = new Array("新加坡");
+       var list1 = new Array("香港");
+     var country;
+        $.ajax({
+            url: "/InternalAPI/GetAddress",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                country = d;
+            }
+        });
+        $('#country').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择国家',
+        });
+        $("#country").multiselect('dataprovider', country);
+        $("#country").val("").multiselect("refresh");
+
+         $('#province').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择省或直辖市'
+
+        });
+        $("#province").val("").multiselect("refresh");
+
+        $('#city').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择市或区'
+        });
+//        $("#city").multiselect('dataprovider', city);
+        $("#city").val("").multiselect("refresh");
+
+        $(function () {
+        $("#country").change(function () {
+            var country = $("#country").find("option:selected").text();
+            $(" #card .multiselect-selected-text.pull-left").text('请选择市或区');
+            $("#city").empty();
+            $("#city").multiselect("rebuild");
+            
+            var province;
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/InternalAPI/GetCityAddress?country=" + country,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    province = d;
+
+                }
+            });
+            $('#province').multiselect({
+
+                buttonWidth: '100%',
+                maxHeight: 200,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                nonSelectedText: '请选择省或直辖市'
+
+            });
+            if (list.indexOf(country) == 0) {
+                $("#province").empty();
+                $("#city").empty();
+                $("#province").multiselect("rebuild");
+                $("#city").multiselect("rebuild");
+                $(" #card .multiselect-selected-text.pull-left").text('无');
+                $(" #card2 .multiselect-selected-text.pull-left").text('无');
+            }
+            else if (province == undefined) {
+                alert("此国家暂未设置");
+
+                $("#province").empty();
+                $("#city").empty();
+                $("#province").multiselect("rebuild");
+                $("#city").multiselect("rebuild");
+                $("#country").val("").multiselect("refresh");
+
+            } else {
+                $("#province").multiselect('dataprovider', province);
+                $("#province").val("").multiselect('refresh');
+            }
+        });
+    });
+    $(function () {
+        $("#province").change(function () {
+            var province = $("#province").find("option:selected").text();
+            var city;
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/InternalAPI/GetCityAddress1?province=" + province,
+                data: $('#Add_Form').serialize(),
+                async: false,
+                dataType: "json",
+                onSubmit: function () {
+                    return $("#Add_Form").form('validate')
+                },
+                success: function (d) {
+                    city = d;
+                }
+            });
+            $('#city').multiselect({
+                buttonWidth: '100%',
+                maxHeight: 200,
+                enableFiltering: true,
+                includeFilterNewBtn: false,
+                nonSelectedText: '请选择市或区'
+            });
+            if (city == undefined) {
+               
+                $("#city").empty();
+                $("#city").multiselect("rebuild");
+                $(" #card .multiselect-selected-text.pull-left").text('无');
+            } else {
+                $("#city").multiselect('dataprovider', city);
+                $("#city").val("").multiselect("refresh");
+            }
+        });
+    });
+    });
+</script>
+<div id="main" style="margin-top: 100px; background-color: #FFF; padding-bottom: 20px;">
+    <!-- Start: Sidebar -->
+    <aside id="sidebar_left" style="font-size: 16px;">
+            <div class="sidebar-menu" style="margin-top: 10px">
+                <ul class="nav">
+                    <li class="active"><a class="accordion-toggle collapse in menu-open" href="#sideOne"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">公司查询与统计</span></a>
+                        <ul id="sideOne" class="nav sub-nav">
+                            <li><a onclick="javascript:window.location = '/Common/BackStageManage'" href="#"><span class="sidebar-title" style="font-size: 14px;color: #08C">公司登记查询与统计</span></a></li>
+                            <li><a @*onclick="javascript:window.location = '/TaxAndTaxRateSet/Index'"*@ href="#"><span class="sidebar-title" style="font-size: 14px">公司财务查询与统计</span></a></li>
+                        </ul>
+                    </li>
+                        <li> <a onclick="javascript:window.location = '/Common/BackStageUserManage'" href="#"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户查询与统计</span></a>
+                    
+                    </li>
+                     <li> <a><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">使用查询与统计</span></a>
+                    </li>
+                   @* <li> <a class="accordion-toggle" href="#sideTwo"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">用户查询与统计</span></a>
+                        <ul id="sideTwo" class="nav sub-nav">
+                        </ul>
+                    </li>
+                     <li> <a class="accordion-toggle" href="#sideThree"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">使用查询与统计</span></a>
+                        <ul id="sideThree" class="nav sub-nav">
+                        </ul>
+                    </li>*@
+                </ul>
+            </div>
+  </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF;" >
+        <div id="content">
+           <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">公司登记查询与统计</span></div>
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="col-md-12" style="margin: auto">
+                            <div class="panel panel-visible">
+                                <div class="panel-body pbn">
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div id="toolbar" >
+                                            <form style="text-align:center; " >
+                                            <input type="hidden" name="ExpenseFlag" id="ExpenseFlag"/>
+                                            <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    登记在
+                                             </div>
+                                             <div class="col-md-3" style="margin-bottom: 0px">       
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                           <span class="input-group-addon" >国家</span> 
+                                                            <select id="country" name="country"   class="form-control"> 
+                                                            </select>  
+                                                                                                                                                             
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3" id="card2" style="margin-bottom: 0px">       
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                             <span class="input-group-addon">省</span> 
+                                                            <select id="province" name="province" class="form-control"> 
+                                                            </select>  
+                                                                                                                                                             
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                 <div class="col-md-3" style="margin-bottom: 0px">       
+                                                    <div class="form-group" id="card" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon">市</span> 
+                                                            <select id="city" name="city"   class="form-control"> 
+                                                                                                                                                               
+                                                            </select>  
+                                                                                                                                                             
+                                                        </div>  
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    的公司
+                                             </div>
+                                             <div class="col-md-1" style="margin-bottom: 0px">   
+                                                    <button onclick="query()" type="button" style="width: 100%; border-radius: 25px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:-5px"  class="btn btn-primary">
+                                                      查询
+                                                     </button>
+                                             </div>
+                                          </form>
+                                           
+
+                                        </div>
+                                        <table id="ComyAllTable" class="table-condensed" style="font-size: 12px">
+                                        <table id="ComyTable" class="table-condensed" style="font-size: 12px">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>   
+    </div>
+        <br />
+    </section>
+</div>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $('#ComyAllTable').bootstrapTable('destroy');
+        $('#ComyAllTable').bootstrapTable({
+            url: '/Company/GetAllCompany',
+            method: 'get', //请求方式（*）
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1, 
+            showFooter: false,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: false, //是否显示分页（*）
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            showExport: false,
+            uniqueId: "C_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                { field: 'C_GUID', width: '8%', align: 'center', title: '序号', formatter: LinkHandle },
+                { field: 'Country', width: '10%', align: 'center', title: '国家', formatter: LinkHandle1 },
+                { field: 'Province', width: '10%', align: 'center', title: '省', formatter: LinkHandle1},
+                { field: 'City', width: '10%', align: 'center', title: '市', formatter: LinkHandle1},
+                { field: 'CompanyID', width: '10%', align: 'center', title: '公司ID', formatter: LinkHandle1 },
+                { field: 'Name', width: '15%', align: 'center', title: '公司名称', formatter: LinkHandle1 },
+                { field: 'EnglishFullName', width: '17%', align: 'center', title: '公司英文名称', formatter: LinkHandle1 },
+                { field: 'AuditDate', width: '10%', align: 'center', title: '登记日期', formatter: LinkHandle1 },
+                { field: 'Count', width: '10%', align: 'center', title: '数量' }
+            ]
+         
+        });
+        $('#ComyTable').bootstrapTable('destroy');
+        $('#ComyTable').bootstrapTable({
+            url: '/Company/GetCompanyList',
+            method: 'get', //请求方式（*）
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1, //初始化加载第一页，默认第一页
+            showFooter: false,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: false, //是否显示分页（*）
+            sortName: '', // 设置默认排序为 Date
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            showExport: false,
+            uniqueId: "C_GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                { field: 'id', width: '8%', align: 'center'},
+                { field: 'Country', width: '10%', align: 'center'},
+                { field: 'Province', width: '10%', align: 'center'},
+                { field: 'City', width: '10%', align: 'center'},
+                { field: 'CompanyID', width: '10%', align: 'center'},
+                { field: 'Name', width: '15%', align: 'center'},
+                { field: 'EnglishFullName', width: '17%', align: 'center'},
+                { field: 'AuditDate', width: '10%', align: 'center'},
+                { field: 'Count', width: '10%', align: 'center', formatter: LinkHandle1}
+            ],
+            queryParams: queryParams
+        });
+
+        $("#ComyTable").css("margin-top", "-30px");
+
+    });
+    function queryParams(params) {
+        var temp = {
+            pageSize: params.limit,
+            pageIndex: params.pageNumber,
+            Country:$('#country').val(),
+            Province:$('#province').val(),
+            City:$('#city').val()
+        };
+        return temp;
+    }
+    var LinkHandle = function (value, row, index) {     
+    var link1 = " <p class=''>全部</p> ";
+       return link1;
+};
+ var LinkHandle1 = function (value, row, index) {     
+    var link1 = "";
+       return link1;
+};
+    function query()
+    {
+         $('#ComyTable').bootstrapTable('refresh');
+    }
+</script>
+

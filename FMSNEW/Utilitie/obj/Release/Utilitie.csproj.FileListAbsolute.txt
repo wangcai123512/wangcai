@@ -1,0 +1,10 @@
+D:\fms\FMSNEW\Utilitie\bin\Release\Utilitie.dll
+D:\fms\FMSNEW\Utilitie\bin\Release\Utilitie.pdb
+D:\fms\FMSNEW\Utilitie\bin\Release\Aspose.Cells.dll
+D:\fms\FMSNEW\Utilitie\bin\Release\General.Resource.dll
+D:\fms\FMSNEW\Utilitie\bin\Release\SSOModel.dll
+D:\fms\FMSNEW\Utilitie\bin\Release\General.Resource.pdb
+D:\fms\FMSNEW\Utilitie\bin\Release\en-US\General.Resource.resources.dll
+D:\fms\FMSNEW\Utilitie\obj\Release\Utilitie.csprojResolveAssemblyReference.cache
+D:\fms\FMSNEW\Utilitie\obj\Release\Utilitie.dll
+D:\fms\FMSNEW\Utilitie\obj\Release\Utilitie.pdb

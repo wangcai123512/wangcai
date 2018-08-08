@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "RolePermission";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<h4>@Common.Resource.RolePermission.RoleName : @ViewData["RoleName"]</h4>
+<form>
+<input type="hidden" id="RoldID" name ="RoleID" value='@ViewData["RoleGuid"]' />
+</form>
+
+
+<ul id="FunTree"></ul>
+
+<div class="Submit">
+    <a href="#" onclick ="SubmitForm()" class="easyui-linkbutton" >@General.Resource.Common.Save</a>
+    <a href="#" onclick ="PageChange('/LocalRoleManagement/RoleIndex')" class="easyui-linkbutton" >@General.Resource.Common.Back</a>
+</div>  
+
+<script>
+    $(function () {
+        $('#FunTree').tree({
+            url: '/LocalRoleManagement/GetPermission/' + $("#RoldID").val(),
+            checkbox:true,
+            onlyLeafCheck:true
+        });
+    });
+    function SubmitForm() {
+        $("form").form('submit', {
+            url: "/LocalRoleManagement/UpdRolePermission",
+            onSubmit: function (param) {
+                var funs="";
+                var nodes = $('#FunTree').tree("getChecked", ['checked', 'indeterminate']);
+                $(nodes).each(function (i, n) { funs += n.id; funs += ","; });
+                param.Funs = funs;
+                return $("form").form("validate");
+            },
+            success: function (data) {
+                $.messager.alert('Message', $.parseJSON(data).Msg, 'info', function () { PageChange("/LocalRoleManagement/RoleIndex"); });
+            }
+        });
+    }
+</script>
+

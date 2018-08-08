@@ -1,0 +1,96 @@
+﻿body {    
+    min-width:1024px;
+    height:100%;
+    font-size:12px;
+    font-family:SimSun;
+}
+a
+{
+    color:#074592;
+    text-decoration:none;
+}
+tr
+{
+    /*height:30px; */
+}
+td,th
+{
+    padding-left:10px;
+    }
+input
+{
+    font-family:SimSun;
+    /*font-size:12px;*/
+    }
+
+input[type="text"], input[type="password"], input[type="file"] 
+{
+    width: 200px;
+    border-width:1px;
+    /*border: 1px solid #CCC;*/
+}
+input[type="password"]
+{
+    font-size: 10px;
+    }
+/*input[type="button"],input[type="submit"]
+{
+    TEXT-ALIGN: center; 
+    FONT-STYLE: normal; 
+    height:16px;
+    WIDTH: 50px;  
+    FONT-WEIGHT:bold; 
+    TEXT-DECORATION: none;
+    cursor:pointer;
+    background-image:url("../images/Btn.png");
+    background-position:center;
+    background-repeat:no-repeat;
+    background-color:#ffffff;
+    border:0px;
+    color:#FFFFFF;
+}
+*/
+select 
+{
+    width: 200px;
+    /*border: 1px solid #CCC;
+    font-size:12px;*/
+    font-family:SimSun;
+    }
+option
+{
+    width: 200px;
+    padding:0px;
+    }
+textarea
+{
+    width:300px;
+    }
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}

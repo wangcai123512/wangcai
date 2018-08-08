@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "DetailRecord";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_DetailedCategories
+           
+<form id="Detail_form"  method="post">
+<table class="Props">
+    <input type="hidden" id="GUID"  value="@ViewData["GUID"]"/>
+    <tr>
+        <td>@General.Resource.Common.Name</td>
+        <td><input id="DRName" class="easyui-validatebox" data-options="required:true"/></td>
+    </tr>
+</table >          
+</form>
+

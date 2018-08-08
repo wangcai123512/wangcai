@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "ImportRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<style type="text/css">
+    input {vertical-align: middle;margin: 0;padding: 0}
+    .file-box {position: relative;width: 340px}
+    .txt {height: 22px;border: 1px solid #cdcdcd;width: 180px;}
+    .btn {background-color: #FFF;border: 1px solid #CDCDCD;height: 24px;width: 70px;}
+    .file {position: absolute;top: 33px;left: 220px;filter: alpha(opacity:0);opacity: 0;height: 24px;width: 260px }
+</style>
+
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<input type="hidden" name="IE_GUID" id="IE_GUID" value="@ViewData["Creator"]" />
+<div id="toolbar" style="margin-left: 5px;">
+    <form id="upexcel" method="post" enctype="multipart/form-data">
+         <input type='text' name='textfield' id='textfield' class='txt' />  
+         <input type='button' class='btn' value='浏览...' /></br>
+         <input type="file" name="upload" class="file" id="upload" onchange="document.getElementById('textfield').value=this.value"/>
+    </form>  
+</div>

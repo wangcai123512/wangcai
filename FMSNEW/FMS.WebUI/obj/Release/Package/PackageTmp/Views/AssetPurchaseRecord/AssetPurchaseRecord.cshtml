@@ -1,0 +1,857 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/view/AssetPurchaseRecord/index.css")" />
+<script type="text/javascript">
+    var AssetTypes = [{ label: "固定资产", value: "固定资产" },
+                    { label: "无形资产", value: "无形资产" }];
+    var CostType = [{ 'label': "记录营业成本", value: "B" },
+                     { label: "记录销售费用", value: "S" },
+                     { label: "记录管理费用", value: "M" }
+    ];
+
+    var ConfigSetting = {
+        buttonWidth: '100%',
+        maxHeight: 150,
+        enableFiltering: false,
+        includeFilterNewBtn: false,
+        nonSelectedText: '请选择',
+    }
+    //供应商下拉框
+    var ConfigSettingRper = {
+        buttonWidth: '100%',
+        maxHeight: 150,
+        enableFiltering: true,
+        includeFilterNewBtn: false,
+        nonSelectedText: '请选择',
+    }
+    var supplier = GetSupplier()
+    $(document).ready(function () {
+        var CostType;
+        $.ajax({
+            url: "/InternalAPI/GetAssetCostType",
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            success: function (data) {
+                $("#CostType").multiselect(ConfigSetting);
+                $("#CostType").multiselect('dataprovider', JSON.parse(data));
+            },
+        })
+        InitAssetTypes("#Example_1 #AssetTypes");
+        GetAssetInvType("#Example_1 #AssetTypes", "#Example_1 #InvType");
+        GetSubType("#Example_1 #InvType", "#Example_1 #SonInvType");
+        GetMMTypeA("#Example_1 #SonInvType", "#Example_1 #MaterielManage");
+        $('#Example_1 #GUID').val(NewGUID());
+        InitCurrency("#Example_1 #Currency");
+        InitSupplier("#Example_1 #RPer");
+        var guid = $('#Example_1 #GUID').val();
+        IntiFileUpload("#Example_1 #certificate", guid);
+        InitalDateInput();
+        var pat;
+        $.ajax({
+            url: "/BusinessUnitSetting/GetBusinessTypeList",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                pat = d;
+            }
+        });
+
+        $('#Example_1 #Business_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $("#Example_1 #Business_GUID").multiselect('dataprovider', pat);
+        $("#Example_1 #Business_GUID").val("").multiselect("refresh");
+
+        $('#Example_1 #SubBusiness_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $("#Example_1 #Business_GUID").change(function () {
+            var guid = $("#Example_1 #Business_GUID").val();
+            var subList
+            $.ajax({
+                url: "/BusinessUnitSetting/GetBusinessChildTpyList?GUID=" + guid,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    subList = d;
+                }
+            });
+            $("#Example_1 #SubBusiness_GUID").multiselect('dataprovider', subList);
+            $("#Example_1 #SubBusiness_GUID").val("").multiselect("refresh");
+
+        });
+        var CostType;
+        $.ajax({
+            url: "/InternalAPI/GetAssetCostType",
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            success: function (data) {
+                $("#CostType").multiselect(ConfigSetting);
+                $("#CostType").multiselect('dataprovider', JSON.parse(data));
+            },
+        })
+        FileInputBaseSetting("#excelUpload");
+        $("#excelUpload").fileinput('refresh', {
+            showUpload: true,
+            uploadUrl: '/AssetPurchaseRecord/ImportExcel',
+            allowedFileExtensions: ['xls', 'xlsx'],
+            initialCaption: "请上传Excel格式文件",
+            previewClass: 'bg-warning',
+            elErrorContainer: "#errorBlock",
+            dropZoneEnabled: true,
+            dropZoneTitleClass: 'file-drop-zone-title',
+            msgInvalidFileExtension: "请上传Excel格式文件（{extensions}）"
+        });
+        $("#excelImportModal").on("hidden.bs.modal", function () {
+            $('#upexcel')[0].reset();
+        });
+        $("#excelUpload").on("fileuploaded", function (event, data, previewId, index) {
+            $('#excelImportModal').modal('hide');
+
+            alert(data.response);
+        });
+
+    });
+    function InitCurrency(selector) {
+        $(selector).multiselect(ConfigSetting);
+        $(selector).multiselect('dataprovider', currency);
+        $(selector).val("").multiselect("refresh");
+        $(selector).multiselect('select', standardCoin);
+    }
+    function InitAssetTypes(selector) {
+        $(selector).multiselect(ConfigSetting);
+        $(selector).multiselect('dataprovider', AssetTypes);
+        $(selector).val("").multiselect("refresh");
+    }
+    function InitSupplier(selector) {
+        $(selector).multiselect(ConfigSettingRper);
+        $(selector).multiselect('dataprovider', supplier);
+        $(selector).val("").multiselect("refresh");
+    }
+    function InitInvType(selector) {
+        $(selector).multiselect(ConfigSetting);
+        $(selector).multiselect('dataprovider', InvType);
+    }
+    function IntiFileUpload(selector, guid) {
+        FileInputBaseSetting(selector);
+        $(selector).fileinput('refresh', {
+            uploadUrl: '/InternalAPI/FileUpload',
+            allowedFileExtensions: ['jpg', 'png'],
+            uploadExtraData: function () { // callback example
+                var out = {};
+                out['frGuid'] = guid;
+                return out;
+            }
+        });
+    }
+    function AddNewRow() {
+        var o = document.getElementById("Example");
+        var div = document.createElement("div");
+        var rows = $("[id^=Example_]");
+        var newIndex = rows.length + 1;
+        var guid = NewGUID();
+        div.id = "Example_" + guid;
+        div.className = "col-md-12";
+        var newId = "Payee_" + guid;
+        div.innerHTML = o.innerHTML.replace(/\{0\}/ig, newIndex);
+        document.getElementById("AddLayout").appendChild(div);
+        $('#' + div.id + ' #GUID').val(guid);
+        InitCurrency('#' + div.id + ' #Currency');
+        InitSupplier('#' + div.id + " #RPer");
+        var assetSelecor = '#' + div.id + ' #AssetTypes';
+        var typeSelector = '#' + div.id + ' #InvType';
+        var subTypeSelector = '#' + div.id + ' #SonInvType';
+        var subMMSelector = '#' + div.id + ' #MaterielManage';
+
+        InitAssetTypes(assetSelecor);
+        GetAssetInvType(assetSelecor, typeSelector)
+        GetSubType(typeSelector, subTypeSelector);
+        GetMMTypeA(subTypeSelector, subMMSelector);
+        $(assetSelecor).change(function () {
+            GetAssetInvType(assetSelecor, typeSelector)
+        });
+        $(typeSelector).change(function () {
+            GetSubType(typeSelector, subTypeSelector)
+        });
+        $(subTypeSelector).change(function () { GetMMTypeA(subTypeSelector, subMMSelector) });
+        var pat;
+        $.ajax({
+            url: "/BusinessUnitSetting/GetBusinessTypeList",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                pat = d;
+            }
+        });
+
+        $('#' + div.id + ' #Business_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $('#' + div.id + ' #Business_GUID').multiselect('dataprovider', pat);
+        $('#' + div.id + ' #Business_GUID').val("").multiselect("refresh");
+
+        $('#' + div.id + ' #SubBusiness_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 200,
+            enableFiltering: true,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $('#' + div.id + ' #Business_GUID').change(function () {
+            var guid = $('#' + div.id + ' #Business_GUID').val();
+            var subList
+            $.ajax({
+                url: "/BusinessUnitSetting/GetBusinessChildTpyList?GUID=" + guid,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    subList = d;
+                }
+            });
+            $('#' + div.id + ' #SubBusiness_GUID').multiselect('dataprovider', subList);
+            $('#' + div.id + ' #SubBusiness_GUID').val("").multiselect("refresh");
+
+        });
+        $("#" + div.id + " .delete").click(function () {
+            RemoveRow(div.id);
+        });
+        IntiFileUpload('#' + div.id + ' #certificate', guid);
+        InitalDateInput();
+        if (newIndex > 1) {
+            var preRow = $("#" + div.id).prev();
+            var opCol = preRow.find("#operate");
+
+            opCol.css("margin-top", "0px");
+            opCol.html($("#Example #remove")[0].outerHTML);
+
+            preRow.find("#remove").bind("click", function () {
+                RemoveRow(preRow[0].id);
+            });
+        }
+    }
+    function RemoveRow(id) {
+        if ($("[id^=Example_]").length == 1) {
+            alert("最后一行不可删除");
+            return false
+        }
+        else {
+            $('#' + id).remove();
+            if ($("[id^=Example_]").length == 1) {
+
+                $("[id^=Example_]").find("#operate").html('<a onclick="AddNewRow()" href="#" style="font-size: 12px;" id="addRow">新增</a><br/>');
+            } else {
+                var lastRow = $("[id^=Example_]").last();
+
+                lastRow.find("#operate").html($("#Example #operate")[0].outerHTML);
+                lastRow.find("#remove").bind("click", function () {
+                    RemoveRow(lastRow[0].id);
+                });
+            }
+        }
+    }
+
+
+
+    function FormSubmitForm() {
+        if (!$("#payForm").valid()) {
+            return false;
+        }
+        var checkTag = $('[id^=Example_]');
+        var error = false;
+        checkTag.find("#Date").each(function () {
+            if ($(this).val() == "") {
+                alert("请输入日期");
+                $(this).focus;
+                error = true;
+                return false;
+            }
+        })
+
+        if (error) {
+            return false;
+        }
+        checkTag.find("#Amount").each(function () {
+            if ($(this).val() == 0 || $(this).val() == "") {
+                alert("输入的金额为空或输入金额错误");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#RPer").each(function () {
+            if ($(this).val() == null) {
+                alert("请输入供应商");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#AssetTypes").each(function () {
+            if ($(this).val() == null) {
+                alert("请输入资产分类");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#InvType").each(function () {
+            if ($(this).val() == null) {
+                alert("请输入资产类别");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#SonInvType").each(function () {
+            if ($(this).val() == null) {
+                alert("请输入资产子类别");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#MaterialNumber").each(function () {
+            if ($(this).val() == null) {
+                alert("输入的数量为空或输入数量错误");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        checkTag.find("#MaterielManage").each(function () {
+            if ($(this).val() == null) {
+                alert("请输入物料名称");
+                error = true;
+                return false;
+            }
+        })
+        if (error) {
+            return false;
+        }
+        var param = new Array();
+        var formText = "&" + $("#payForm").serialize();
+        var rows = formText.split("&GUID=");
+        var list = new Array();
+        var temp;
+        var divList = $("[id^=Example_]");
+        var files = $("#Example_1 #certificate").fileinput('getFileStack');
+        var costType = $("#CostType").val();
+        for (var i = 0; i < rows.length; i++) {
+            temp = decodeURIComponent(rows[i]);
+            if (temp !== "") {
+                temp = conveterParamsToJson("GUID=" + temp + "&CostType=" + costType);
+                list.push(temp);
+            }
+        }
+        param = { recordList: list };
+        $.ajax({
+            type: "POST",
+            url: "/AssetPurchaseRecord/UpdateRecord",
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            data: JSON.stringify(param),
+            success: function (data) {
+                var res = JSON.parse(data)
+                if (res.success) {
+                    $("[name=certificate]").each(function () {
+                        $(this).fileinput('upload')
+                    })
+                    alert("提交成功");
+                    location.reload(true);
+                }
+                else {
+                    alert(res.msg);
+                }
+            },
+            error: function (err) {
+                alert(err);
+            }
+        })
+    }
+
+    function UPdateFixAmount()
+    {
+        
+        var error = false;
+        var dataContent = new Object();
+        dataContent.C_GUID="";
+        dataContent.FixedAssets=$("#FixedAssets").val();
+        dataContent.AccumulatedDepreciation=$("#AccumulatedDepreciation").val();
+        dataContent.IntangibleAssets=$("#IntangibleAssets").val();
+        dataContent.AccumulatedAmortization=$("#AccumulatedAmortization").val();
+        dataContent.DeferredExpense=$("#DeferredExpense").val();
+        
+        //$("#divFix input").each(function ()
+        //{
+        //    if ($(this).val() == 0 || $(this).val() == "") {
+        //        alert("输入的金额为空或输入金额错误");
+        //        error = true;
+        //        return false;
+        //    }
+        //})
+        var count = 0;
+        $("#divFix input").each(function ()
+        {
+            if ($(this).val() == 0 || $(this).val() == "") {
+                count += 1;
+            }
+        })
+
+        if (count == 5) {
+            alert("请输入一个金额");
+            return false;
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: '/AssetPurchaseRecord/UpdateFixedAssets',
+            async: false,
+            contentType: 'application/json',
+            dataType: 'html',
+            data: JSON.stringify(dataContent),
+            success: function (data) {
+                var res = JSON.parse(data)
+                if (res.success) {
+                    alert("提交成功");
+                    location.reload(true);
+                }
+                else {
+                    alert(res.msg);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    //上传execle
+    function ShowExcelImport() {
+
+        $('#excelImportModal').modal({ show: true, backdrop: 'static' });
+    }
+    function ExcelImport() {
+        $('#excelUpload').fileinput('upload');
+    }
+    //获取类别
+    function GetAssetInvType(assetSelector, invTypeSelector) {
+        var AssetType = $(assetSelector).val();
+        $.ajax({
+            url: "/PurchasingTypeRecord/GetAssetsAidType",
+            data: { assetType: AssetType },
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                InitSelect(invTypeSelector, d);
+                ClassSub();
+            }
+        });
+    }
+    function ClassSub() {
+        $('#Example_1 #SonInvType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: 150,
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: '请选择',
+        });
+        $("#Example_1 #SonInvType").val("").multiselect("refresh");
+    }
+</script>
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_MaterialPurchasingLefMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <div id="content" style="padding-left: 0px;">
+                <div id="main" style="background-color: #FFF;">
+                    <div id="Example" class="col-md-12" style="display: none">
+                        <input type="hidden" name="GUID" value="" id="GUID" />
+                        <div class="col-md-1" style="width: 80px">
+                            <div class="form-group">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <input type="text" class="Date form-control datepicker mtn " id="Date" name="Date"
+                                           require="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 70px;margin-left:-20px">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <input type="text" id="Amount" name="Amount" class="Amount form-control money" maxlength="10"
+                                       onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 80px; margin-left: -23px">
+                            <div class="input-group input-group-sm" style="margin: 0">
+                                <input type="text" id="MaterialNumber" name="MaterialNumber" class="Amount form-control money" maxlength="10"
+                                       onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                            </div>
+
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -23px; ">
+                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                <select id="Currency" name="Currency" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -20px; ">
+                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                <select id="Business_GUID" name="Business_GUID" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -23px; ">
+                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                <select id="SubBusiness_GUID" name="SubBusiness_GUID" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -20px; ">
+                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                <select id="AssetTypes" name="AssetType" require="true" onchange="GetAssetInvType('#Example_1 #AssetTypes', '#Example_1 #InvType')"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="width: 113px; margin-left: -23px; ">
+                            <div class="input-group input-group-sm" style="width:100%">
+                                <select id="InvType" name="InvType"></select>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -23px; ">
+                            <div class="input-group input-group-sm" style="width:100%">
+                                <select id="SonInvType" name="SonInvType" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -23px; ">
+                            <div class="input-group input-group-sm" style="width:100%">
+                                <select id="MaterielManage" name="MaterielManage" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 113px; margin-left: -20px; ">
+                            <div class="input-group input-group-sm" style="width:100%">
+                                <select id="RPer" name="RPer" require="true"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="padding-left:0px;margin-left:0px">
+                            <div id="operate">
+                                <a onclick="AddNewRow()" href="#" style="font-size: 12px;color: #074592;" id="addRow">新增</a><br />
+                                <a class="delete" style="font-size: 12px;color: #074592;" id="remove">删除</a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="content" style="padding-bottom: 150px;padding-top: 0px;">
+                        <div class="row" style="margin-top: 30px;">
+                            <div class="col-md-10" style="margin-bottom: 20px; text-align: center">
+                                <span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">
+                                    资产采购登记
+                                </span>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <button onclick="javascript:window.location ='/InternalAPI/DownLoadFile?fileID=e7610dc3-f908-4583-8e2d-c5abecfabf0b'"
+                                                style="width: 100%; border: 2px solid #000000; border-radius: 100px; font-size: 13px; color: #000000;" class="zocial">
+                                            下载资产采购模板
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group" style="margin-bottom: 25px;">
+                                        <button onclick="ShowExcelImport()" style="width: 100%; border: 2px solid #000000; border-radius: 100px; font-size: 13px; color: #000000;" class="zocial">上传资产采购模板</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="divFix" class="col-md-12">
+                                <div class="col-md-1 fixTitle">
+                                    <label style="font-size: 14px;">
+                                        固定资产:
+                                    </label>
+                                </div><div class="fixContent">
+                                    <input type="text" id="FixedAssets" name="FixedAssets" class="form-control money" maxlength="10"
+                                           onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                </div>
+                                <div class="col-md-1 fixTitle">
+                                    <label style="font-size: 14px;">
+                                        累计折旧:
+                                    </label>
+                                </div><div class="fixContent">
+                                    <input type="text" id="AccumulatedDepreciation" name="AccumulatedDepreciation" class="Amount form-control money" maxlength="10"
+                                           onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                </div>
+                                <div class="col-md-1 fixTitle">
+                                    <label style="font-size: 14px;">
+                                        无形资产:
+                                    </label>
+                                </div><div class="fixContent">
+                                    <input type="text" id="IntangibleAssets" name="IntangibleAssets" class="form-control money" maxlength="10"
+                                           onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                </div>
+                                <div class="col-md-1 fixTitle">
+                                    <label style="font-size: 14px;">
+                                        累计摊销:
+                                    </label>
+                                </div><div class="fixContent">
+                                    <input type="text" id="AccumulatedAmortization" name="AccumulatedAmortization" class="form-control money" maxlength="10"
+                                           onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                </div>
+                                <div class="col-md-1 fixTitle" style="width:120px">
+                                    <label style="font-size: 14px;">
+                                        长期待摊费用:
+                                    </label>
+                                </div><div class="fixContent">
+                                    <input type="text" id="DeferredExpense" name="DeferredExpense" class="form-control money" maxlength="10"
+                                           onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                </div>
+                                <div class="col-md-1 fixTitle">
+                                    <button type="button" style="width: 70px; border-radius: 100px; font-size: 14px;
+                        border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary "
+                                            onclick="UPdateFixAmount()">
+                                        保存
+                                    </button>
+                                </div>
+
+                            </div>
+                            <div id="title" class="col-md-12">
+                                <div class="col-md-1" style="width: 80px">
+                                    <label style="font-size: 14px;">
+                                        购入日期
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 50px">
+                                    <label style="font-size: 14px;">
+                                        金额
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 80px;margin-left:-10px">
+                                    <label style="font-size: 14px;">
+                                        数量
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 80px;margin-left:-20px">
+                                    <label style="font-size: 14px;">
+                                        货币
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 150px;margin-left:0px">
+                                    <label style="font-size: 14px;">
+                                        业务单元
+                                    </label>
+                                </div>
+                                <div class="col-md-2" style="width: 150px;margin-left:-50px">
+                                    <label style="font-size: 14px;">
+                                        业务子单元
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 110px;margin-left:-60px">
+                                    <label style="font-size: 14px;">
+                                        资产分类
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 150px; margin-left: -30px">
+                                    <label style="font-size: 14px;">
+                                        资产类别
+                                    </label>
+                                </div>
+                                <div class="col-md-2" style="width: 150px;margin-left:-50px">
+                                    <label style="font-size: 14px;">
+                                        资产子类别
+                                    </label>
+                                </div>
+                                <div class="col-md-2" style="width: 120px; margin-left: -50px">
+                                    <label style="font-size: 14px;">
+                                        物料
+                                    </label>
+                                </div>
+                                <div class="col-md-1" style="width: 120px;margin-left:-40px">
+                                    <label style="font-size: 14px;">
+                                        供应商
+                                    </label>
+                                </div>
+
+                            </div>
+                            <form id="payForm">
+
+                                <div id="AddLayout">
+                                    <div id="Example_1" class="col-md-12">
+                                        <input type="hidden" name="GUID" id="GUID" />
+
+                                        <div class="col-md-1" style="width: 80px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" class="Date form-control datepicker mtn " id="Date" name="Date"
+                                                           require="true">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 70px;margin-left:-20px">
+                                            <div class="input-group input-group-sm" style="margin: 0">
+                                                <input type="text" id="Amount" name="Amount" class="Amount form-control money" maxlength="10"
+                                                       onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 80px;margin-left:-23px">
+                                            <div class="input-group input-group-sm" style="margin: 0">
+                                                <input type="text" id="MaterialNumber" name="MaterialNumber" class="Amount form-control money" maxlength="10"
+                                                       onkeyup="value=value.replace(/[^\d]/g,'')" value="" require="true">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -23px">
+                                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                                <select id="Currency" name="Currency" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -20px">
+                                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                                <select id="Business_GUID" name="Business_GUID" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -23px">
+                                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                                <select id="SubBusiness_GUID" name="SubBusiness_GUID" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -20px">
+                                            <div class="input-group input-group-sm" style="margin: 0; width: 100%">
+                                                <select id="AssetTypes" name="AssetType" require="true" onchange="GetAssetInvType('#Example_1 #AssetTypes', '#Example_1 #InvType')"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -23px">
+                                            <div class="input-group input-group-sm" style="width:100%">
+                                                <select id="InvType" name="InvType" onchange="GetSubType('#Example_1 #InvType', '#Example_1 #SonInvType')"></select>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1" style="width: 113px; margin-left: -23px">
+                                            <div class="input-group input-group-sm" style="width:100%">
+                                                <select id="SonInvType" name="SonInvType" onchange="GetMMTypeA('#Example_1 #SonInvType', '#Example_1 #MaterielManage')" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -23px">
+                                            <div class="input-group input-group-sm" style="width:100%">
+                                                <select id="MaterielManage" name="MaterielManage" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="width: 113px; margin-left: -20px">
+                                            <div class="input-group input-group-sm" style="width:100%">
+                                                <select id="RPer" name="RPer" require="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="padding-left:0px;margin-left:0px">
+                                            <div style="" id="operate">
+                                                <a onclick="AddNewRow()" href="#" style="font-size: 12px;color: #074592;" id="addRow">新增</a><br />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin: auto;padding-left:25%;padding-top:15px">
+                                    <div class="col-md-2" style="margin: auto">
+                                        <button type="button" style="width: 100px; border-radius: 100px; font-size: 14px;
+                        border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary "
+                                                onclick="FormSubmitForm()">
+                                            提交
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2" style="margin: auto">
+                                        <button onclick="javascript:window.location = '/DirectMaterialPurchasingRecord/Index'" type="button" style="width: 100px;
+                        border-radius: 100px; font-size: 14px; border: 0px solid #c0c0c0; font-weight: bold"
+                                                class="btn btn-primary ">
+                                            返回上页
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div class="modal fade" id="excelImportModal" tabindex="-1" role="dialog" aria-labelledby="excelImportModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="excelImportModalLabel">
+                    Excel数据导入
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <form id="upexcel" method="post" enctype="multipart/form-data">
+                            <div class="col-md-10" style="margin-bottom: 0px">
+                                <div class="form-group">
+                                    <input id="excelUpload" name="excelUpload" class="file_upload" type="file" />
+                                    <div id="errorBlock" class="help-block"></div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<style type="text/css">
+    .multiselect-selected-text {
+        max-width: 3em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fixTitle {
+        width: 85px;
+        float: left;
+    }
+
+    .fixContent {
+        width: 80px;
+        float: left;
+    }
+    .fixContent input{
+        height:25px;
+    }
+</style>

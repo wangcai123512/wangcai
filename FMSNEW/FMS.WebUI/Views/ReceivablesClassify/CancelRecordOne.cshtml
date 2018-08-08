@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "CancelRecordOne";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<input type="hidden" name="GUID" id="GUID" value="@ViewData["GUID"]"/>
+
+<div id="CancelRecordOne_div" style="margin-top: -6px; width: 100%; height: 100%">
+    <div style="width: 100%; height: 20%"><table id="CancelRecordOne_List"></table>
+    </div>
+    <div style="margin-top: 20px">
+        <input type="radio" name="TypeDtss" id="radio121" onclick="checkDeclareCustomer()" value="预付客户款"/>
+	    <label for="radio1">预收客户款</label></br>
+
+	    <input type="radio" name="TypeDtss" id="radio122" onclick="checkDeclareDeposit()" value="押金与暂支付款"/>
+	    <label for="radio2">从押金与暂支付款列表获取</label></br>
+    </div>
+    <div style="margin-top: 20px; margin-left: 10px;">备注：<input name="Remark" id="Remark"/>
+    </div >
+    <div style="margin-top: 5px; margin-left: 10px;">
+    <form>
+        <input class="easyui-validatebox" type="hidden" id="Attachment_GUID" name="Attachment_GUID"/>
+        <input id="Receivablesfile_upload" name="Receivablesfile_upload" type="file" multiple="multiple"/>
+        <div id="fileQueue" class="fileQueue"></div>
+        <div id="div_files"></div>
+    </form>
+   </div>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    var rpguid = $('#GUID').val();
+	    $("#CancelRecordOne_List").datagrid({
+	        url: '/ReceivablesClassify/GetReceivablesRecord?id=' + rpguid,
+	        columns: [[
+	            { field: 'R_PerName', title: '@FMS.Resource.Finance.Finance.Payer' },
+	            { field: 'Date', title: '收款日期', formatter: ChangeDateFormat },
+	            { field: 'SumAmount', title: '收款金额', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' }
+					]]
+	    });
+
+        //添加界面的附件管理
+        var auth = "@(Request.Cookies[FormsAuthentication.FormsCookieName]==null ? string.Empty : Request.Cookies[FormsAuthentication.FormsCookieName].Value)";
+        var ASPSESSID = "@Session.SessionID";
+        $('#CancelRecordOne_div #Receivablesfile_upload').uploadify({
+            width: 105,
+            height: 20,
+            swf: '/Content/uploadify/uploadify.swf',    //FLash文件路径
+            buttonText: '上传合同或凭证',               //按钮文本
+            uploader: '/ReceivablesClassify/Upload',       //处理文件上传Action
+            queueID: 'fileQueue',                        //队列的ID
+            queueSizeLimit: 10,                          //队列最多可上传文件数量，默认为999
+            auto: false,                                 //选择文件后是否自动上传，默认为true
+            multi: true,                                 //是否为多选，默认为true
+            removeCompleted: true,                       //是否完成后移除序列，默认为true
+            fileSizeLimit: '4MB',                        //单个文件大小，0为无限制，可接受KB,MB,GB等单位的字符串值
+            fileTypeDesc: 'Image Files',                 //文件描述
+            fileTypeExts: '*.gif; *.jpg; *.png; *.bmp;*.tif;*.doc;*.xls;*.zip',  //上传的文件后缀过滤器
+            onQueueComplete: function (event, data) {                 //所有队列完成后事件
+                //ShowUpFiles($("#Attachment_GUID").val(), "div_files");  //完成后更新已上传的文件列表
+                FileFlag = true;
+                $('#RR_List').datagrid("reload");
+            },
+            onUploadStart: function (file) {
+                $("#CancelRecordOne_div #Receivablesfile_upload").uploadify("settings", 'formData', { 'folder': '政策法规', 'guid': $("#GUID").val(), 'ASPSESSID': ASPSESSID, 'AUTHID': auth }); //动态传参数
+            },
+            onUploadError: function (event, queueId, fileObj, errorObj) {
+                console.log(errorObj);
+                FileFlag = false;
+            }
+        });
+    });
+
+    function checkDeclareCustomer() {
+        $("#CancelRecordOne_div").after("<div id='WWinReceivablesDeclareCustomer'></div>");
+        $("#WWinReceivablesDeclareCustomer").dialog({
+            title: ' ',
+            width: 800,
+            height: 378,
+            onClose: function () {
+                $("#WWinReceivablesDeclareCustomer").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { checkDeclareCustomerNextPage(); } }]
+        });
+
+        $('#WWinReceivablesDeclareCustomer').dialog("refresh", "/ReceivablesClassify/GetReceivablesDeclareCustomer/");
+    }
+    function checkDeclareCustomerNextPage() {
+        var items = $('#ChooseReceivablesDeclareCustomer_List').datagrid('getChecked');
+        $.each(items, function (index, item) {
+            $('#IE_GUID').val(item.GUID);
+            $('#flag').val("从预收客户款列表获取");
+        });
+        $("#WWinReceivablesDeclareCustomer").dialog("destroy");
+    }
+
+    function checkDeclareDeposit() {
+        $("#CancelRecordOne_div").after("<div id='WinReceivablesDeclareDeposit'></div>");
+        $("#WinReceivablesDeclareDeposit").dialog({
+            title: ' ',
+            width: 800,
+            height: 378,
+            onClose: function () {
+                $("#WinReceivablesDeclareDeposit").dialog("destroy");
+            },
+            buttons: [{ text: '提交', handler: function () { checkDeclareDepositNextPage(); } }]
+        });
+
+        $('#WinReceivablesDeclareDeposit').dialog("refresh", "/ReceivablesClassify/GetReceivablesDeclareDeposit/");
+	}
+	function checkDeclareDepositNextPage() {
+	    var items = $('#ChooseReceivablesDeclareDeposit_List').datagrid('getChecked');
+	    $.each(items, function (index, item) {
+	        $('#IE_GUID').val(item.GUID);
+	        $('#flag').val("从押金与暂支付列表获取");
+	    });
+	    $("#WinReceivablesDeclareDeposit").dialog("destroy");
+	}
+</script>
+

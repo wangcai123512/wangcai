@@ -1,0 +1,226 @@
+﻿    @{
+        ViewBag.Title = "TermsOfUse";
+        Layout = "~/Views/Shared/_LoginLayout_New.cshtml";
+    }
+    <script type="text/javascript" src="@Url.Content("~/js/jquery.qrcode.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/js/webuploader.js")"></script>
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/webuploader.css")"/>
+ 
+    <div style="width: 100%;height:auto;border: 1px solid #DDDDDD">    
+        <div style="margin-top: 2%;margin-left: 1%;">
+            <h4 class="modal-title" id="fileuploadModalLabel">Net-Accounting</h4>
+        </div>
+        <hr style="border:1px double #e8e8e8" />
+        <div id="uploader" class="wu-example">
+            <!--隐藏域-->
+            <input type="hidden" id="belongid" name="belongid" value="@ViewData["belongid"]">
+            <input type="hidden" id="timestamp" name="timestamp" value="@ViewData["timestamp"]" >
+            <input type="hidden" id="number" name="number" value="@ViewData["number"]">
+            <!--用来存放文件信息-->
+            <div class="btns">
+                <table>
+                    <tr>
+                        <td>                      
+                            <div id="picker" style="margin-left:30px;margin-top:30px">选择文件</div>
+                        </td>
+                        <td>
+                            <div id="thelist" class="uploader-list" style="margin-top:20px" ></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div style="margin-top: 5%;margin-bottom: 2%;margin-left: 75%;">
+                <button id="ASubmitBtn" class="btn btn-primary" type="button" onclick="ASubmitBtn()">提交</button>
+            </div>
+        </div>
+    </div>
+    <!--提交之后上传之前的名称提交model-->
+    <div class="modal fade" id="editunifiednameModal" tabindex="-1" role="dialog" aria-labelledby="editunifiednameModal"
+                    aria-hidden="true">
+           <div class="modal-dialog" >
+                 <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    文件名称
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <div  class="row">
+                                    <form class="nameform" id="name_Form" method="post"> 
+                                                <div class="col-md-12" style="text-align: center">
+                                                    <div class="col-md-3" style="text-align: center">
+                                                        <div class="form-group">
+                                                            <div class="input-group input-group-sm" style="margin: 0">
+                                                                <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;附&nbsp;件&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                                               <input type="text" id="TempFileNameFirst" name="TempFileNameFirst" class=" form-control " maxlength="10"
+                                                                     required style="width:200px" />                                          
+                                                             
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    关闭
+                                </button>
+                                <button id="ctlBtn" class="btn btn-primary" type="button">
+                                    上传
+                                </button>
+                            </div>
+                 </div>
+               <!-- /.modal-content -->
+          </div>
+    </div>
+    <script type="text/javascript">
+        //页面初始化，不断计算当前页面时间有没有过期
+        $(document).ready(function () {
+            var timestamp = $("#timestamp").val();
+            var number = $("#number").val();
+            window.iCount = window.setInterval(function () { Invalid(timestamp, number); }, 20000);
+        });
+        function Invalid(timestamp, number) {
+            var date = new Date().getTime();
+            var timestamp = timestamp;
+            var lastdate = date - timestamp;
+            //计算出小时数
+            var leave1 = lastdate % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000))
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000)        //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000))
+            if (minutes > 50) {
+                $("#ctlBtn").attr("disabled", "disabled");
+                alert("您的二维码已过期，请重新打开扫描！");
+            }
+        }
+        //点击提交按钮弹出生成文件名model
+        function ASubmitBtn() {
+            var childNum = document.getElementById('thelist').children.length;
+            if (childNum == 0) {
+                alert("请选择文件");
+            } else {
+                $('#editunifiednameModal').modal({ show: true, backdrop: 'static' });
+                $(".boxed-layout").css("padding-right", "0px");
+            }
+        }
+        // 文件上传
+        jQuery(function () {
+
+            var $ = jQuery,
+                    $list = $('#thelist'),
+                    $btn = $('#ctlBtn'),
+                    state = 'pending',
+                    uploader;
+
+            uploader = WebUploader.create({
+
+                // 不压缩image
+                resize: false,
+
+                // swf文件路径
+                swf: '../webuploader/Uploader.swf',
+
+                // 文件接收服务端。
+                server: '/InternalAPI/FileUpload',
+
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: {
+                    id: '#picker',
+                    multiple: true
+                },
+                //fileSingleSizeLimit:,
+                accept: {
+                    title: '文件类型',
+                    extensions: 'gif,jpg,jpeg,bmp,png,xls,xlsx,doc,docx',
+                },
+                //50M
+                fileSingleSizeLimit: 50 * 1024 * 1024
+            });
+            uploader.on('fileQueued', function (file) {
+                $list.append('<div id="' + file.id + '" class="item">' +
+                        '<h4 class="info" style="margin-left:20px">' + file.name + '</h4>' + '</div>');
+            });
+            uploader.on('startUpload', function () {
+                //获取当前的记录ID
+                var belongid = $("#uploader  #belongid").val();
+                //获取编辑名称
+                var TempFileNameFirst = $("#editunifiednameModal  #TempFileNameFirst").val();
+                uploader.options.formData.frGuid = belongid;
+                uploader.options.formData.TempFileNameFirst = TempFileNameFirst;
+                $("#uploadMesg").text("上传中");
+            });
+            // 文件上传过程中创建进度条实时显示。
+            uploader.on('uploadProgress', function (file, percentage) {
+                var $li = $('#' + file.id),
+                        $percent = $li.find('.progress .progress-bar');
+
+                // 避免重复创建
+                if (!$percent.length) {
+                    $percent = $('<div class="progress progress-striped active">' +
+                            '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                            '</div>' +
+                            '</div>').appendTo($li).find('.progress-bar');
+                }
+
+                $li.find('p.state').text('文件');
+
+                $percent.css('width', percentage * 100 + '%');
+            });
+
+            uploader.on('uploadAccept', function (file, response) {
+               
+            });
+            uploader.on('uploadSuccess', function (file, response) {
+                $("#uploadMesg").text("");
+                //把上传文件中的文件名删除
+                $('#thelist').empty();
+                //关闭上传合同附件的模态框
+                $('#editunifiednameModal #TempFileNameFirst').val("");
+                $('#editunifiednameModal').modal('hide');
+                $('#AttachmentImportModal').modal('hide');
+            });
+            uploader.on('uploadError', function (file, reason) {
+            });
+            uploader.on('uploadFinished', function (file) {
+                alert('上传成功');
+                $('#editunifiednameModal #TempFileNameFirst').val("");
+                $('#editunifiednameModal').modal('hide');
+                $('#AttachmentImportModal').modal('hide');
+                var fileflag = $('#fileflag').val();
+                CloseAttachmentImportModal();
+
+
+            });
+            uploader.on('uploadComplete', function (file) {
+                $('#' + file.id).find('.progress').fadeOut();
+                /* uploader.reset();*/
+                $("#uploadMesg").text("");
+                //把上传文件中的文件名删除
+                $('#thelist').empty();   
+            });
+            uploader.on('all', function (type) {
+                if (type === 'startUpload') {
+                    state = 'uploading';
+                } else if (type === 'stopUpload') {
+                    state = 'paused';
+                } else if (type === 'uploadFinished') {
+                    state = 'done';
+                }
+            });
+
+            $btn.on('click', function () {
+                if (state === 'uploading') {
+                    uploader.stop();
+                } else {
+                    uploader.upload();
+                }
+            });
+        });
+    </script>

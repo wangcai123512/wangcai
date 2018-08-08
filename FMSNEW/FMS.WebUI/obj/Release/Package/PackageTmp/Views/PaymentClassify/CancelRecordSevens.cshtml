@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "CancelRecordSevens";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%; height: 100%">
+    <div id="CERtoolbar">
+        <div>
+            <a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+            <a id="a4" class="easyui-linkbutton" onclick="GenExpense()">计入费用</a>
+        </div>
+        <div>
+            <form id="CERconditionForm">
+                <table>
+                    <tr>
+                        <td>日期:</td>
+                        <td><input class="easyui-datebox" id="conDateBegin" name="dateBegin" data-options="width:100,panelHeight:'auto'"/>-<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+                    </tr>
+                    <tr>
+                        <td>供应商:</td>
+                        <td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+                    </tr>
+                    <tr>
+                        <td>状态:</td>
+                        <td>
+                            <select class="easyui-combobox" id="conFlag" name="state" data-options="width:207,panelHeight:'auto'">
+                                <option value="应付">应付</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>费用类别:</td>
+                        <td>
+                            <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+                                <option value="财务费用">财务费用</option>
+                            </select>
+                        </td>
+                        <td style="color: red">注：倘若未找到对应的费用记录，请直接计入费用按钮，并且同时销账！</td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+    <table id="CancelExpenseRecord_List"></table>
+</div>
+<div id="WinExpense"></div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+    	$("#WinExpense").dialog({
+			closed: true,
+			title: ' ',
+			width: 800,
+			height: 400,
+			onLoad: function () {
+                $("#Expense_Form #Type").text("记录财务费用");
+	            $("#Expense_Form #InvType").val("财务费用");
+                $("#Choose_dv1").hide();
+                $("#Choose_dv2").show();
+                $("#a5").hide();
+	            $("#a11").hide();
+	            $("#IsubmitE").hide();
+
+	            var row = $("#PR_List").datagrid('getSelected');
+	            $('#Expense_Form #IE_GUID').val(row.RP_GUID);
+	            $('#hidRPer').val(row.RPer);
+	            $("#SumAmount").val(row.SumAmount);
+	            $("#Currency").val(row.Currency);
+	            $("#AffirmDate").datebox('setValue', ChangeDateFormat(row.Date));
+	            $("#Date").datebox('setValue', ChangeDateFormat(row.Date));
+			},
+			buttons: [{
+			    text: '@General.Resource.Common.Save',
+			    handler: function () { IESaveE(); }
+			}]
+		});
+
+	    $("#CancelExpenseRecord_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/ExpenseQuery/GetExpenseList?state=应付'+'&incomeGrp=财务费用',
+	        columns: [[
+                { field: 'ck', checkbox: true, title: '选择' },
+				{ field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.AffirmDate', formatter: DateHandle },
+	            { field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Supplier' },
+	            { field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+	            { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.SumAmount', align: 'right', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+	            { field: "State", title: "@General.Resource.Common.Flag"},
+	            { field: 'Date', title: '@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.ExpiryDate', formatter: DateHandle },
+	            { field: "InvType", title: "@FMS.Resource.Finance.Finance.Expense@FMS.Resource.Finance.Finance.Group" },
+	            { field: 'Remark', title: '@General.Resource.Common.Remark ' }
+			]],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CERtoolbar"
+	    });
+
+	});
+
+    function IESaveE() {
+        var row = $("#PR_List").datagrid('getSelected');
+	    $("#Expense_Form").form('submit', {
+	        url: "/ExpenseRecord/UpdExpenseRecord",
+	        onSubmit: function () {
+	            //表单验证
+	            return $("#Expense_Form").form('validate');
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+	                $.ajax({
+	                    url: '/PaymentClassify/UpdState?id=' + row.RP_GUID,
+	                    type: "POST"
+	                });
+
+	                $.ajax({
+	                    url: '/PaymentClassify/UpdInyType?id=' + row.RP_GUID + '&invtype=筹资活动付款'+ '&typedts=分配股利、利润和偿付利息所支付的款;偿付利息'+ '&ieguid=' + row.RP_GUID,
+	                    type: "POST"
+	                });
+
+	                $("#WinExpense").dialog("destroy");
+	                $("#CancelRecordSevens").dialog("destroy");
+                    $("#CancelRecordSeven").dialog("destroy");
+
+	                $('#PR_List').datagrid("reload");
+	            });
+	        }
+	    });
+	}
+
+	function Search() {
+		$("#CancelExpenseRecord_List").datagrid("load",$("#CERconditionForm").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#CancelExpenseRecord_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#CancelExpenseRecord_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+
+   function GenExpense() {
+    	$("#WinExpense").dialog("open");
+	    $("#WinExpense").dialog("refresh", "/ExpenseRecord/Temporary");
+	}
+</script>
+

@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <title>FMS</title>
+    <meta name="keywords" content="HTML5 Bootstrap 3 Admin Template UI Theme">
+    <meta name="description" content="Fusion - A Responsive HTML5 Admin UI Template Theme">
+    <meta name="author" content="AdminDesigns">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font CSS (Via CDN) -->
+    <!--link rel='stylesheet' type='text/css' href='css/googlefonts.css'-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/vendor/bootstrap/css/bootstrap.min.css")"/>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/vendor.css")"/>
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/theme.css")"/>
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/utility.css")"/>
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/custom.css")"/>
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="@Url.Content("~/img/favicon.ico")"/>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-55837308-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+<body style="margin: 0; padding: 0;">
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>
+<script type="text/javascript" language="javascript">
+    $(function () {
+        if ($.cookie("theme") == undefined) {
+            $.cookie("theme", "default", { path: "/", expires: 7 })
+        }
+        $("#theme").empty();
+        $("#theme").html("<link href='../../Content/EasyUI/themes/" + $.cookie("theme") + "/easyui.css' type='text/css' rel='Stylesheet' />");
+    }
+);
+</script>

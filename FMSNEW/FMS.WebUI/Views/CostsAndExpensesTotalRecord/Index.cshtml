@@ -1,0 +1,275 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_New.cshtml";
+}
+<script type="text/javascript" src="@Url.Content("~/js/views/CostsAndExpensesRecord/common.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/views/CostsAndExpensesRecord/CostsAndExpensesTotalRecord/index.js")"></script>
+
+<div id="main" style="margin-top: 100px;">
+    @Html.Partial("_CostsAndExpensesRecordMenu");
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+        <div id="MAIN" style="background-color: #FFF">
+            <input type="hidden" id="code" name="code" value="@ViewData["Code"]">
+            <div id="content">
+              <div class="row" style="margin-top: 20px;">
+                    <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">总成本与费用</span></div>
+                    <!--根据一级费用科目分类的总成本与费用-->
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="CostsAndExpensesOnceTotalRecord">
+                                        <div class="col-md-1" style="margin-bottom: 0px;width:40px;padding-top:5px">
+                                            从
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 40px; padding-top: 5px">
+                                            至
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px;font-weight:700;margin-top:4px">
+                                            根据一级费用科目分类的总成本与费用
+                                        </div>
+                                        <div class="col-md-2" style="margin-left:40px"> 
+                                            <button onclick="OnceTotalRecordQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--根据二级费用科目分类的总成本与费用-->
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="CostsAndExpensesSecondTotalRecord">
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 40px; padding-top: 5px; ">
+                                            从
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 40px; padding-top: 5px">
+                                            至
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px;width:110px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px; font-weight: 700; margin-top: 4px">
+                                            根据二级费用科目分类的总成本与费用
+                                        </div>
+                                        <div class="col-md-2" style="margin-left:40px">
+                                            <button onclick="SecondTotalRecordQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--总成本与费用比较-->
+                    <div class="col-md-12" style="margin: auto">
+                        <div class="panel panel-visible">
+                            <div class="panel-body pbn">
+                                <div class="col-md-12" style="margin-bottom: 0px">
+                                    <form id="CostsAndExpensesCompareTotalRecord">
+                                        <div class="col-md-1" style="margin-bottom: 0px;width:40px;padding-top:5px">
+                                            从
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px; width: 110px">
+                                            <div class="form-group" style="margin-top: 0px;width:100px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <select id="monthsStart" name="dateBegin" class="form-control report-date"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px; width: 40px; padding-top: 5px">
+                                            至
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 0px; width: 110px">
+                                            <div class="form-group" style="margin-top: 0px;width:100px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <select id="monthsEnd" name="dateEnd" class="form-control report-date"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px; font-weight: 700; margin-top: 4px">
+                                            的总成本与费用比较
+                                        </div>
+                                        <div class="col-md-2" style="margin-left:40px">
+                                            <button onclick="CompareTotalRecordQuery()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold;margin-top:0px;margin-bottom:15px" class="btn btn-primary">
+                                                查询
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+ <!--根据一级费用科目分类的总成本与费用-->
+<div class="modal fade" id="CostsAndExpensesOnceTotalModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    一级费用科目分类的总成本与费用
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <div class="form-group">
+                            <div>
+                                <span style="font-size: 16px">
+                                    公司：
+                                    <b>@ViewData["ChineseFullName"]</b>
+                                    <b>  <button onclick="OnceTotalExcelExport()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导出</button></b>
+                                </span>
+                            </div>
+                            <div style="margin-top:10px;margin-left:45px">
+                                <span style="font-size: 14px;">
+                                    <b>从</b><b><input type="text" id="dateBegin" readonly="readonly" style="width:110px;text-align:center"></b>
+                                    至<b><input type="text" id="dateEnd" readonly="readonly" style="width:110px;text-align:center"></b> 根据一级费用科目分类的总成本与费用
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="onceform">
+                            <tr >
+                                <td style=" width:800px" id="sj">
+                                    <table id="OnceTotalCollectList" style="font-size: 12px;background-color:#F5F5F5;"></table>
+                                    <table id="OnceTotalList" style="font-size: 12px; margin-top: -20px"></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+ <!--根据二级费用科目分类的总成本与费用-->
+<div class="modal fade" id="CostsAndExpensesSecondTotalModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    二级费用科目分类的总成本与费用
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div>
+                        <span style="font-size: 16px">
+                            公司：
+                            <b>@ViewData["ChineseFullName"]</b>
+                            <b>  <button onclick="SecondTotalExcelExport()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary pull-right">导出</button></b>
+                        </span>
+                    </div>
+                    <div style="margin-top:10px;margin-left:45px">
+                        <span style="font-size: 14px;">
+                            <b>从</b><b><input type="text" id="dateBegin" readonly="readonly" style="width:110px;text-align:center"></b>
+                            至<b><input type="text" id="dateEnd" readonly="readonly" style="width:110px;text-align:center"></b>根据二级费用科目分类的总成本与费用
+                        </span>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="secondform">
+                            <tr>
+                                <td style=" width:800px">
+                                    <table id="SecondTotalCollectList" style="font-size: 12px;background-color:#F5F5F5;margin-top:10px" class="asd"></table>
+                                    <table id="SecondTotalList" style="font-size: 12px; margin-top: -20px"></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+ <!-- 每月总成本与费用比较 -->
+<div class="modal fade" id="CostsAndExpensesCompareTotalModel" tabindex="-1" role="dialog" aria-labelledby="ResaleValue"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    每月总成本与费用比较
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="canvas-holder">
+                    <h5 class="bar-title"><span style="font-size: 14px">公司：<b>@ViewData["ChineseFullName"]</b></span></h5>
+                    <h5 class="bar-title" style="margin-top:10px;margin-left:45px">
+                        <span style="font-size: 14px">
+                            <b>从</b><b><input type="text" id="dateBegin" readonly="readonly" style="width:110px;text-align:center"></b>
+                           至<b><input style="width:110px;text-align:center" type="text" id="dateEnd" readonly="readonly"></b>的每月总成本与费用比较
+                        </span>
+
+                    </h5>
+                    <h5 class="bar-title"><span style="font-size: 14px;margin-left:650px">统计货币：<b>@ViewData["Code"]</b></span></h5>
+                    <canvas id="myChart" width="250" height="125"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

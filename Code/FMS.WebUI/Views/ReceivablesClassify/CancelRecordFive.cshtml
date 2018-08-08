@@ -1,0 +1,166 @@
+﻿@{
+    ViewBag.Title = "ChooseReceivablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%; height: 100%">
+    <div id="CIRtoolbar">
+        <div>
+            <a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+            <a class="easyui-linkbutton" onclick="GenIncome()">计入收入</a>
+        </div>
+        <div>
+            <form id="CRT_Form">
+                <table>
+                    <tr>
+                        <td>日期:</td>
+                        <td><input class="easyui-datebox" id="conDateBegin" name="dateBegin" data-options="width:100,panelHeight:'auto'"/>-<input class="easyui-datebox" id="conDateEnd" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+                    </tr>
+                    <tr>
+                        <td>客户:</td>
+                        <td><input class="easyui-combobox" id="conCustomer" name="customer" data-options="width:207,panelHeight:'auto',url:'/InternalAPI/GetPayer',textField:'Name',valueField:'BP_GUID'"/></td>
+                    </tr>
+                    <tr>
+                        <td>状态:</td>
+                        <td>
+                            <select class="easyui-combobox" id="conFlag" name="state" data-options="width:207,panelHeight:'auto'">
+                                <option value="应收">应收</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>收入类别:</td>
+                        <td>
+                            <select class="easyui-combobox" id="conIncomeGrp" name="incomeGrp" data-options="width:207,panelHeight:'auto'">
+                                <option value="投资收入">投资收入</option>
+                            </select>
+                        </td>
+                        <td style="color: red">注：倘若未找到对应的收入记录，请按计入收入按钮，此时提交后将直接销账！</td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+    <table id="CRT_List"></table>
+</div>
+<div id="WinIncome"></div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+    	$("#WinIncome").dialog({
+	        closed: true,
+	        title: ' ',
+	        width: 800,
+	        height: 400,
+	        onLoad: function () {
+	            $("#Income_Form #Type").text("记录投资收入");
+	            $("#Income_Form #InvType").val("投资收入");
+	            $("#Choose_dv1").hide();
+	            $("#Choose_dv2").show();
+
+	            var row = $("#RR_List").datagrid('getSelected');
+	            $('#Income_Form #IE_GUID').val(row.RP_GUID);
+	            $('#hidRPer').val(row.RPer);
+	            $("#SumAmount").val(row.SumAmount);
+	            $("#Currency").val(row.Currency);
+	            $("#AffirmDate").datebox('setValue', ChangeDateFormat(row.Date));
+	            $("#Date").datebox('setValue', ChangeDateFormat(row.Date));
+	            $("#a5").hide();
+	            $("#a11").hide();
+	            $("#IsubmitI").hide();
+	        },
+	        buttons: [{
+	            text: '@General.Resource.Common.Save',
+	            handler: function () { IESaveI(); }
+	        }]
+	    });
+
+	    $("#CRT_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/IncomeQuery/GetIncomeList?state=应收'+'&incomeGrp=投资收入',
+	        columns: [[
+                { field: 'ck', checkbox: true, title: '选择' },
+				{ field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate',formatter: DateHandle,remoteSort:true },
+				{ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Client' },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.SumAmount', align: 'right', formatter: DecimalFmter },
+				{ field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+				{ field: "State", title: "@General.Resource.Common.Flag"},
+                { field: "InvType", title: "@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Group"},
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.ClosingDate', formatter: DateHandle },
+				{ field: 'Remark', title: '@General.Resource.Common.Remark ' }
+			]],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CIRtoolbar"
+	    });
+
+	});
+
+    	function IESaveI() {
+	    var row = $("#RR_List").datagrid('getSelected');
+	    $("#Income_Form").form('submit', {
+	        url: "/IncomeRecord/UpdIncomeRecord",
+	        onSubmit: function () {
+	            //表单验证
+	            return $("#Income_Form").form('validate');
+	        },
+	        success: function (data) {
+	            $.messager.alert('Message', $.parseJSON(data).Msg, 'info',function() {
+	                $.ajax({
+	                    url: '/ReceivablesClassify/UpdState?id=' + row.RP_GUID,
+	                    type: "POST"
+	                });
+
+	                $.ajax({
+	                    url: '/ReceivablesClassify/UpdRecInyType?id=' + row.RP_GUID + '&invtype=投资活动收款' + '&typedts=取得投资收益的收款' + '&ieguid=' + row.RP_GUID,
+	                    type: "POST"
+	                });
+
+	                $("#WinIncome").dialog("destroy");
+	                $("#CancelRecordFive").dialog("destroy");
+	                $('#RR_List').datagrid("reload");
+	            });
+
+	        }
+	    });
+	}
+
+	function Search() {
+		$("#CRT_List").datagrid("load",$("#CRT_Form").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#CRT_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['SumAmount'];
+        }
+        var p = $('#CRT_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+
+   function GenIncome() {
+       $("#WinIncome").dialog("open");
+       $("#WinIncome").dialog("refresh", "/IncomeRecord/Temporary");
+     }
+</script>
+

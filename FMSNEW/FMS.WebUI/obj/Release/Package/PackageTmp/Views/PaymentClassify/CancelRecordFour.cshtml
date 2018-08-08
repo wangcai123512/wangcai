@@ -1,0 +1,97 @@
+﻿@{
+    ViewBag.Title = "CancelRecordFour";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+<div style="margin-top: -6px; width: 100%;height: 100%">
+<div id="CERtoolbar">
+	<div>
+		<a class="easyui-linkbutton" onclick="Search()">@General.Resource.Common.Search</a>
+	</div>
+	<div>
+	    <form id="CERconditionForm">
+	        <table>
+	            <tr>
+	                <td>日期:</td>
+	                <td><input class="easyui-datebox" name="dateBegin" data-options="width:100,panelHeight:'auto'"/>-<input class="easyui-datebox" name="dateEnd" data-options="width:100,panelHeight:'auto'"/></td>
+	            </tr>
+	            <tr>
+	                <td>状态:</td>
+	                <td>
+	                    <select class="easyui-combobox" name="state" data-options="width:207,panelHeight:'auto'">
+	                        <option value="未付">未付</option>
+	                    </select>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>支出类别:</td>
+	                <td>
+	                    <select class="easyui-combobox" name="paymentGrp" data-options="width:207,panelHeight:'auto'">
+	                        <option value="投资支出">投资支出</option>
+	                    </select>
+	                </td>
+	            </tr>
+	        </table>
+	    </form>
+	</div>
+</div>
+<table id="PaymentDeclareCostSpending_List"></table>
+</div>
+<script language="javascript" type="text/javascript">
+
+	var DateHandle = function(value, row, index) {
+	    if (value == "/Date(-62135596800000)/") {
+	        return "";
+	    } else {
+	        return ChangeDateFormat(value);
+	    }
+	};
+
+	$(function () {
+	    $("#PaymentDeclareCostSpending_List").datagrid({
+	        onLoadSuccess:compute,
+	        url: '/PaymentDeclareCostSpending/GetList?state=未付'+'&paymentGrp=投资支出',
+            columns: [[
+                    { checkbox: true },
+                    { field: 'Date', title: '申请日期', formatter: ChangeDateFormat },
+                    { field: 'RPerName', title: '收款方' },
+                    { field: 'Amount', title: '申请金额', align: 'right', formatter: DecimalFmter },
+                    { field: 'Currency', title: '货币' },
+                    { field: "InvType", title: '支出类别' },
+                    { field: 'Remark', title: '备注' },
+                    { field: 'RPer', title: '', hidden: true },
+                    { field: 'State', title: '状态', align: 'center'}
+                ]
+            ],
+	        showFooter: true,
+	        pagination: true,
+	        rownumbers: true,
+	        singleSelect: true,
+            selectOnCheck: true,
+            checkOnSelect: true,
+            fit:true,
+	        toolbar: "#CERtoolbar"
+	    });
+
+	});
+
+	function Search() {
+		$("#PaymentDeclareCostSpending_List").datagrid("load",$("#CERconditionForm").serializeObject());
+	}
+	
+    function compute() {
+        var rows = $('#PaymentDeclareCostSpending_List').datagrid('getRows')//获取当前的数据行
+        var totalsumamount = 0;
+        for (var i = 0; i < rows.length; i++) {
+            totalsumamount += rows[i]['Amount'];
+        }
+        var p = $('#PaymentDeclareCostSpending_List').datagrid('getPager');
+        $(p).pagination({  
+            displayMsg: '当前'+rows.length+ '条记录总金额为{ '+Money(totalsumamount)+' }',
+        });  
+    }
+    function Money(price ) {
+         if(price > 0) { var priceString = price.toString(); var priceInt = parseInt(price); var len = priceInt.toString().length; var num = len / 3; var remainder = len % 3; var priceStr = ''; for(var i = 1; i <= len; i++) { priceStr += priceString.charAt(i-1); if(i == (remainder) && len > remainder) priceStr += ','; if((i - remainder) % 3 == 0 && i < len && i > remainder) priceStr += ','; } if(priceString.indexOf('.') < 0) { priceStr = priceStr + '.00'; } else { priceStr += priceString.substr(priceString.indexOf('.')); if(priceString.length - priceString.indexOf('.') - 1 < 2) { priceStr = priceStr + '0'; } } return  priceStr; } else{ return price; } 
+    }
+</script>
+

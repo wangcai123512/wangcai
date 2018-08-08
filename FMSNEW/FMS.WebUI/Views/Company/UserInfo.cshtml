@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "UserInfo";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_User
+@*<h2>CompanyInfo</h2>*@
+<form id="UserInfoForm">
+<input type="hidden" name="U_GUID" id="U_GUID" value="@ViewData["U_GUID"]" />
+<input type="hidden" name="C_GUID" id="C_GUID" value="@Model.C_GUID"/>
+<table id="UserInfoList">
+<tr>
+<td>@General.Resource.Common.UserName:</td>
+<td><input class="easyui-validatebox" id="UserName" name="UserName" data-options="required:true" value="@Model.UserName"/></td>
+</tr>
+<tr>
+<td>@Common.Resource.RolePermission.LoginName:</td>
+<td><input class="easyui-validatebox" id="LoginName" name="LoginName" data-options="required:true" value="@Model.LoginName"/></td>
+</tr>
+<tr>
+<td>@General.Resource.Common.Password:</td>
+<td><input class="easyui-validatebox" id="Password" name="Password" data-options="required:true" value="@Model.Password"/></td>
+</tr>
+</table>
+</form>
+

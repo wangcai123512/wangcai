@@ -1,0 +1,303 @@
+﻿@using System.Web.Security
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+@model FMS.Model.T_Tax
+@*<script type="text/javascript" src="http://www.jeasyui.com/easyui/datagrid-groupview.js"></script>*@
+<script src="@Url.Content("~/Scripts/datagrid-groupview.js")" type="text/javascript"></script>
+
+<div id="CurrencyAndExchangeRate_div">
+    <form id="f1">
+            <table><tr>
+        <td>我选择的统计货币是：</td>
+        <td><input id="Currency" name="Currency" data-options="required:true"/></td>
+    </tr></table>
+    </form>
+    <form id="CurrencyAndExchangeRate_form">
+        <table id="CurrencyAndExchangeRate_table" class="easyui-datagrid" title="汇率更新" style="width: 700px; height: auto"
+               data-options="
+                iconCls: 'icon-edit',
+                singleSelect: true,
+                toolbar: '#tb',
+                url: 'datagrid_data1.json',
+                method: 'get',
+                onClickCell: onClickCell
+            ">
+            <thead>
+            <tr>
+                <th data-options="field:'GUID',width:80,hidden:true">GUID</th>
+                <th data-options="field:'Date',width:80,editor:{type:'datebox',options:{}}">更新日期</th>
+                <th data-options="field:'FAmount',width:80,editor:{type:'numberbox',options:{precision:2,required: true}}">金额</th>
+                <th data-options="field:'FCurrency',width:80">货币</th>
+                <th data-options="field:'DUI',width:80">兑换</th>
+                <th data-options="field:'TAmount',width:80,editor:{type:'numberbox',options:{precision:2,required: true}}">金额</th>
+                <th data-options="field:'TCurrency',width:80,hidden:false,
+                        formatter:function(value,row){
+                            return row.Name;
+                        },
+                        editor:{
+                            type:'combobox',
+                            options:{
+                                editable:false,
+                                required:true,
+                                url:'/InternalAPI/GetUserCurrency',
+                                textField:'text',
+                                valueField:'value'
+                            }}">货币</th>
+            </tr>
+            </thead>
+        </table>
+
+        <div id="tb" style="height: auto">
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">新增</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">删除</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">保存</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" onclick="reject()">撤销</a>
+        </div>
+    </form>
+    <a id="CurrencyAndExchangeRate_submit" class="easyui-linkbutton" onclick="CurrencyAndExchangeRate_submit()">@General.Resource.Common.Save</a>
+
+    <table id="CurrencyAndExchangeRate_list" class="easyui-datagrid" title="查看汇率更新记录" style="width: 300px; height: 250px"
+           data-options="
+                singleSelect:true,
+                collapsible:true,
+                rownumbers:true,
+                fitColumns:true,
+                data:datasource,
+                view:groupview,
+                groupField:'Date',
+                groupFormatter:function(value,rows){
+                    return ChangeDateFormat(value);
+                }
+            ">
+        <thead>
+        <tr>
+            <th data-options="field:'Date',width:70,formatter: ChangeDateFormat">日期</th>
+            <th data-options="field:'FAmount',width:100,align:'right',formatter: DUIHUAN">汇率更新</th>
+            <th data-options="field:'FCurrency',width:80,align:'center'">统计货币</th>
+            <th data-options="field:'TAmount',width:100,align:'right',hidden:true">金额</th>
+            <th data-options="field:'TCurrency',width:80,hidden:true">货币</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    var DUIHUAN = function (value, row) {
+        return row.FAmount + row.FCurrency + "=" + row.TAmount + row.TCurrency;
+    }
+    var DateHandle = function (value, row, index) {
+        if (value == "/Date(-62135596800000)/") {
+            return "";
+        } else {
+            return ChangeDateFormat(value);
+        }
+    };
+    var StandardCoin;
+    var CommonCurrency;
+    var datasource;
+    $(function () {
+        $.ajax({
+            url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateLists",
+            async: true,
+            type: "post",
+            dataType: "json",
+            success: function (d) { datasource = d; }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetUserCurrency",
+            async: false,
+            dataType: "json",
+            success: function(d) {
+                CommonCurrency = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCompanySetting",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                StandardCoin = d.StandardCoin;
+            }
+        });
+
+        $("#Currency").combobox({
+            editable: false,
+            required: true,
+            data: CommonCurrency,
+            onLoadSuccess: function (data) {
+                $("#Currency").combobox("setValue", StandardCoin);
+            }
+        });
+    });
+
+    function NewRP_GUID() {
+        var RPGUID;
+        $.ajax({
+            url: "/ReceivablesRecord/NewGuid",
+            async: false,
+            dataType: "text",
+            success: function (d) {
+                RPGUID = d.toString();
+            }
+        });
+        return RPGUID;
+    }
+
+    var editIndex = undefined;
+    function endEditing() {
+        if (editIndex == undefined) { return true }
+        if ($('#CurrencyAndExchangeRate_table').datagrid('validateRow', editIndex)) {
+            var ed = $('#CurrencyAndExchangeRate_table').datagrid('getEditor', { index: editIndex, field: 'TCurrency' });
+            var name = $(ed.target).combobox('getText');
+            $('#CurrencyAndExchangeRate_table').datagrid('getRows')[editIndex]['Name'] = name;
+            $('#CurrencyAndExchangeRate_table').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#CurrencyAndExchangeRate_table').datagrid('selectRow', index)
+                    .datagrid('beginEdit', index);
+                var ed = $('#CurrencyAndExchangeRate_table').datagrid('getEditor', { index: index, field: field });
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#CurrencyAndExchangeRate_table').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    function append() {
+        if ($("#f1").form('validate')) {
+            if (endEditing()) {
+                $('#CurrencyAndExchangeRate_table').datagrid('appendRow', { FCurrency: $("#Currency").combobox('getValue'), GUID: NewRP_GUID(), DUI: "兑换" });
+                editIndex = $('#CurrencyAndExchangeRate_table').datagrid('getRows').length - 1;
+                $('#CurrencyAndExchangeRate_table').datagrid('selectRow', editIndex)
+                    .datagrid('beginEdit', editIndex);
+            }
+        } else {
+            alert("请先选择统计货币！");
+        }
+    }
+    function removeit() {
+        if (editIndex == undefined) { return }
+        $('#CurrencyAndExchangeRate_table').datagrid('cancelEdit', editIndex)
+            .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+    function accept() {
+        if (endEditing()) {
+            $('#CurrencyAndExchangeRate_table').datagrid('acceptChanges');
+        }
+    }
+    function reject() {
+        $('#CurrencyAndExchangeRate_table').datagrid('rejectChanges');
+        editIndex = undefined;
+    }
+    function getChanges() {
+        var rows = $('#CurrencyAndExchangeRate_table').datagrid('getChanges');
+        alert(rows.length + ' rows are changed!');
+    }
+    $.extend(
+        $('#CurrencyAndExchangeRate_table').datagrid.defaults.editors, {
+            datebox: {
+                init: function (container, options) {
+                    var input = $('<input type="text">').appendTo(container);
+                    input.datebox(options);
+                    return input;
+                },
+                destroy: function (target) {
+                    $(target).datebox('destroy');
+                },
+                getValue: function (target) {
+                    return $(target).datebox('getValue');
+                },
+                setValue: function (target, value) {
+                    $(target).datebox('setValue', formatDatebox(value));
+                },
+                resize: function (target, width) {
+                    $(target).datebox('resize', width);
+                }
+            }
+        });
+    function formatDatebox(value) {
+        if (value == null || value == '') {
+            return '';
+        }
+        var dt = parseToDate(value); //关键代码，将那个长字符串的日期值转换成正常的JS日期格式 
+        return dt.format("yyyy-MM-dd"); //这里用到一个javascript的Date类型的拓展方法，这个是自己添加的拓展方法，在后面的步骤3定义  
+    }
+
+    function parseToDate(value) {
+        if (value == null || value == '') {
+            return undefined;
+        }
+
+        var dt;
+        if (value instanceof Date) {
+            dt = value;
+        }
+        else {
+
+            if (!isNaN(value)) {
+                dt = new Date(value);
+            }
+            else if (value.indexOf('/Date') > -1) {
+                value = value.replace(/\/Date(−?\d+)\//, '$1');
+                dt = new Date();
+                dt.setTime(value);
+            } else if (value.indexOf('/') > -1) {
+                dt = new Date(Date.parse(value.replace(/-/g, '/')));
+            } else {
+                dt = new Date(value);
+            }
+        }
+        return dt;
+    }
+
+    function CurrencyAndExchangeRate_submit() {
+        accept();
+        var rows = $('#CurrencyAndExchangeRate_table').datagrid('getRows');
+        $.each(rows, function (index, item) {
+            var guid = item.GUID;
+            var date = item.Date;
+            var famount = item.FAmount;
+            var fcurrency = item.FCurrency;
+            var tamount = item.TAmount;
+            var tcurrency = item.TCurrency;
+            $.ajax({
+                url: '/CurrencyAndExchangeRateManagement/UpdCurrencyAndExchangeRate?guid=' + guid + '&date=' + date + '&famount=' + famount + '&fcurrency=' + fcurrency + '&tamount=' + tamount + '&tcurrency=' + tcurrency,
+                type: "POST",
+                beforeSend: function () {
+                    //表单验证
+                    return $("#CurrencyAndExchangeRate_form").form('validate');
+                },
+                success: function (data) {
+                    //成功则刷新表
+                    if ($.parseJSON(data).Result) {
+                        $('#CurrencyAndExchangeRate_table').datagrid('loadData', { total: 0, rows: [] });
+//                        $.ajax({
+//                            url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateLists",
+//                            async: false,
+//                            dataType: "json",
+//                            success: function (d) { data = d; }
+//                        });
+//                        $("#CurrencyAndExchangeRate_list").datagrid("reload");
+                        $('#CurrencyAndExchangeRate_list').datagrid({ url: "/CurrencyAndExchangeRateManagement/GetCurrencyAndExchangeRateLists",method: "post" });
+                    }
+                },
+                error: errorHandle
+            });
+
+        });
+    }
+</script>
+
+

@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Attachment";
+    Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+@model FMS.Model.T_Attachment
+           
+<form id="Attachenmtform"  method="post">
+<table class="Props">
+    <input type="hidden" name="A_GUID" value="@Model.A_GUID" />
+    <tr>
+        <td>文件名</td>
+        <td><input name="FileName" class="easyui-validatebox" value="@Model.FileName" data-options="required:true"/></td>
+    </tr>
+    <tr>
+        <td>备注</td>
+        <td><input name="FileRemark" class="easyui-validatebox" value="@Model.FileRemark" data-options="required:true"/></td>
+    </tr>
+</table >          
+</form>
+
+

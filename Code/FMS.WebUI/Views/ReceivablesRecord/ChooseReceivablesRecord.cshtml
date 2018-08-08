@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "ChooseReceivablesRecord";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+<input type="hidden" name="C_GUID" id="C_GUID" value="@ViewData["C_GUID"]"/>
+
+<div style="margin-left: -6px; margin-top: -6px; width: auto; height: 308px;">
+     <table id="ChooseReceivablesRecord_List"></table>
+</div>
+
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $("#ChooseReceivablesRecord_List").datagrid({
+            url: '/ReceivablesRecord/GetChooseReceivablesRecord/',
+            columns: [
+                [
+                    { field: 'ck', checkbox: true, title: '选择' },
+                    { field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payer', align: 'center', width: 70 },
+                    { field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo', align: 'center', width: 100 },
+                    { field: 'InvType', title: '收入类别', align: 'center', width: 100 },
+                    { field: 'AffirmDate', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate', align: 'center',formatter: ChangeDateFormat ,width: 70 },
+                    //{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.AffirmDate', align: 'center', formatter: ChangeDateFormat, width: 70 },
+                    { field: 'Money', title: '@FMS.Resource.Finance.Finance.Proceeds@FMS.Resource.Finance.Finance.Amount', align: 'center', formatter: DecimalFmter, width: 70 }
+                ]
+            ],
+            fit: true,
+            pagination: true,
+            rownumbers: true,
+            singleSelect: false,
+            selectOnCheck: true,
+            checkOnSelect: true
+        });
+    });
+</script>

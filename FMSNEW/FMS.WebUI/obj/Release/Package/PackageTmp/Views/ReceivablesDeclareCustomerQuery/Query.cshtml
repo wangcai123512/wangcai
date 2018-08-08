@@ -1,0 +1,1153 @@
+﻿@{ ViewBag.Title = "Query"; Layout = "~/Views/Shared/_Layout_New.cshtml"; }
+<script type="text/javascript" src="@Url.Content("~/js/jquery.qrcode.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/webuploader.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/js/Attachment.js")"></script>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/webuploader.css")"/>
+<script type="text/javascript">
+    $(document).ready(function () {
+        InitalDateInput();
+        var rper;
+        var currency;
+        var Searcurrency;
+        $.ajax({
+            url: "/InternalAPI/GetPartnersAll",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                rper = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetSearchCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                Searcurrency = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+
+        $('#customer').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+        });
+        $("#customer").multiselect('dataprovider', rper);
+        $("#customer").val("").multiselect('refresh');
+
+
+        $('#currency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+        });
+        $("#currency").multiselect('dataprovider', Searcurrency);
+        $("#currency").val("").multiselect('refresh');
+
+
+        $('#state').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+
+        });
+        $("#state").val("").multiselect('refresh');
+
+        $('#incomeGrp').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ''
+
+        });
+        $("#incomeGrp").val("").multiselect('refresh');
+
+        //////////////////
+
+        var rper;
+        var currency;
+        $.ajax({
+            url: "/InternalAPI/GetCustomer",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                rper = d;
+            }
+        });
+
+        $.ajax({
+            url: "/InternalAPI/GetCommonCurrency",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                currency = d;
+            }
+        });
+
+        $('#RPer').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false
+        });
+        $("#RPer").multiselect('dataprovider', rper);
+
+
+        $('#Currency').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false
+        });
+        $("#Currency").multiselect('dataprovider', currency);
+
+        $('#TaxationType').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false
+
+        });
+
+        var pat;
+        $.ajax({
+            url: "/BusinessUnitSetting/GetBusinessTypeList",
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                pat = d;
+            }
+        });
+
+        $('#Business_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: "请选择业务单元"
+        });
+        $("#Business_GUID").multiselect('dataprovider', pat);
+        $("#Business_GUID").val("").multiselect("refresh");
+
+        $('#SubBusiness_GUID').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $("#Business_GUID").change(function () {
+            var guid = $("#Business_GUID").val();
+            var subList
+            $.ajax({
+                url: "/BusinessUnitSetting/GetBusinessChildTpyList?GUID=" + guid,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    subList = d;
+                }
+            });
+            $("#SubBusiness_GUID").multiselect('dataprovider', subList);
+            $("#SubBusiness_GUID").val("").multiselect("refresh");
+
+        });
+        $('#Business_GUID1').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: "请选择业务单元"
+        });
+        $("#Business_GUID1").multiselect('dataprovider', pat);
+        $("#Business_GUID1").val("").multiselect("refresh");
+
+        $('#SubBusiness_GUID1').multiselect({
+            buttonWidth: '100%',
+            maxHeight: '100%',
+            enableFiltering: false,
+            includeFilterNewBtn: false,
+            nonSelectedText: ""
+        });
+        $("#Business_GUID1").change(function () {
+            var guid = $("#Editdialog #Business_GUID1").val();
+            var subList
+            $.ajax({
+                url: "/BusinessUnitSetting/GetBusinessChildTpyList?GUID=" + guid,
+                async: false,
+                dataType: "json",
+                success: function (d) {
+                    subList = d;
+                }
+            });
+            $("#SubBusiness_GUID1").multiselect('dataprovider', subList);
+            $("#SubBusiness_GUID1").val("").multiselect("refresh");
+
+        });
+    });
+</script>
+<div id="main" style="margin-top: 100px;">
+    <aside id="sidebar_left" style="font-size: 16px;">
+        <div class="sidebar-menu" style="margin-top: 10px">
+            <ul class="nav" style="">
+                <li> <a onclick="javascript:window.location = '/Common/Index'" href="javascript:window.location = '/Common/Index'"><span class="sidebar-title" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;font-weight:bold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;首页</span></a></li>
+                <li> <a onclick="javascript:window.location = '/ReceivablesRecord/ReceivablesRecord'" href="javascript:window.location = '/ReceivablesRecord/ReceivablesRecord'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span> <span class="sidebar-title" style="font-size: 14px">记录收款</span> <span class="sidebar-title-tray"></span> </a> </li>
+                <li> <a onclick="javascript:window.location = '/ReceivablesClassify/Index'" href="javascript:window.location = '/ReceivablesClassify/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">查询收款与销账</span></a> </li>
+                <li> <a onclick="javascript:window.location = '/ReceivablesDeclareCustomer/Index'" href="javascript:window.location='/ReceivablesDeclareCustomer/Index'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px">申报收入外收款</span></a> </li>
+                <li class="active"> <a onclick="javascript:window.location = '/ReceivablesDeclareCustomerQuery/Query'" href="javascript:window.location='/ReceivablesDeclareCustomer/Query'"><span class="glyphicons glyphicons-chevron-right" style="font-size: 14px"></span><span class="sidebar-title" style="font-size: 14px;color: #08C">查询收入外收款</span></a> </li>
+            </ul>
+        </div>
+    </aside>
+    <!-- Start: Content -->
+    <section id="content_wrapper">
+    <div id="MAIN" style="background-color: #FFF" >
+    <div id="content">
+        <div class="row" style="margin-top: 20px;height:2500px">
+        <div class="col-md-12" style="margin-bottom: 20px; text-align: center"><span style="font-size: 30px; font-weight: 900; color: #074592; text-decoration: underline">查询收入外收款记录</span></div>
+            <div class="col-md-12" style="margin: auto">
+                <div class="panel panel-visible">
+                    <div class="panel-body pbn">
+                        <div id="toolbar">
+                            <div class="col-md-12" style="margin-bottom: 0px">
+                                <form>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-7" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">收款日期&nbsp;  </span>
+                                                    <input type="text" id="dateBegin" name="dateBegin" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1" style="margin-bottom: 0px">
+                                            至
+                                        </div>
+                                        <div class="col-md-4" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <input type="text" id="dateEnd" name="dateEnd" class="form-control datepicker mtn" required=""/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group" style="margin-top: 0px">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;付款方&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    <select id="customer" name="customer" required="true">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                                <div class="col-md-12" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">业务单元</span>
+                                                            <select id="Business_GUID" name="Business_GUID" required="true">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                            <div class="col-md-6" style="margin-bottom: 0px">
+                                                <div class="col-md-12" style="margin-bottom: 0px">
+                                                    <div class="form-group" style="margin-top: 0px">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;业务子单元&nbsp;&nbsp;</span>
+                                                            <select id="SubBusiness_GUID" name="SubBusiness_GUID" required="true">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>  
+
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">收款类别&nbsp; </span>
+                                                    <select id="incomeGrp" name="incomeGrp" required="true">
+                                                        <option value="">全部</option>
+                                                        <option value="预收客户账款" selected="selected">预收客户账款</option>
+                                                        <option value="收回公司支出的暂支借款">收回公司支出的暂支借款</option>
+                                                        <option value="收回公司支出的押金">收回公司支出的押金</option>
+                                                        <option value="收到的其他公司支付的押金">收到的其他公司支付的押金</option>
+                                                        <option value="收取投资款(注册资本金额以内部分)">收取投资款(注册资本金额以内部分)</option>
+                                                        <option value="收取投资款(超出注册资本金额部分)">收取投资款(超出注册资本金额部分)</option>
+                                                        <option value="短期借款所获得的收款">短期借款所获得的收款</option>
+                                                        <option value="长期借款所获得的收款">长期借款所获得的收款</option>
+                                                        <option value="收回短期投资的本金金额内的款">收回短期投资的本金金额内的款</option>
+                                                        <option value="收回长期债券投资的本金金额内的款">收回长期债券投资的本金金额内的款</option>
+                                                        <option value="收回长期股权投资的本金金额内的款">收回长期股权投资的本金金额内的款</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;">&nbsp;&nbsp;&nbsp;&nbsp;货&nbsp;&nbsp;币&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    <select id="currency" name="currency" required="true">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                      <div class="col-md-6" style="margin-bottom: 0px">
+                                        <div class="col-md-12" style="margin-bottom: 0px">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-sm" style="margin: 0">
+                                                    <span class="input-group-addon" style="color: #000000;"> 状&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 态 &nbsp; </span>
+                                                    <select id="state" name="state" required="true">
+                                                        <option value="">全部</option>
+                                                        <option value="未收">未收</option>
+                                                        <option value="已收">已收</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-bottom: 0px">
+                                        <div class="col-md-5" style="margin: auto">
+                                        </div>
+                                        <div class="col-md-2" style="margin: auto">
+                                            <button onclick="query()" type="button" style="width: 100px; border-radius: 100px; font-size: 12px; border: 0px solid #c0c0c0; font-weight: bold" class="btn btn-primary">查询</button>
+                                        </div>
+                                        <div class="col-md-5" style="margin: auto">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <table id="CompanyTable" style="font-size: 12px" class="table-condensed">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </section>
+</div>
+<div class="modal fade" id="Voucher" tabindex="-1" role="dialog" aria-labelledby="AmountUsed"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    凭证
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-md-12" style="margin-bottom: 5px; text-align: center">
+                        <span style="font-size: 30px; font-weight: 900; color: #000000; text-decoration: underline">记账凭证</span>
+                    </div>
+
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4" style="text-align: center">
+                            <span id="VoucherDate"></span>
+                        </div>
+                        <div class="col-md-4" style="text-align: center;">
+                            <span>本币：@Session["Currency"] 单位：元</span>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 5px;">
+                        <span>核算单位：</span>
+                        @Session["FullName"]
+                        <span id="num" style="float:right"></span>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: 10px">
+                        <table id="VoucherTable" class="table table-striped table-bordered table-condensed" style="font-size: 12px"></table>
+                    </div>
+                    <div class="col-md-12" style="margin-left:-10px">
+                        <div class="col-md-2">
+                            <span>财务主管:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>记账:</span>
+                            @Session["NickName"]
+                        </div>
+                        <div class="col-md-2">
+                            <span>复核:</span>
+                            @Session["NickName"]
+                        </div>
+
+                        <div class="col-md-2">
+                            <span>出纳:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>制单:</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span>经办人:</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<div class="modal fade" id="AmountUsed" tabindex="-1" role="dialog" aria-labelledby="AmountUsed"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    已销账
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12" style="margin-bottom: 0px">
+                        <table id="dataListAmountUsed" style="font-size: 12px"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<div class="modal fade" id="Editdialog" tabindex="-1" role="dialog" aria-labelledby="AmountUsed"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="amyModalLabel">
+                    编辑
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="Example_1">
+                    <div class="row">
+                    <div class="col-md-12">
+                        <form class="cmxform" id="altForm" method="post">
+                            <input type="hidden" value="" id="GUID" name="GUID" />
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">申报日期</span>
+                                        <input type="text" id="datepicker" name="Date" class="form-control datepicker mtn">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">&nbsp;&nbsp;收款类别&nbsp;&nbsp;</span>
+                                        <select id="InvType1" name="InvType">
+                                            <option value="预收客户款" selected="selected">预收客户款</option>
+                                            <option value="收取短期借款">收取短期借款</option>
+                                            <option value="收取长期借款">收取长期借款</option>
+                                            <option value="收取押金">收取押金</option>
+                                            <option value="收取暂支">收取暂支</option>
+                                            <option value="吸取投资">吸取投资</option>
+                                            <option value="其他与筹资活动有关的收款">其他与筹资活动有关的收款</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                             <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">业务单元</span>
+                                        <select id="Business_GUID1" name="Business_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">业务子单元</span>
+                                        <select id="SubBusiness_GUID1" name="SubBusiness_GUID" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group" style="margin-top: 0px">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">&nbsp;付款方&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="Payee1" name="RPer" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;状&nbsp;态&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+                                        <select id="state1" name="state" required="true">
+                                            <option value="未收">未收</option>
+                                            <option value="已收">已收</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group">
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">申报金额</span>
+                                        <input type="text" id="maskedMoney" name="Amount" class="form-control money" maxlength="10" autocomplete="off"
+                                               placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="margin-bottom: 0px">
+                                <div class="form-group">
+
+                                    <div class="input-group input-group-sm" style="margin: 0">
+                                        <span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;货&nbsp;币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <select id="currency1" name="currency" required="true"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left:10px">
+                                <div class="input-group input-group-sm" style="margin: 0">
+                                    <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;附&nbsp;&nbsp;&nbsp;&nbsp;件&nbsp;&nbsp;</span>
+                                    <button class="btn btn-primary btn-sm" style="width:168px;margin-left:2px;margin-right:10px" type="button" onclick="ShowFirstUpLoadDialog()"> 上传附件</button>
+                                    <button class="btn btn-primary btn-sm" style="width:167px;margin-right:0px;" id="" name="" type="button" onclick="showUploadFile()"> &nbsp;&nbsp;&nbsp;浏&nbsp;&nbsp;&nbsp;览....</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="Upadeta()" class="btn btn-default">
+                    提交
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--上传附件model-->
+<div class="modal fade" id="AttachmentImportModal" tabindex="-1" role="dialog" aria-labelledby="AttachmentImportModal"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="CloseAttachmentImportModal()">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="excelImportModal">附件上传</h4>
+            </div>
+            <div>
+                <div class="modal-body" style="width: 50%;float: left;">
+                    <input  type="hidden" id="uploadformid" />                   
+                        <div id="uploader" class="wu-example" >
+                            <!--用来存放文件信息-->
+                            <div class="btns">
+                                <table>                                    
+                                    <tr>
+                                        <td>
+                                            <div id="picker" >选择文件</div>
+                                        </td>
+                                        <td>
+                                            <div id="thelist" class="uploader-list" ></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <input type="hidden" id="flag"/>
+                    </div>
+                <div class="modal-body" style="width: 50%;float: left;padding: 5px;padding-left:85px">
+                    <div id="qrcode" class="modal-body" style="width: 100%;padding: 10px;text-align: center;">
+                        <img src="/img/qrcode.jpg" />
+                    </div>
+                    <div style="width: 60%;text-align: center;margin-left:42px">
+                        <span style="font-size: 14px">扫描二维码通过手机上传附件</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="CloseAttachmentImportModal()">Close</button>
+                <button id="ASubmitBtn" class="btn btn-primary" type="button" onclick="ASubmitBtn()">提交</button>
+            </div>
+        </div>
+                           
+    </div>
+</div>
+<!--显示当前id附件记录model-->
+<div class="modal fade" id="showhaveuploadedModal" tabindex="-1" role="dialog" aria-labelledby="countryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">附件查看</h4>
+            </div>
+            <div class="modal-body">
+                <table id="showhaveuploaded">
+
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--编辑当前记录名称model-->
+<div class="modal fade" id="edithaveuploadedModal" tabindex="-1" role="dialog" aria-labelledby="edithaveuploadedModal"
+    aria-hidden="true">
+    <div class="modal-dialog" >
+        <div class="modal-content">
+         <input type="hidden" value="" id="actionHandler" name="actionHandler" />
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑附件名称
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div  class="row">
+                <form class="cmxform" id="D_Form" method="post">
+                            <input type="hidden" name="A_GUID" id="GUID" />
+                            <input type="hidden" name="FR_GUIDS" id="FR_GUID" />
+                            <div class="col-md-12" style="text-align: center">
+                                <div class="col-md-1">
+                                </div>
+                                <div class="col-md-5" style="padding-right: 25px">
+                                    <div class="form-group">
+                                        <div class="input-group input-group-sm" style="margin: 0">
+                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;附&nbsp;件&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                    <input type="text" id="TempFileName" name="FileName" class=" form-control " maxlength="10"
+                                         require="true" style="width:350px" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </form>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    关闭
+                </button>
+                <button type="button" class="btn btn-primary" onclick="EditUpload()">
+                    提交
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--提交之后上传之前的名称提交model-->
+<div class="modal fade" id="editunifiednameModal" tabindex="-1" role="dialog" aria-labelledby="editunifiednameModal"
+                aria-hidden="true">
+       <div class="modal-dialog" >
+             <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                文件名称
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div  class="row">
+                                <form class="nameform" id="name_Form" method="post"> 
+                                            <div class="col-md-12" style="text-align: center">
+                                                <div class="col-md-1">
+                                                </div>
+                                                <div class="col-md-5" style="padding-right: 25px">
+                                                    <div class="form-group">
+                                                        <div class="input-group input-group-sm" style="margin: 0">
+                                                            <span class="input-group-addon" style="color: #000000">&nbsp;&nbsp;&nbsp;附&nbsp;件&nbsp;名&nbsp;称&nbsp;&nbsp;&nbsp;</span>
+                                                           <input type="text" id="TempFileNameFirst" name="TempFileNameFirst" class=" form-control " maxlength="10"
+                                                                 required style="width:350px" />                                          
+                                                             
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button id="ctlBtn" class="btn btn-primary" type="button">
+                                上传
+                            </button>
+                        </div>
+             </div>
+           <!-- /.modal-content -->
+      </div>
+</div>
+<script language="javascript" type="text/javascript">
+    jQuery(document).ready(function () {
+
+        $('#dateBegin').datepicker();
+        $('#dateEnd').datepicker();
+
+        $('#CompanyTable').bootstrapTable({
+            url: "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList",
+            method: 'get',
+            pageSize: 10,
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: true,
+            sortName: 'Name', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 desc
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            uniqueId: "GUID",
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                    { field: 'Date', title: '申报日期', formatter: ChangeDateFormat, align: 'center' },
+                    { field: 'RPerName', title: '付款方', align: 'center' },
+                    { field: 'Amount', title: '申报金额', align: 'center', formatter: DecimalFmter },
+                    { field: 'GUID', title: '未销金额', align: 'center', formatter: LinkHandleAmount },
+                    { field: 'Currency', title: '货币', align: 'center' },
+                    { field: "BusinessName" , width: '10%', align: 'center', title:"业务单元" },
+                    { field: "SubBusinessName" , width: '10%', align: 'center', title:"业务子单元" },
+                    { field: "InvType", title: '收款类别', align: 'center' },
+                    { field: 'AGUID', title: '附件', align: 'center', formatter: FJHandle },
+                    { field: 'State', title: '状态', align: 'center' },
+                    { field: 'GUID', title: '', width: '10%', formatter: LinkHandle }
+                    ],
+            queryParams: queryParams
+        });
+    });
+
+        var ChangeDateFormat = function (jsondate) {
+        if(jsondate !==null){
+            jsondate = jsondate.replace("/Date(", "").replace(")/", "");
+            if (jsondate.indexOf("+") > 0) {
+                jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+            } else if (jsondate.indexOf("-") > 0) {
+                jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+            }
+            
+            var date = new Date(jsondate);
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "/" + month + "/" + currentDate;
+            }
+        }
+
+    var DecimalFmter = function (s) {
+        if (s == null || s == "undefined"|| s=="0") {
+            return "";
+        }
+        var h = '';
+        s = s.toString();
+        if (s.charAt(0) == '-') {
+            h = '-';
+            s = s.slice(1);
+        }
+        if (/[^0-9\.]/.test(s)) return "NaN";
+        s = s.replace(/^(\d*)$/, "$1.");
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        s = s.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(s)) s = s.replace(re, "$1,$2");
+        s = s.replace(/,(\d\d)$/, ".$1");
+        return h + s.replace(/^\./, "0.");
+
+    }
+
+    var FJHandle = function (value, row, index) {
+        if (value == "" || value == null) {
+            return "";
+        } else {
+            var v = "../Content/EasyUI/themes/icons/hxz.png";
+            //return '<img style=\"height: 100px;width: 100px;\" src=\""+v+"\"/>';
+            return '<img style="height: 16px;width: 16px;" src="' + v + '" />';
+        }
+    };
+
+    var LinkHandle = function (value, row) {
+        var link = "";
+        var a = "<a class='linkbtn' onclick='EditClick(\"" + value + "\")'>@General.Resource.Common.Edit</a>";
+        var b = "<a class='linkbtn' onclick='DeleteClick(\"" + value + "\")'>@General.Resource.Common.Delete</a>";
+//        var c = " <a class='linkbtn'   onclick='GetVoucher(\"" + value + "\")'>凭证</a> ";
+        if (row.State == '已收' || row.CostSum !== 0 || row.Remark == '初始预收账款') {
+            a = "";
+            b = "";
+        }
+        return a + " " + b;
+    };
+
+    var LinkHandleAmount = function (value, row, index) {
+        if (row.DisAmount <= 0) {
+            var link1 = "<a class='' >  \ " + '0 ' + "\</a>"
+        }
+        else if (row.DisAmount > 0) {
+            var link1 = "<a class='linkbtn' onclick='AmountUsed(\"" + value + "\")'><font color=blue>\ " + DecimalFmter(row.DisAmount) + "\</font></a>"
+        }
+        return link1;
+    };
+
+    function DeleteClick(value) {
+        $.ajax({
+            url: "/ReceivablesRecord/GetIEUsed?id=" + value,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data) == '') {
+                    if (confirm('确认删除?')) {
+                        $.ajax({
+                            url: "/ReceivablesDeclareCustomer/DelReceivablesDeclareCustomer/?id=" + value,
+                            type: "POST",
+                            success: function (data) {
+                                if ($.parseJSON(data).Result) {
+                                    alert("删除成功");
+                                    $('#CompanyTable').bootstrapTable('refresh', { url: "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList" });
+                                } else {
+                                    alert("删除失败");
+                                }
+                            },
+                            error: function () {
+                                alert("删除失败");
+                            }
+                        });
+                    }
+                } else {
+                    alert("部分已销账，无法删除");
+                }
+            }
+        });
+    }
+
+    function EditClick(value) {
+        $.ajax({
+            url: "/ReceivablesRecord/GetIEUsed?id=" + value,
+            type: "POST",
+            success: function (data) {
+                if ($.parseJSON(data) == '') {
+                    $('#Editdialog').modal({ show: true, backdrop: 'static' });
+                    $(".boxed-layout").css("padding-right", "0px");
+                    $("#Payee1").multiselect(SelectConfigSetting);
+                    $("#InvType1").multiselect(SelectConfigSetting);
+                    $("#InvType1").val("").multiselect("refresh");
+                    $("#currency1").multiselect(SelectConfigSetting);
+                    $("#currency1").multiselect('dataprovider', currency);
+                    $("#currency1").val("").multiselect("refresh");
+                    $("#state1").multiselect(SelectConfigSetting);
+                    $("#state1").val("").multiselect("refresh");
+                    var Payee;
+                    $.ajax({
+                        url: "/InternalAPI/GetCustomer",
+                        async: false,
+                        dataType: "json",
+                        success: function (d) {
+                            Payee = d;
+                        }
+                    });
+                    var allList;
+                    $.ajax({
+                        url: "/InternalAPI/GetPartnersAll",
+                        async: false,
+                        dataType: "json",
+                        success: function (d) {
+
+                            allList = d;
+                        }
+                    });
+                    $(" #InvType1").change(function () {
+                        if ($("#InvType1").val() == "收取短期借款" || $("#InvType1").val() == "收取长期借款" ||  $("#InvType1").val() == "收取押金" || $("#InvType1").val() == "收取暂支") {
+                            sessionStorage.Payee = JSON.stringify(allList);
+                            $(' #Payee1').multiselect('dataprovider', JSON.parse(sessionStorage.Payee));
+                            $("#Payee1").val("").multiselect("refresh");
+                        } else {
+                            sessionStorage.Payee = JSON.stringify(Payee);
+                            $(' #Payee1').multiselect('dataprovider', JSON.parse(sessionStorage.Payee));
+                            $("#Payee1").val("").multiselect("refresh");
+                        }
+                    });
+                    $('#Payee1').val("").multiselect('refresh');
+                    var rowRecord = $('#CompanyTable').bootstrapTable('getRowByUniqueId', value);
+                     if(rowRecord.Business_GUID != null){
+                     $('#Business_GUID1').multiselect('select', rowRecord.Business_GUID);
+                     $("#Business_GUID1").multiselect("refresh");
+                        var guid = rowRecord.Business_GUID;
+                            var subList
+                            $.ajax({
+                                url: "/BusinessUnitSetting/GetBusinessChildTpyList?GUID=" + guid,
+                                async: false,
+                                dataType: "json",
+                                success: function (d) {
+                                    subList = d;
+                                }
+                            });
+                            $("#SubBusiness_GUID1").multiselect('dataprovider', subList);
+                             $("#SubBusiness_GUID1").val("").multiselect("refresh");
+                        $('#SubBusiness_GUID1').multiselect('select', rowRecord.SubBusiness_GUID);
+                         $("#SubBusiness_GUID1").multiselect("refresh");
+                        }else{
+                                $('#Business_GUID1').val("").multiselect("refresh");
+                                $('#SubBusiness_GUID1').val("").multiselect("refresh");
+                            }
+                    $("#datepicker").val(rowRecord.Date);
+                    $('#datepicker').datepicker('update');
+                    $('#InvType1').multiselect('select', rowRecord.InvType);
+                    if ($("#InvType1").val() == "收取短期借款" || $("#InvType1").val() == "收取长期借款" ||  $("#InvType1").val() == "收取押金" || $("#InvType1").val() == "收取暂支") {
+                        sessionStorage.Payee = JSON.stringify(allList);
+                        $(' #Payee1').multiselect('dataprovider', JSON.parse(sessionStorage.Payee));
+                        $("#Payee1").val("").multiselect("refresh");
+                    } else {
+                        sessionStorage.Payee = JSON.stringify(Payee);
+                        $(' #Payee1').multiselect('dataprovider', JSON.parse(sessionStorage.Payee));
+                        $("#Payee1").val("").multiselect("refresh");
+                    }
+                    $('#Payee1').multiselect('select', rowRecord.RPer);
+                    $("#Payee1").multiselect("refresh");
+                    $('#state1').multiselect('select', rowRecord.State);
+                    $('#maskedMoney').val(rowRecord.Amount);
+                    $('#currency1').multiselect('select', rowRecord.Currency);
+                     $("#currency1").multiselect("refresh");
+                    $("#GUID").val(value);
+                } else {
+                    alert("部分已销账，无法编辑");
+                }
+            }
+        });
+
+    }
+
+    function Upadeta() {
+        if ($("#InvType1").val() == null) {
+            alert("请选择收款");
+            return false;
+        }
+        if ($("#Payee1").val() == null) {
+            alert("请选择付款单位");
+            return false;
+        }
+        if ($("#state1").val() == "") {
+            alert("请选择收款状态");
+            return false;
+        }
+        if ($("#datepicker").val() == "") {
+            alert("请选择申报日期");
+            return false;
+        }
+        if ($("#maskedMoney").val() == "") {
+            alert("请输入申报金额");
+            return false;
+        }
+        if ($("#currency1").val() == null) {
+            alert("请选择货币");
+            return false;
+        }
+        else {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/ReceivablesDeclareCustomer/UpdaDeclareCustomer",
+                data: $('#altForm').serialize(),
+                async: false,
+                onSubmit: function () {
+                    return $("#altForm").form('validate');
+                },
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (data) {
+                    if (data == "操作成功！") {
+                        alert("提交成功");
+                        $('#Editdialog').modal('hide');
+                        $('#CompanyTable').bootstrapTable('refresh', { url: "/ReceivablesDeclareCustomer/GetReceivablesDeclareCustomerList" });
+                    } else {
+                        alert("提交失败");
+                    }
+
+                }
+            });
+        }
+    }
+
+    function AmountUsed(id) {
+        $('#dataListAmountUsed').bootstrapTable('destroy');
+        $('#dataListAmountUsed').bootstrapTable({
+            url: "/PaymentRecord/GetIEUsed?id=" + id, //请求后台的URL（*）   
+            method: 'get', //请求方式（*）
+            pageSize: 10, //每页的记录行数（*）
+            pageList: [10, 20, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1, //初始化加载第一页，默认第一页
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            cardView: false, //是否显示详细视图
+            pagination: true, //是否显示分页（*）
+            sortName: 'Name', // 设置默认排序为 name
+            sortOrder: 'desc', // 设置排序为反序 des
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            columns: [
+                { field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', width: '7%' },
+	            { field: 'RPerName', title: '收款单位', width: '10%', align: 'center' },
+	            { field: 'SumAmount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'center', formatter: DecimalFmter },
+	            { field: 'Currency', title: '@FMS.Resource.Finance.Finance.Currency' },
+	            { field: 'InvType', title: "@FMS.Resource.Finance.Finance.Payment@FMS.Resource.Finance.Finance.Group", width: '12%' },
+                { field: 'InvTypeDts', align: 'center', title: "付款子类" },
+	            { field: 'B_GUID', title: '付款账户', width: '10%' },
+                { field: 'Record', width: '10%', title: "销账状态" }
+            ]
+
+
+        });
+        $('#AmountUsed').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+
+    }
+
+
+    function GetVoucher(id) {
+        $('#VoucherTable').bootstrapTable('destroy');
+        $('#VoucherTable').bootstrapTable({
+            url: "/ReceivablesDeclareCustomerQuery/GetDCVoucher?GUID=" + id,
+            method: 'get',
+            pageSize: 30,
+            pageList: [10, 20, 30, 50, 100, 200], // 自定义分页列表
+            pageNumber: 1,
+            singleSelect: true,
+            clickToSelect: true,
+            checkOnSelect: true,
+            selectOnCheck: true,
+            pagination: false,
+            rownumbers: true,
+            search: false, // 开启搜索功能
+            showColumns: false,
+            showRefresh: false,
+            showQuery: false,
+            showToggle: false,
+            showExport: false,
+            exportTypes: ['xml', 'txt', 'excel'],
+            //detailView:true,
+            columns: [
+				{ field: "Summary", title: '摘要' },
+                { field: "Name", title: '会计科目', formatter: ChinaCost },
+                { field: "CreditAmount", title: '借方金额', formatter: DecimalFmter },
+				{ field: "DebitAmount", title: '贷方金额', formatter: DecimalFmter }
+            ],
+        });
+
+        var voucherDate
+        var num
+        $.ajax({
+            url: "/ExpenseQuery/GetVoucherID?id=" + id,
+            async: false,
+            dataType: "json",
+            success: function (d) {
+                voucherDate = d.VDate;
+                num = d.id;
+            }
+        });
+        document.getElementById("VoucherDate").innerText = voucherDate;
+        if (num.length == 1) {
+            num = '第' + '00' + num + '号' + ' - 0001/0001';
+        }
+       else if (num.length == 2) {
+            num = '第' + '0' + num + '号' + ' - 0001/0001';
+        } else {
+            num = '第' + num + '号' + ' - 0001/0001';
+        }
+        document.getElementById("num").innerText = num;
+        $('#Voucher').modal({ show: true, backdrop: 'static' });
+        $(".boxed-layout").css("padding-right", "0px");
+    }
+
+    function queryParams(params) {  //配置参数
+        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            pageSize: params.limit,   //页面大小
+            pageIndex: params.pageNumber,  //页码
+            datebegin: $('#dateBegin').val(),
+            dateend: $('#dateEnd').val(),
+            customer: $('#customer').val(),
+            currency: $('#currency').val(),
+            state: $('#state').val(),
+            incomeGrp: $('#incomeGrp').val(),
+            business_GUID: $('#Business_GUID').val(),
+            subBusiness_GUID:$('#SubBusiness_GUID').val()
+        };
+        return temp;
+    }
+    function query() {
+
+        $('#CompanyTable').bootstrapTable('refresh');
+    }
+</script>

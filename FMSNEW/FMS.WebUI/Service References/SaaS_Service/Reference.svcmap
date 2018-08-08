@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="7c764e3f-d93f-4fe9-9289-5f2f5d287cd0" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://192.168.1.112:8888/SaaS_Service.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SaaS_Service.xsd" MetadataType="Schema" ID="13242b28-faad-441b-a48e-9c762d92863c" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?xsd=xsd1" />
+    <MetadataFile FileName="SaaS_Service1.xsd" MetadataType="Schema" ID="07242da2-79eb-4702-b896-1f5f60a607ee" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?xsd=xsd2" />
+    <MetadataFile FileName="SaaSService.wsdl" MetadataType="Wsdl" ID="8c85c5e1-a409-4509-bcea-28ca127900d9" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?wsdl" />
+    <MetadataFile FileName="SaaS_Service2.xsd" MetadataType="Schema" ID="aa7b6f89-8d3a-4ea3-9038-d9a9d6809ed7" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?xsd=xsd0" />
+    <MetadataFile FileName="SaaS_Service3.xsd" MetadataType="Schema" ID="4d792d5b-0ee4-4c24-8ceb-5b351aedf998" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?xsd=xsd3" />
+    <MetadataFile FileName="SaaS_Service.disco" MetadataType="Disco" ID="57735195-7b0e-4a80-b47e-cb72c4e94e2a" SourceId="1" SourceUrl="http://192.168.1.112:8888/SaaS_Service.svc?disco" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

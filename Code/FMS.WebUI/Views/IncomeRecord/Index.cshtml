@@ -1,0 +1,127 @@
+﻿@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_ContentLayout_V4.cshtml";
+}
+
+<table id="IR_List"></table>
+
+<script language="javascript" type="text/javascript">
+    var LinkHandle = function (value,row) {
+        var link = "";
+        var EditThreshold = '@(((DateTime)Session["EditThreshold"]).ToShortDateString())';
+        EditThreshold = (new Date(EditThreshold)).getTime();
+        var date = DateHandle(row.Date);
+        date = date.replace(/-/g, "/");
+        date = (new Date(date)).getTime();
+        if (date >= EditThreshold) {
+            link = " <a class='linkbtn' onclick='AddClick(\"" + value + "\")'>@General.Resource.Common.Edit</a> "
+			+ " <a class='linkbtn' onclick='DeleteClick(\"" + value + "\")'>@General.Resource.Common.Delete</a> ";
+        }
+        else {
+            link = "<a class='linkbtn' onclick='CheckClick(\"" + value + "\")'>@General.Resource.Common.Check</a>";
+        }
+
+        return link;
+    };
+
+	var DateHandle = function (value, row, index) {
+		return ChangeDateFormat(value); 
+	}
+
+	$(function () {
+		$("#IR_List").datagrid({
+			url: '/IncomeRecord/GetIncomeList',
+			columns: [[
+				{ field: 'RPerName', title: '@FMS.Resource.Finance.Finance.Payer' },
+				{ field: 'Date', title: '@FMS.Resource.Finance.Finance.Date', formatter: DateHandle },
+				{ field: 'InvNo', title: '@FMS.Resource.Finance.Finance.InvNo' },
+				{ field: 'Amount', title: '@FMS.Resource.Finance.Finance.Amount', align: 'right', formatter: DecimalFmter },
+				{ field: 'IE_GUID', title: '', formatter: LinkHandle }
+			]],
+			toolbar: [{
+				iconCls: 'icon-add',
+				text: '@General.Resource.Common.Add',
+				handler: function () { AddClick(); }
+			}],
+			pagination: true,
+			rownumbers: true,
+			singleSelect: true
+		});
+
+	});
+
+
+function AddClick(id) {
+    $("#IR_List").after("<div id='WinIR'></div>");
+    $("#WinIR").dialog({
+        title: ' ',
+        maximized: true,
+        onClose: function () { $("#WinIR").dialog("destroy"); },
+        buttons: [{
+            text: '@General.Resource.Common.Save',
+            handler: function () { SubmitForm(); }
+        }]
+    });
+    if (id == null) {
+        $('#WinIR').dialog("refresh", "/IncomeRecord/IncomeRecord");
+    }
+    else {
+        $('#WinIR').dialog("refresh", "/IncomeRecord/IncomeRecord/" + id);
+    }
+}
+
+function CheckClick(id) {
+    $("#IR_List").after('<div id="WinCheck"></div>');
+    $("#WinCheck").dialog({
+        title: ' ',
+        collapsible: false,
+        minimizable: false,
+        maximized: true,
+        onClose: function () { $("#WinCheck").dialog("destroy"); }
+    });
+    $('#WinCheck').dialog("refresh", "/IncomeRecord/CheckIncomeRecord/" + id);
+}
+
+	function DeleteClick(id) {
+		$.messager.confirm('Confirm', '@General.Resource.Common.Confirm_Delete', function (r) {
+			if (r) {
+				$.ajax({
+					url: "/IncomeRecord/DelIncomeRecord/" + id,
+					type: "POST",
+					success: function (data) {
+						$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+						if ($.parseJSON(data).Result) {
+						    $('#IR_List').datagrid("reload");
+						}
+					},
+					error: errorHandle
+				});
+			}
+		});
+	}
+
+	function SubmitForm() {
+		if ($("#IncomeRecord").form("validate")) {
+			var h = JSON.stringify($("#IncomeRecord").serializeObject());
+			var b = JSON.stringify($("#IncomeDetailsList").datagrid("getData").rows);
+			$.ajax({
+				url: "/IncomeRecord/UpdIncomeRecord",
+				processData: false,
+				type: "POST",
+				data: "head=" + h + "&list=" + b,
+				success: function (data) {
+					$.messager.alert('Message', $.parseJSON(data).Msg, 'info');
+					if ($.parseJSON(data).Result) {
+						$('#WinIR').dialog("close");
+						$('#IR_List').datagrid("reload");
+					}
+				},
+				error: errorHandle
+			});
+		}
+		return false;
+	}
+
+</script>
+
+
